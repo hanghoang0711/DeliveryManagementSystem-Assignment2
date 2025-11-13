@@ -3,15 +3,15 @@ const sql = require("mssql");
 const config = {
     user: "sa",  // bạn phải dùng sa để tạo tài khoản
     password: "Nhom6251",
-    server: "localhost",
-    database: "master",
+    server: "ThuyHien",
+    database: "QuanLyGiaoHang_Nhom06",
     options: { encrypt: false }
 };
 
 async function createManagerAccount() {
     try {
         await sql.connect(config);
-
+        console.log(dbConfig.dialect) ;
         // tạo login
         await sql.query(`
             IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = 'sManager')
