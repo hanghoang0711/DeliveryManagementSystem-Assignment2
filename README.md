@@ -112,6 +112,10 @@ DeliveryManagementSystem-Assignment2/
 - `sp_TaoDonHang` - Tạo đơn hàng mới với validation
 - `sp_HuyDonHang` - Hủy đơn hàng với kiểm tra trạng thái
 
+#### Triggers (2)
+- `trg_capNhatTrangThaiDonHangDaGiao` - Cập nhật trạng thái đơn hàng khi đơn hàng giao thành công.
+- `trg_capNhatDiemThanhVienKhiTaoHoaDon` - Cập nhật điểm và hạng của khách hàng khi hoá đơn mới được tạo.
+
 ---
 
 ## 🔌 Backend API
@@ -221,6 +225,7 @@ Import collection từ: `backend/TEST_GUIDE_POSTMAN.md`
 --   - Tạo bảng với constraints
 --   - Insert dữ liệu mẫu
 --   - Tạo 2 functions và 2 stored procedures
+--   - Tạo 2 trigger
 ```
 
 ### Bước 2: Cài Đặt Backend

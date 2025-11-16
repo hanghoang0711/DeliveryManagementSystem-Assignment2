@@ -581,7 +581,6 @@ CREATE TABLE DIA_CHI_CUA_KHACH_HANG (
     CONSTRAINT FK_DCCKH_KHACHHANG FOREIGN KEY (Ma_khach_hang) REFERENCES KHACH_HANG(Ma_khach_hang) ON DELETE CASCADE
 );
 GO
-
 -- =====================================================================
 -- HOÀN TẤT TẠO BẢNG
 -- =====================================================================
@@ -723,7 +722,7 @@ INSERT INTO TAI_XE (DriverID, Ho_ten, CCCD, Gioi_Tinh, Ngay_Sinh, Ngay_Bat_Dau_L
 ('DRV002', N'Trần Thị Phương', '079123456782', N'Nữ', '2002-09-05', '2025-11-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 4.5),
 ('DRV003', N'Đỗ Giang Thần', '0790123456', N'Nam', '1988-09-09', '2024-12-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 5.0),
 ('DRV004', N'Lê Văn Hậu', '079123456783', N'Nam', '1995-12-20', '2025-11-20', N'Đang giao hàng', 'NV0002', '2025-11-20', 5.0),
-('DRV005', N'Phạm Thị Yến Nhi', '079123456784', N'Nữ', '2004-06-25', '2025-11-25', N'Sẵn sàng', 'NV0002', '2025-11-25', 5.0), 
+('DRV005', N'Phạm Thị Yến Nhi', '079123456784', N'Nữ', '2004-06-25', '2025-11-25', N'Sẵn sàng', 'NV0002', '2025-11-25', 5.0),
 ('DRV006', N'Ngô Văn Tùng', '079123456785', N'Nam', '1997-07-11', '2025-11-10', N'Sẵn sàng', 'NV0002', '2025-11-10', 5.0),
 ('DRV007', N'Đinh Thị Trang', '079123456786', N'Nữ', '1999-08-09', '2025-11-12', N'Sẵn sàng', 'NV0002', '2025-11-12', 5.0),
 ('DRV008', N'Hoàng Văn Toàn', '079123456787', N'Nam', '1990-10-10', '2025-11-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 4.7),
@@ -982,7 +981,7 @@ INSERT INTO DANH_GIA_CUA_KHACH_HANG VALUES
 PRINT N'';
 PRINT N'=====================================================================';
 PRINT N'5. KIỂM TRA DỮ LIỆU ĐÃ INSERT';
-PRINT N'====================================================================='; 
+PRINT N'=====================================================================';
 GO
 
 /*PRINT N'--- Dữ liệu bảng NHANVIEN ---'; SELECT * FROM NHANVIEN;
@@ -1114,11 +1113,11 @@ BEGIN
     FROM KHACH_HANG KH
     JOIN DON_HANG DH ON KH.Ma_khach_hang = DH.Ma_khach_hang
     JOIN HOA_DON HD ON DH.Ma_don_hang = HD.Ma_don_hang
-    WHERE DH.Trang_thai_don = N'Đã giao' 
-      AND CAST(DH.thoi_gian_dat_don AS DATE) BETWEEN @TuNgay AND @DenNgay  
+    WHERE DH.Trang_thai_don = N'Đã giao'
+      AND CAST(DH.thoi_gian_dat_don AS DATE) BETWEEN @TuNgay AND @DenNgay
     GROUP BY KH.Ma_khach_hang
-    HAVING SUM(HD.so_tien_sau_khi_giam) > 0  
-    ORDER BY SUM(HD.so_tien_sau_khi_giam) DESC; 
+    HAVING SUM(HD.so_tien_sau_khi_giam) > 0
+    ORDER BY SUM(HD.so_tien_sau_khi_giam) DESC;
 
     RETURN;
 END;
@@ -1147,9 +1146,9 @@ BEGIN
         COUNT(CGH.DeliveryID) AS SoChuyenGiao,
         TX.Rating
     FROM TAI_XE TX
-    LEFT JOIN CHUYEN_GIAO_HANG CGH 
-           ON TX.DriverID = CGH.DriverID 
-          AND CGH.TrangThaiChuyen = N'Hoàn thành'  
+    LEFT JOIN CHUYEN_GIAO_HANG CGH
+           ON TX.DriverID = CGH.DriverID
+          AND CGH.TrangThaiChuyen = N'Hoàn thành'
     WHERE TX.Rating >= @MinStar
     GROUP BY TX.DriverID, TX.Ho_ten, TX.Rating
     ORDER BY SoChuyenGiao DESC, TX.Rating DESC;
@@ -1189,10 +1188,10 @@ BEGIN
         BEGIN TRAN;
 
         -- Kiểm tra input cơ bản
-        IF @MaKH IS NULL 
-            OR @SDTNhan IS NULL 
-            OR @TenNguoiNhan IS NULL 
-            OR @DiaChiLay IS NULL 
+        IF @MaKH IS NULL
+            OR @SDTNhan IS NULL
+            OR @TenNguoiNhan IS NULL
+            OR @DiaChiLay IS NULL
             OR @DiaChiGiao IS NULL
             OR @CanNang <= 0
             OR @PhiVanChuyen <= 0
@@ -1212,7 +1211,7 @@ BEGIN
 
         -- Sinh mã đơn
         DECLARE @MaDon VARCHAR(10);
-        SELECT @MaDon = 'DH' + 
+        SELECT @MaDon = 'DH' +
             RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_don_hang, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
         FROM DON_HANG;
 
@@ -1281,7 +1280,7 @@ BEGIN
         -- Lấy trạng thái và mã khách hàng
         DECLARE @TrangThai NVARCHAR(50), @MaKH VARCHAR(10);
 
-        SELECT 
+        SELECT
             @TrangThai = Trang_thai_don,
             @MaKH = Ma_khach_hang
         FROM DON_HANG
@@ -1317,7 +1316,92 @@ BEGIN
 END;
 GO
 
+
 PRINT N'=====================================================================';
 PRINT N'HOÀN TẤT TẠO FUNCTIONS VÀ STORED PROCEDURES';
+PRINT N'=====================================================================';
+GO
+
+PRINT N'';
+PRINT N'=====================================================================';
+PRINT N'7. TRIGGER.';
+PRINT N'=====================================================================';
+GO
+
+
+CREATE OR ALTER TRIGGER trg_capNhatTrangThaiDonHangDaGiao
+ON DON_HANG_DUOC_GIAO AFTER INSERT AS
+BEGIN
+	IF CURSOR_STATUS('global', 'cur') >= -1
+	BEGIN
+	    CLOSE cur;
+	    DEALLOCATE cur;
+	END
+
+	DECLARE cur CURSOR FOR SELECT Ma_don_hang FROM inserted;
+	DECLARE @Ma_don_hang VARCHAR(10);
+
+	OPEN cur;
+
+	FETCH NEXT FROM cur INTO @Ma_don_hang;
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		UPDATE DON_HANG
+		SET Trang_thai_don = 'Đã giao'
+		WHERE Ma_don_hang = @Ma_don_hang;
+
+		FETCH NEXT FROM cur INTO @Ma_don_hang;
+	END;
+
+	CLOSE cur;
+END;
+
+GO
+
+CREATE OR ALTER TRIGGER trg_capNhatDiemThanhVienKhiTaoHoaDon
+ON HOA_DON AFTER INSERT AS
+BEGIN
+	DECLARE @Ma_khach_hang VARCHAR(10), @Ma_don_hang VARCHAR(10), @Ma_thanh_toan VARCHAR(10);
+
+	SELECT * INTO #temp FROM inserted
+
+	WHILE 1 = 1
+	BEGIN
+		SELECT TOP(1) @Ma_don_hang = Ma_don_hang, @Ma_thanh_toan = Ma_thanh_toan FROM #temp
+		IF NOT @@ROWCOUNT <> 0 BEGIN BREAK; END
+
+		SELECT @Ma_khach_hang = t.Ma_khach_hang FROM THANH_TOAN t WHERE t.Ma_thanh_toan = @Ma_thanh_toan;
+
+		DECLARE @Diem INT;
+		SELECT @Diem = d.Diem_tich_luy FROM DON_HANG d WHERE d.Ma_don_hang = @Ma_don_hang;
+		SET @Diem = @Diem + (SELECT k.Diem_thanh_vien FROM KHACH_HANG k WHERE k.Ma_khach_hang = @Ma_khach_hang);
+
+		UPDATE KHACH_HANG
+		SET
+			Diem_thanh_vien = @Diem,
+			Ten_hang = (
+				SELECT TOP(1) h.Ten_hang
+				FROM HANG_THANH_VIEN h
+				WHERE @Diem >= h.Diem_thanh_vien_toi_thieu
+				ORDER BY h.Diem_thanh_vien_toi_thieu DESC
+			)
+		WHERE Ma_khach_hang = @Ma_khach_hang;
+
+		DELETE FROM #temp WHERE Ma_don_hang = @Ma_don_hang;
+	END;
+END;
+
+-- Test TRIGGER bằng cách thêm 1 value vào TABLE.
+INSERT INTO DON_HANG_DUOC_GIAO (DeliveryID, Ma_don_hang, Thoi_diem_giao_du_kien, Thoi_diem_giao_hang_thuc_te, Thoi_gian_lay_hang_thuc_te, ThuTuGiao) VALUES
+('CGH005', 'DH010', '2025-10-30 17:30', '2025-10-30 17:00', '2025-10-30 13:00', 3);
+GO
+
+PRINT N'Test trg_capNhatTrangThaiDonHangDaGiao:';
+SELECT * FROM DON_HANG WHERE Ma_don_hang = 'DH010';
+GO
+
+PRINT N'=====================================================================';
+PRINT N'HOÀN TẤT TẠO TRIGGER';
 PRINT N'=====================================================================';
 GO
