@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'user',
     },
+  }, {
+    tableName: 'Users',
+    timestamps: true // Authentication table có timestamps
   });
 
   return User;

@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
     Ma_Nhan_Vien_quan_li: { type: DataTypes.STRING(10), allowNull: false },
     Trang_Thai: { type: DataTypes.STRING, defaultValue: 'Sẵn sàng', allowNull: false },
     Ngay_Bat_Dau_Quan_Ly: { type: DataTypes.DATE, allowNull: false }
+  }, {
+    tableName: "TAI_XE",
+    timestamps: false
   });
 
   return TaiXe; // <--- phải return model

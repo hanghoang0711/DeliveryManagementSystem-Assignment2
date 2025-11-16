@@ -4,6 +4,9 @@ module.exports = (sequelize, DataTypes) => {
     Bang_lai_B_B1_C: { type: DataTypes.STRING(50), allowNull: false },
     Suc_chua_toi_da: { type: DataTypes.DECIMAL(10,2) },
     Kinh_nghiem_van_chuyen: { type: DataTypes.STRING (255)}
+  }, {
+    tableName: "TAI_XE_XE_TAI",
+    timestamps: false
   });
 
   return TaiXeXeTai;
