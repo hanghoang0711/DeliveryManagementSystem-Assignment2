@@ -25,7 +25,8 @@ db.NhanVien = require('./nhanvien.model.js')(sequelize, Sequelize);
 db.NhanVienQuanLyTaiXe = require('./nhanvienquanlytaixe.model.js')(sequelize, Sequelize);
 db.GhiChuQuanLyTaiXe = require('./ghichu.model.js')(sequelize, Sequelize);
 db.User = require('./user.model.js')(sequelize, Sequelize);
-
+db.Mentorship = require('./mentorship.model.js')(sequelize, Sequelize);
+db.ChuyenGiaoHang = require('./chuyengiaohang.model.js')(sequelize, Sequelize);
 // ============================================
 // IMPORT MODELS - (ORDER DOMAIN)
 // ============================================
@@ -40,20 +41,64 @@ db.HoaDon = require('./HoaDon.js')(sequelize, Sequelize);
 // db.NhanVienQuanLyTaiXe.belongsTo(db.NhanVien, { foreignKey: "Ma_nhan_vien" });
 // db.NhanVien.hasOne(db.NhanVienQuanLyTaiXe, { foreignKey: "Ma_nhan_vien" });
 
-db.TaiXe.belongsTo(db.NhanVienQuanLyTaiXe, { foreignKey: "Ma_Nhan_Vien_quan_li" });
-db.NhanVienQuanLyTaiXe.hasMany(db.TaiXe, { foreignKey: "Ma_Nhan_Vien_quan_li" });
+db.TaiXe.belongsTo(db.NhanVienQuanLyTaiXe, {foreignKey: "Ma_Nhan_Vien_quan_li",});
+db.NhanVienQuanLyTaiXe.hasMany(db.TaiXe, {
+    foreignKey: "Ma_Nhan_Vien_quan_li",
+});
 
-db.TaiXe.hasOne(db.TaiXeXeMay, { foreignKey: "DriverID" });
+db.TaiXe.hasOne(db.TaiXeXeMay, {
+    foreignKey: "DriverID",
+    onDelete: "CASCADE",  // xóa tài xế thì xóa luôn hồ sơ xe gắn liền
+});
 db.TaiXeXeMay.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
 
-db.TaiXe.hasOne(db.TaiXeXeTai, { foreignKey: "DriverID" });
+db.TaiXe.hasOne(db.TaiXeXeTai, {
+    foreignKey: "DriverID",
+    onDelete: "CASCADE",
+});
 db.TaiXeXeTai.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
 
-db.TaiXe.hasMany(db.TaiXeSDT, { foreignKey: "DriverID" });
+db.TaiXe.hasMany(db.TaiXeSDT, {
+    foreignKey: "DriverID",
+    onDelete: "CASCADE",  // xóa tài xế xoá các số điện thoại
+});
 db.TaiXeSDT.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
 
-db.TaiXe.hasMany(db.GhiChuQuanLyTaiXe, { foreignKey: "Ma_tai_xe" });
+db.TaiXe.hasMany(db.GhiChuQuanLyTaiXe, {
+    foreignKey: "Ma_tai_xe",
+    onDelete: "CASCADE",
+});
 db.GhiChuQuanLyTaiXe.belongsTo(db.TaiXe, { foreignKey: "Ma_tai_xe" });
+
+db.Mentorship.belongsTo(db.TaiXe, {
+    as: "Mentor",
+    foreignKey: "MentorID",
+ 
+});
+
+db.Mentorship.belongsTo(db.TaiXe, {
+    as: "Mentee",
+    foreignKey: "MenteeID",
+  
+});
+
+db.TaiXe.hasMany(db.Mentorship, {
+    as: "MentorRecords",
+    foreignKey: "MentorID"
+});
+
+db.TaiXe.hasMany(db.Mentorship, {
+    as: "MenteeRecords",
+    foreignKey: "MenteeID"
+});
+
+db.ChuyenGiaoHang.belongsTo(db.TaiXe, {
+    foreignKey: "DriverID",
+    onDelete: "SET NULL", 
+   
+});
+db.TaiXe.hasMany(db.ChuyenGiaoHang, { foreignKey: "DriverID" });
+
 
 // ============================================
 // ASSOCIATIONS (ORDER DOMAIN)

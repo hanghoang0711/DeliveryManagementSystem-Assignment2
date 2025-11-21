@@ -121,8 +121,8 @@ Button ở góc phải sẽ chuyển từ "Try it out" → "Execute"
 #### 1.3. Nhập thông tin đăng nhập
 ```json
 {
-  "username": "admin",
-  "password": "admin123"
+  "username": "sManager",
+  "password": "Nhom6251"
 }
 ```
 
@@ -187,8 +187,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 3. Nhập request body:
 ```json
 {
-  "username": "admin",
-  "password": "admin123"
+  "username": "sManager",
+  "password": "Nhom6251"
 }
 ```
 4. Click **"Execute"**
@@ -198,7 +198,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Response Body:**
 ```json
 {
-  "message": "Đăng nhập thành công",
+  "message": "Đăng nhập thành công!",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
@@ -226,7 +226,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Response Body:**
 ```json
 {
-  "message": "Tài khoản hoặc mật khẩu không đúng"
+  "message": "Sai thông tin đăng nhập!"
 }
 ```
 
@@ -241,7 +241,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 3. Nhập request body:
 ```json
 {
-  "username": "admin",
+  "username": "sManager",
   "password": "wrongpassword"
 }
 ```
@@ -252,7 +252,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Response Body:**
 ```json
 {
-  "message": "Tài khoản hoặc mật khẩu không đúng"
+  "message": "Sai thông tin đăng nhập!"
 }
 ```
 
@@ -272,16 +272,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 4. Nhập request body:
 ```json
 {
-  "DriverID": "TX999",
-  "Ho_ten": "Nguyễn Văn Test",
-  "CCCD": "099999999999",
+  "DriverID": "DRVTEST10",
+  "Ho_ten": "Nguyen Van Test Driver",
+  "CCCD": "123456789898",
   "Gioi_Tinh": "Nam",
-  "Ngay_Sinh": "1995-05-15",
-  "SDT": "0999999999",
-  "Email": "test@example.com",
-  "Dia_chi": "123 Test Street",
+  "Ngay_Sinh": "1990-01-01",
+  "Ngay_Bat_Dau_Lam_Viec": "2020-01-01",
   "Rating": 5.0,
-  "Mo_ta": "Test driver from Swagger UI"
+  "Ma_Nhan_Vien_quan_li": "NV0002",
+  "Trang_Thai": "Sẵn sàng",
+  "Ngay_Bat_Dau_Quan_Ly": "2020-01-01"
 }
 ```
 5. Click **"Execute"**
@@ -291,18 +291,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Response Body:**
 ```json
 {
-  "message": "Tài xế đã được thêm thành công",
+  "message": "Tài xế tạo thành công",
   "data": {
-    "DriverID": "TX999",
-    "Ho_ten": "Nguyễn Văn Test",
-    "CCCD": "099999999999",
+    "DriverID": "DRVTEST10",
+    "Ho_ten": "Nguyen Van Test Driver",
+    "CCCD": "123456789898",
     "Gioi_Tinh": "Nam",
-    "Ngay_Sinh": "1995-05-15T00:00:00.000Z",
-    "SDT": "0999999999",
-    "Email": "test@example.com",
-    "Dia_chi": "123 Test Street",
-    "Rating": 5.0,
-    "Mo_ta": "Test driver from Swagger UI"
+    "Ngay_Sinh": "1990-01-01",
+    "Ngay_Bat_Dau_Lam_Viec": "2020-01-01",
+    "Rating": 5,
+    "Ma_Nhan_Vien_quan_li": "NV0002",
+    "Trang_Thai": "Sẵn sàng",
+    "Ngay_Bat_Dau_Quan_Ly": "2020-01-01"
   }
 }
 ```
@@ -330,7 +330,50 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Response Body:**
 ```json
 {
-  "message": "Validation error: Thiếu trường bắt buộc Ho_ten"
+  "errors": [
+    {
+      "type": "field",
+      "msg": "Họ tên không được để trống",
+      "path": "Ho_ten",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Ngày sinh không được để trống",
+      "path": "Ngay_Sinh",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Ngày bắt đầu làm việc không được để trống",
+      "path": "Ngay_Bat_Dau_Lam_Viec",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Mã nhân viên quản lý không được để trống",
+      "path": "Ma_Nhan_Vien_quan_li",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Invalid value",
+      "path": "Trang_Thai",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Invalid value",
+      "path": "Trang_Thai",
+      "location": "body"
+    },
+    {
+      "type": "field",
+      "msg": "Ngày bắt đầu quản lý không được để trống",
+      "path": "Ngay_Bat_Dau_Quan_Ly",
+      "location": "body"
+    }
+  ]
 }
 ```
 
@@ -349,24 +392,35 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Status Code:** 200
 - **Response Body:** Mảng các tài xế
 ```json
-[
-  {
-    "DriverID": "TX001",
-    "Ho_ten": "Nguyễn Văn A",
-    "CCCD": "001234567890",
-    "Gioi_Tinh": "Nam",
-    "Ngay_Sinh": "1990-01-01T00:00:00.000Z",
-    "SDT": "0901234567",
-    "Email": "tx001@example.com",
-    "Dia_chi": "123 Nguyen Hue, HCMC",
-    "Rating": 4.8,
-    "Mo_ta": "Experienced driver"
-  },
-  {
-    "DriverID": "TX999",
-    "Ho_ten": "Nguyễn Văn Test",
-    ...
-  }
+{
+  "message": "Danh sách tài xế",
+  "data": [
+    {
+      "DriverID": "DRV001",
+      "Ho_ten": "Nguyễn Văn Rê",
+      "CCCD": "079123456781",
+      "Gioi_Tinh": "Nam",
+      "Ngay_Sinh": "1998-03-11",
+      "Ngay_Bat_Dau_Lam_Viec": "2023-11-10",
+      "Rating": 5,
+      "Ma_Nhan_Vien_quan_li": "NV0002",
+      "Trang_Thai": "Sẵn sàng",
+      "Ngay_Bat_Dau_Quan_Ly": "2025-11-10"
+    },
+    {
+      "DriverID": "DRV002",
+      "Ho_ten": "Trần Thị Phương",
+      "CCCD": "079123456782",
+      "Gioi_Tinh": "Nữ",
+      "Ngay_Sinh": "2002-09-05",
+      "Ngay_Bat_Dau_Lam_Viec": "2025-11-15",
+      "Rating": 4.5,
+      "Ma_Nhan_Vien_quan_li": "NV0002",
+      "Trang_Thai": "Sẵn sàng",
+      "Ngay_Bat_Dau_Quan_Ly": "2025-11-15"
+    },
+}
+...
 ]
 ```
 
@@ -380,7 +434,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 2. Mở endpoint **GET /api/driver/{id}**
 3. Click **"Try it out"**
 4. Nhập **path parameter:**
-   - `id`: `TX999` (hoặc ID của tài xế vừa tạo ở TC4)
+   - `id`: DRV002 (hoặc ID của tài xế vừa tạo ở TC4)
 5. Click **"Execute"**
 
 **Kết quả mong đợi:**
@@ -388,16 +442,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - **Response Body:**
 ```json
 {
-  "DriverID": "TX999",
-  "Ho_ten": "Nguyễn Văn Test",
-  "CCCD": "099999999999",
-  "Gioi_Tinh": "Nam",
-  "Ngay_Sinh": "1995-05-15T00:00:00.000Z",
-  "SDT": "0999999999",
-  "Email": "test@example.com",
-  "Dia_chi": "123 Test Street",
-  "Rating": 5.0,
-  "Mo_ta": "Test driver from Swagger UI"
+  "message": "Thông tin tài xế",
+  "data": {
+    "DriverID": "DRV002",
+    "Ho_ten": "Trần Thị Phương",
+    "CCCD": "079123456782",
+    "Gioi_Tinh": "Nữ",
+    "Ngay_Sinh": "2002-09-05",
+    "Ngay_Bat_Dau_Lam_Viec": "2025-11-15",
+    "Rating": 4.5,
+    "Ma_Nhan_Vien_quan_li": "NV0002",
+    "Trang_Thai": "Sẵn sàng",
+    "Ngay_Bat_Dau_Quan_Ly": "2025-11-15"
+  }
 }
 ```
 
@@ -411,7 +468,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 2. Mở endpoint **PUT /api/driver/{id}**
 3. Click **"Try it out"**
 4. Nhập **path parameter:**
-   - `id`: `TX999`
+   - `id`: DRV002
 5. Nhập **request body:**
 ```json
 {
@@ -428,10 +485,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 {
   "message": "Cập nhật tài xế thành công",
   "data": {
-    "DriverID": "TX999",
+    "DriverID": "DRV002",
     "Ho_ten": "Nguyễn Văn Test Updated",
+    "CCCD": "079123456782",
+    "Gioi_Tinh": "Nữ",
+    "Ngay_Sinh": "2002-09-05",
+    "Ngay_Bat_Dau_Lam_Viec": "2025-11-15",
     "Rating": 4.5,
-    ...
+    "Ma_Nhan_Vien_quan_li": "NV0002",
+    "Trang_Thai": "Sẵn sàng",
+    "Ngay_Bat_Dau_Quan_Ly": "2025-11-15"
   }
 }
 ```
@@ -446,7 +509,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 2. Mở endpoint **DELETE /api/driver/{id}**
 3. Click **"Try it out"**
 4. Nhập **path parameter:**
-   - `id`: `TX999`
+   - `id`: DRV002
 5. Click **"Execute"**
 
 **Kết quả mong đợi:**

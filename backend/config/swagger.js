@@ -70,17 +70,17 @@ const options = {
           properties: {
             DriverID: {
               type: 'string',
-              example: 'DRV001',
+              example: 'DRVTEST10',
               description: 'Driver ID (10 characters max)'
             },
             Ho_ten: {
               type: 'string',
-              example: 'Nguyễn Văn A',
+              example: 'Nguyen Van Test Driver',
               description: 'Full name'
             },
             CCCD: {
               type: 'string',
-              example: '079123456781',
+              example: '123456789898',
               description: 'Citizen ID (12 digits)'
             },
             Gioi_Tinh: {
@@ -110,7 +110,7 @@ const options = {
             },
             Ma_Nhan_Vien_quan_li: {
               type: 'string',
-              example: 'NV001',
+              example: 'NV0002',
               description: 'Manager employee ID'
             },
             Trang_Thai: {
