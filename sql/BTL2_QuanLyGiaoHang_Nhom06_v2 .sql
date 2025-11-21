@@ -5,11 +5,11 @@ GO
 IF NOT EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'QuanLyGiaoHang_Nhom06')
 BEGIN
     CREATE DATABASE QuanLyGiaoHang_Nhom06;
-    PRINT N'Đã tạo database QuanLyGiaoHang_Nhom06';
+    PRINT N'Đã tạo database QuanLyGiaoHang_Nhom06_v2 thành công';
 END
 ELSE
 BEGIN
-    PRINT N'Database QuanLyGiaoHang_Nhom06 đã tồn tại';
+    PRINT N'Database QuanLyGiaoHang_Nhom06_v2 đã tồn tại';
 END
 GO
 
@@ -20,10 +20,21 @@ GO
 -- 2. XÓA BẢNG CŨ
 -- =====================================================================
 PRINT N'Đang xóa các bảng cũ (nếu có)...';
--- Drop theo thứ tự dependency (ngược lại với thứ tự tạo)
+-- FIX: Xóa tất cả Foreign Key constraints trước để tránh lỗi dependency
+DECLARE @sql NVARCHAR(MAX) = '';
+SELECT @sql += 'ALTER TABLE ' + QUOTENAME(OBJECT_SCHEMA_NAME(parent_object_id)) + '.' + 
+               QUOTENAME(OBJECT_NAME(parent_object_id)) + 
+               ' DROP CONSTRAINT ' + QUOTENAME(name) + ';' + CHAR(13)
+FROM sys.foreign_keys;
+EXEC sp_executesql @sql;
+PRINT N'Đã xóa tất cả Foreign Key constraints.';
+GO
+
+-- Drop tất cả bảng (không cần quan tâm thứ tự nữa)
+PRINT N'Đang xóa tất cả các bảng...';
 
 -- Xóa các bảng tham chiếu đến DON_HANG trước
-IF OBJECT_ID('HOA_DON', 'U') IS NOT NULL DROP TABLE HOA_DON;
+-- HOA_DON đã bị xóa khỏi ERD
 IF OBJECT_ID('DON_HANG_DUOC_TIEP_NHAN', 'U') IS NOT NULL DROP TABLE DON_HANG_DUOC_TIEP_NHAN;
 IF OBJECT_ID('DON_HANG_HUY', 'U') IS NOT NULL DROP TABLE DON_HANG_HUY;
 IF OBJECT_ID('DON_HANG_HOAN_VE_KHO', 'U') IS NOT NULL DROP TABLE DON_HANG_HOAN_VE_KHO;
@@ -42,13 +53,14 @@ IF OBJECT_ID('MA_KHUYEN_MAI', 'U') IS NOT NULL DROP TABLE MA_KHUYEN_MAI; -- Tham
 -- Xóa bảng CHUONG_TRINH_KHUYEN_MAI
 IF OBJECT_ID('CHUONG_TRINH_KHUYEN_MAI', 'U') IS NOT NULL DROP TABLE CHUONG_TRINH_KHUYEN_MAI;
 
--- Xóa các bảng còn lại theo thứ tự dependency
+-- Xóa các bảng còn lại theo thứ tự dependency (FIX: GIAO_DICH và THANH_TOAN trước KHACH_HANG)
+IF OBJECT_ID('YEU_CAU_HO_TRO', 'U') IS NOT NULL DROP TABLE YEU_CAU_HO_TRO; -- Tham chiếu KHACH_HANG
+IF OBJECT_ID('GIAO_DICH_DUOC_KIEM_SOAT', 'U') IS NOT NULL DROP TABLE GIAO_DICH_DUOC_KIEM_SOAT; -- Tham chiếu THANH_TOAN và NHANVIEN_TAI_CHINH
+IF OBJECT_ID('THANH_TOAN', 'U') IS NOT NULL DROP TABLE THANH_TOAN; -- Tham chiếu KHACH_HANG
 IF OBJECT_ID('DIA_CHI_CUA_KHACH_HANG', 'U') IS NOT NULL DROP TABLE DIA_CHI_CUA_KHACH_HANG;
 IF OBJECT_ID('SO_DIEN_THOAI_CUA_KHACH_HANG', 'U') IS NOT NULL DROP TABLE SO_DIEN_THOAI_CUA_KHACH_HANG;
 IF OBJECT_ID('KHACH_HANG_DOANH_NGHIEP', 'U') IS NOT NULL DROP TABLE KHACH_HANG_DOANH_NGHIEP;
 IF OBJECT_ID('KHACH_HANG_CA_NHAN', 'U') IS NOT NULL DROP TABLE KHACH_HANG_CA_NHAN;
-IF OBJECT_ID('GIAO_DICH_DUOC_KIEM_SOAT', 'U') IS NOT NULL DROP TABLE GIAO_DICH_DUOC_KIEM_SOAT;
-IF OBJECT_ID('THANH_TOAN', 'U') IS NOT NULL DROP TABLE THANH_TOAN;
 IF OBJECT_ID('KHOANG_CACH_VAN_CHUYEN', 'U') IS NOT NULL DROP TABLE KHOANG_CACH_VAN_CHUYEN;
 IF OBJECT_ID('CHUYEN_GIAO_HANG', 'U') IS NOT NULL DROP TABLE CHUYEN_GIAO_HANG;
 IF OBJECT_ID('SU_DUNG_XE_TAI', 'U') IS NOT NULL DROP TABLE SU_DUNG_XE_TAI;
@@ -59,7 +71,6 @@ IF OBJECT_ID('TAI_XE_SDT', 'U') IS NOT NULL DROP TABLE TAI_XE_SDT;
 IF OBJECT_ID('GHI_CHU_QUAN_LY_TAI_XE', 'U') IS NOT NULL DROP TABLE GHI_CHU_QUAN_LY_TAI_XE;
 IF OBJECT_ID('MENTORSHIP', 'U') IS NOT NULL DROP TABLE MENTORSHIP;
 IF OBJECT_ID('TAI_XE', 'U') IS NOT NULL DROP TABLE TAI_XE;
-IF OBJECT_ID('YEU_CAU_HO_TRO', 'U') IS NOT NULL DROP TABLE YEU_CAU_HO_TRO;
 IF OBJECT_ID('NHAN_VIEN_DUOC_GIAM_SAT', 'U') IS NOT NULL DROP TABLE NHAN_VIEN_DUOC_GIAM_SAT;
 IF OBJECT_ID('QUAN_TRI_VIEN', 'U') IS NOT NULL DROP TABLE QUAN_TRI_VIEN;
 IF OBJECT_ID('NHAN_VIEN_QUAN_LY_TAI_XE', 'U') IS NOT NULL DROP TABLE NHAN_VIEN_QUAN_LY_TAI_XE;
@@ -69,7 +80,7 @@ IF OBJECT_ID('NHANVIEN_XU_LI_DON_HANG', 'U') IS NOT NULL DROP TABLE NHANVIEN_XU_
 IF OBJECT_ID('CHUNG_CHI_BANG_CAP_CUA_NHANVIEN_TAI_CHINH', 'U') IS NOT NULL DROP TABLE CHUNG_CHI_BANG_CAP_CUA_NHANVIEN_TAI_CHINH;
 IF OBJECT_ID('NHANVIEN_TAI_CHINH', 'U') IS NOT NULL DROP TABLE NHANVIEN_TAI_CHINH;
 IF OBJECT_ID('CA_LAM_VIEC_CUA_NHAN_VIEN', 'U') IS NOT NULL DROP TABLE CA_LAM_VIEC_CUA_NHAN_VIEN;
-IF OBJECT_ID('KHACH_HANG', 'U') IS NOT NULL DROP TABLE KHACH_HANG;
+IF OBJECT_ID('KHACH_HANG', 'U') IS NOT NULL DROP TABLE KHACH_HANG; -- Sau khi xóa THANH_TOAN và YEU_CAU_HO_TRO
 IF OBJECT_ID('HANG_THANH_VIEN', 'U') IS NOT NULL DROP TABLE HANG_THANH_VIEN;
 IF OBJECT_ID('XE', 'U') IS NOT NULL DROP TABLE XE;
 IF OBJECT_ID('KHO', 'U') IS NOT NULL DROP TABLE KHO;
@@ -209,11 +220,13 @@ CREATE TABLE MA_GIAM_GIA_THEO_HANG (
 );
 GO
 
-
--- Bảng 20: DON_HANG
+-- ===========================
+--           UPDATE          
+-- ===========================
+-- Bảng 20: DON_HANG (CẬP NHẬT: Thêm 4 trường mới, cập nhật trạng thái)
 CREATE TABLE DON_HANG (
     Ma_don_hang VARCHAR(10) PRIMARY KEY,
-    Trang_thai_don NVARCHAR(50) NOT NULL DEFAULT N'Đã tạo',
+    Trang_thai_don NVARCHAR(50) NOT NULL DEFAULT N'Đang xử lí', -- Cập nhật trạng thái mặc định
     Thoi_gian_lay_hang_du_kien DATETIME,
     Thoi_gian_giao_hang_du_kien DATETIME NOT NULL,
     Ma_khuyen_mai_CT VARCHAR(10), -- Tách ra để tham chiếu đúng FK
@@ -221,6 +234,14 @@ CREATE TABLE DON_HANG (
     Ma_giam_gia VARCHAR(10),
     thoi_gian_dat_don DATETIME NOT NULL DEFAULT GETDATE(),
     gia_tri_hang_hoa_phi_van_chuyen MONEY NOT NULL CHECK (gia_tri_hang_hoa_phi_van_chuyen >= 0),
+    
+    -- ===== THÊM 4 TRƯỜNG MỚI =====
+    phi_van_chuyen_goc MONEY NOT NULL CHECK (phi_van_chuyen_goc >= 0),
+    so_tien_duoc_giam MONEY DEFAULT 0 CHECK (so_tien_duoc_giam >= 0),
+    phi_van_chuyen_sau_giam MONEY NOT NULL CHECK (phi_van_chuyen_sau_giam >= 0),
+    quang_duong DECIMAL(10, 2) NOT NULL CHECK (quang_duong > 0), -- Đơn vị: km
+    -- ===========================
+    
     SDT_nguoi_nhan VARCHAR(15) NOT NULL,
     ten_nguoi_nhan NVARCHAR(100) NOT NULL,
     can_nang DECIMAL(5, 2) NOT NULL CHECK (can_nang > 0),
@@ -228,29 +249,31 @@ CREATE TABLE DON_HANG (
     dia_chi_lay_hang NVARCHAR(255) NOT NULL,
     diem_tich_luy INT DEFAULT 0,
     phuong_thuc_giao_hang NVARCHAR(50) NOT NULL,
-    Ma_khach_hang VARCHAR(10) NOT NULL, -- Thêm cột Ma_khach_hang để tạo FK
+    Ma_khach_hang VARCHAR(10) NOT NULL,
     CONSTRAINT FK_DH_KHACHHANG FOREIGN KEY (Ma_khach_hang) REFERENCES KHACH_HANG(Ma_khach_hang),
     CONSTRAINT FK_DH_MAKHUYENMAI FOREIGN KEY (Ma_khuyen_mai_CT, Ma_khuyen_mai_KM) REFERENCES MA_KHUYEN_MAI(Ma_chuong_trinh, Ma_khuyen_mai),
     CONSTRAINT FK_DH_MAGIAMGIA FOREIGN KEY (Ma_giam_gia) REFERENCES MA_GIAM_GIA(Ma_giam_gia),
     CONSTRAINT CK_DH_ThoiGianGiao CHECK (Thoi_gian_giao_hang_du_kien > thoi_gian_dat_don),
-    CONSTRAINT CK_DH_ThoiGianLay CHECK (Thoi_gian_lay_hang_du_kien IS NULL OR (Thoi_gian_lay_hang_du_kien > thoi_gian_dat_don AND Thoi_gian_giao_hang_du_kien > Thoi_gian_lay_hang_du_kien))
+    CONSTRAINT CK_DH_ThoiGianLay CHECK (Thoi_gian_lay_hang_du_kien IS NULL OR (Thoi_gian_lay_hang_du_kien > thoi_gian_dat_don AND Thoi_gian_giao_hang_du_kien > Thoi_gian_lay_hang_du_kien)),
+    CONSTRAINT CK_DH_PhiVanChuyen CHECK (phi_van_chuyen_sau_giam = phi_van_chuyen_goc - so_tien_duoc_giam),
+    CONSTRAINT CK_DH_TrangThaiDon CHECK (Trang_thai_don IN (
+        N'Đang xử lý',
+        N'Đang tìm tài xế',
+        N'Đã tìm được tài xế',
+        N'Đang lấy hàng',
+        N'Lấy hàng thành công',
+        N'Lấy hàng thất bại',
+        N'Đang giao hàng',
+        N'Giao hàng thành công',
+        N'Giao hàng thất bại',
+        N'Đã hoàn về kho',
+        N'Đã hoàn thành'
+    ))
 );
 GO
 
 
--- Bảng 7: HOA_DON
-CREATE TABLE HOA_DON (
-    Ma_hoa_don VARCHAR(10) PRIMARY KEY,
-    Ma_thanh_toan VARCHAR(10),
-    Ma_don_hang VARCHAR(10) UNIQUE NOT NULL,
-    So_tien_goc MONEY NOT NULL CHECK (So_tien_goc >= 0),
-    so_tien_sau_khi_giam MONEY NOT NULL CHECK (so_tien_sau_khi_giam >= 0),
-    thoi_gian_tao DATETIME NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT FK_HD_THANHTOAN FOREIGN KEY (Ma_thanh_toan) REFERENCES THANH_TOAN(Ma_thanh_toan),
-    CONSTRAINT FK_HD_DONHANG FOREIGN KEY (Ma_don_hang) REFERENCES DON_HANG(Ma_don_hang),
-    CONSTRAINT CK_HD_SoTien CHECK (so_tien_sau_khi_giam <= So_tien_goc)
-);
-GO
+-- Bảng 7: HOA_DON - ĐÃ BỊ XÓA KHỎI ERD (Thông tin thanh toán đã được tích hợp vào DON_HANG)
 
 -- Bảng 8: NHANVIEN_XU_LI_DON_HANG (Chuyên biệt hóa)
 CREATE TABLE NHANVIEN_XU_LI_DON_HANG (
@@ -410,20 +433,24 @@ CREATE TABLE XE (
 );
 GO
 
--- Bảng 21: CHUYEN_GIAO_HANG
+-- ===========================
+--           UPDATE          
+-- ===========================
+-- Bảng 21: CHUYEN_GIAO_HANG (CẬP NHẬT: Bỏ Tong_quang_duong, Thu_tu_*, Thêm so_luong_don_gop)
 CREATE TABLE CHUYEN_GIAO_HANG (
     DeliveryID VARCHAR(10) PRIMARY KEY,
-    Tong_quang_duong_van_chuyen DECIMAL(10, 2) CHECK (Tong_quang_duong_van_chuyen >= 0), -- Thuộc tính dẫn xuất
-    Thu_tu_lay_hang INT, -- Có thể không cần thiết nếu dùng bảng chi tiết
-    Thu_tu_giao_hang INT, -- Có thể không cần thiết nếu dùng bảng chi tiết
-    DriverID VARCHAR(10) NOT NULL,
-    VehicleID VARCHAR(10) NOT NULL, -- Thêm VehicleID
-    ThoiGianBatDau DATETIME NOT NULL DEFAULT GETDATE(), -- Thêm thời gian bắt đầu, kết thúc
-    ThoiGianKetThuc DATETIME,
-    TrangThaiChuyen NVARCHAR(50) DEFAULT N'Đang chuẩn bị', -- Thêm trạng thái
-    CONSTRAINT FK_CGH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID),
-    CONSTRAINT FK_CGH_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID), -- Thêm FK cho XE
-    CONSTRAINT CK_CGH_ThoiGian CHECK (ThoiGianKetThuc IS NULL OR ThoiGianKetThuc >= ThoiGianBatDau)
+    -- Tong_quang_duong_van_chuyen đã bị XÓA (có thể tính từ DON_HANG)
+    -- Thu_tu_lay_hang, Thu_tu_giao_hang đã CHUYỂN sang DON_HANG_DUOC_GIAO
+    
+    so_luong_don_gop INT DEFAULT 1 CHECK (so_luong_don_gop >= 1), -- TRƯỜNG MỚI: Số đơn gộp trong chuyến
+    
+    DriverID VARCHAR(10) ,
+    --ThoiGianBatDau DATETIME NOT NULL DEFAULT GETDATE(),
+    --ThoiGianKetThuc DATETIME,
+    TrangThaiChuyen NVARCHAR(50) DEFAULT N'Đang thực hiện',
+    CONSTRAINT FK_CGH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID) ON DELETE SET NULL ,
+    --CONSTRAINT FK_CGH_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID),
+    --CONSTRAINT CK_CGH_ThoiGian CHECK (ThoiGianKetThuc IS NULL OR ThoiGianKetThuc >= ThoiGianBatDau)
 );
 GO
 
@@ -439,18 +466,28 @@ CREATE TABLE THONG_TIN_XU_LI_DON_HANG (
 );
 GO
 
--- Bảng 23: DON_HANG_DUOC_GIAO (Chi tiết chuyến giao hàng)
+-- ===========================
+--           UPDATE          
+-- ===========================
+-- Bảng 23: DON_HANG_DUOC_GIAO (CẬP NHẬT: Thêm Thu_tu_lay_hang và Thu_tu_giao_hang)
 CREATE TABLE DON_HANG_DUOC_GIAO (
     DeliveryID VARCHAR(10) NOT NULL,
     Ma_don_hang VARCHAR(10) NOT NULL,
-    Thoi_diem_giao_du_kien DATETIME, -- Lấy từ DON_HANG?
-    Thoi_diem_giao_hang_thuc_te DATETIME,
+    Thoi_gian_giao_hang_thuc_te DATETIME,
     Thoi_gian_lay_hang_thuc_te DATETIME,
-    ThuTuGiao INT, -- Thứ tự giao trong chuyến
+
+    Thoi_diem_gop_don DATETIME NOT NULL DEFAULT GETDATE(), -- Thời điểm đơn hàng được gộp vào chuyến
+    -- ===== THÊM 2 TRƯỜNG MỚI (Chuyển từ CHUYEN_GIAO_HANG) =====
+    Thu_tu_lay_hang INT NOT NULL CHECK (Thu_tu_lay_hang >= 1), -- Thứ tự lấy hàng trong chuyến
+    Thu_tu_giao_hang INT NOT NULL CHECK (Thu_tu_giao_hang >= 1), -- Thứ tự giao hàng trong chuyến
+    -- =========================================================
+    
+    ThuTuGiao INT, -- Giữ lại để backward compatible (có thể xóa sau)
     PRIMARY KEY (DeliveryID, Ma_don_hang),
     CONSTRAINT FK_DHDG_CGH FOREIGN KEY (DeliveryID) REFERENCES CHUYEN_GIAO_HANG(DeliveryID),
     CONSTRAINT FK_DHDG_DONHANG FOREIGN KEY (Ma_don_hang) REFERENCES DON_HANG(Ma_don_hang),
-    CONSTRAINT CK_DHDG_ThoiGianGiao CHECK (Thoi_diem_giao_hang_thuc_te IS NULL OR Thoi_gian_lay_hang_thuc_te IS NULL OR Thoi_diem_giao_hang_thuc_te >= Thoi_gian_lay_hang_thuc_te)
+    CONSTRAINT CK_DHDG_ThoiGianGiao CHECK (Thoi_gian_giao_hang_thuc_te IS NULL OR Thoi_gian_lay_hang_thuc_te IS NULL OR Thoi_gian_giao_hang_thuc_te >= Thoi_gian_lay_hang_thuc_te),
+    CONSTRAINT CK_DHDG_GopDonSomHonLayHang CHECK (Thoi_diem_gop_don <= Thoi_gian_lay_hang_thuc_te)
 );
 GO
 
@@ -513,7 +550,7 @@ CREATE TABLE SU_DUNG_XE_MAY (
     DriverID VARCHAR(10) NOT NULL,
     VehicleID VARCHAR(10) NOT NULL,
     PRIMARY KEY (DriverID, VehicleID),
-    CONSTRAINT FK_SDXM_TAIXEXEMAY FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_MAY(DriverID),
+    CONSTRAINT FK_SDXM_TAIXEXEMAY FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_MAY(DriverID) ON DELETE CASCADE ,
     CONSTRAINT FK_SDXM_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID)
 );
 GO
@@ -523,7 +560,7 @@ CREATE TABLE SU_DUNG_XE_TAI (
     DriverID VARCHAR(10) NOT NULL,
     VehicleID VARCHAR(10) NOT NULL,
     PRIMARY KEY (DriverID, VehicleID),
-    CONSTRAINT FK_SDXT_TAIXEXETAI FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_TAI(DriverID),
+    CONSTRAINT FK_SDXT_TAIXEXETAI FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_TAI(DriverID)ON DELETE CASCADE,
     CONSTRAINT FK_SDXT_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID)
 );
 GO
@@ -559,7 +596,7 @@ CREATE TABLE DANH_GIA_CUA_KHACH_HANG (
     DriverID VARCHAR(10), -- Thêm DriverID nếu đánh giá cả tài xế
     CONSTRAINT FK_DGCKH_KHACHHANG FOREIGN KEY (Ma_khach_hang) REFERENCES KHACH_HANG(Ma_khach_hang),
     CONSTRAINT FK_DGCKH_DONHANG FOREIGN KEY (Ma_don_hang) REFERENCES DON_HANG(Ma_don_hang),
-    CONSTRAINT FK_DGCKH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID)
+    CONSTRAINT FK_DGCKH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID) ON DELETE CASCADE
     -- Nên có ràng buộc UNIQUE(Ma_khach_hang, Ma_don_hang) để mỗi đơn hàng chỉ được đánh giá 1 lần?
 );
 GO
@@ -581,6 +618,7 @@ CREATE TABLE DIA_CHI_CUA_KHACH_HANG (
     CONSTRAINT FK_DCCKH_KHACHHANG FOREIGN KEY (Ma_khach_hang) REFERENCES KHACH_HANG(Ma_khach_hang) ON DELETE CASCADE
 );
 GO
+
 -- =====================================================================
 -- HOÀN TẤT TẠO BẢNG
 -- =====================================================================
@@ -722,7 +760,7 @@ INSERT INTO TAI_XE (DriverID, Ho_ten, CCCD, Gioi_Tinh, Ngay_Sinh, Ngay_Bat_Dau_L
 ('DRV002', N'Trần Thị Phương', '079123456782', N'Nữ', '2002-09-05', '2025-11-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 4.5),
 ('DRV003', N'Đỗ Giang Thần', '0790123456', N'Nam', '1988-09-09', '2024-12-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 5.0),
 ('DRV004', N'Lê Văn Hậu', '079123456783', N'Nam', '1995-12-20', '2025-11-20', N'Đang giao hàng', 'NV0002', '2025-11-20', 5.0),
-('DRV005', N'Phạm Thị Yến Nhi', '079123456784', N'Nữ', '2004-06-25', '2025-11-25', N'Sẵn sàng', 'NV0002', '2025-11-25', 5.0),
+('DRV005', N'Phạm Thị Yến Nhi', '079123456784', N'Nữ', '2004-06-25', '2025-11-25', N'Sẵn sàng', 'NV0002', '2025-11-25', 5.0), 
 ('DRV006', N'Ngô Văn Tùng', '079123456785', N'Nam', '1997-07-11', '2025-11-10', N'Sẵn sàng', 'NV0002', '2025-11-10', 5.0),
 ('DRV007', N'Đinh Thị Trang', '079123456786', N'Nữ', '1999-08-09', '2025-11-12', N'Sẵn sàng', 'NV0002', '2025-11-12', 5.0),
 ('DRV008', N'Hoàng Văn Toàn', '079123456787', N'Nam', '1990-10-10', '2025-11-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 4.7),
@@ -859,36 +897,28 @@ INSERT INTO GIAO_DICH_DUOC_KIEM_SOAT (Ma_thanh_toan, Ma_nhan_vien, Thoi_diem_xac
 ('TT005', 'NV0005', '2025-10-29 17:00', N'Đã xác minh');
 GO
 
-PRINT N'--- Chèn dữ liệu DON_HANG ---';
+-- ===========================
+--           UPDATE          
+-- ===========================
+PRINT N'--- Chèn dữ liệu DON_HANG (CẬP NHẬT: Thêm 4 trường mới) ---';
 INSERT INTO DON_HANG (Ma_don_hang, Trang_thai_don, Thoi_gian_lay_hang_du_kien, Thoi_gian_giao_hang_du_kien,
     Ma_khuyen_mai_CT, Ma_khuyen_mai_KM, Ma_giam_gia, thoi_gian_dat_don, gia_tri_hang_hoa_phi_van_chuyen,
+    phi_van_chuyen_goc, so_tien_duoc_giam, phi_van_chuyen_sau_giam, quang_duong,
     SDT_nguoi_nhan, ten_nguoi_nhan, can_nang, dia_chi_giao_hang, dia_chi_lay_hang, diem_tich_luy, phuong_thuc_giao_hang, Ma_khach_hang)
 VALUES
-('DH001', N'Đang giao', '2025-10-26 08:00', '2025-10-26 11:00', 'KMHE2025', 'SUMMER10', 'VCFREE15', '2025-10-25 09:00', 85000, '0901110001', N'Nguyễn Minh', 2.5, N'Quận 3, TP.HCM', N'Quận 1, TP.HCM', 10, N'Giao nhanh', 'KH1'),
-('DH002', N'Đã giao', '2025-10-27 09:00', '2025-10-27 12:30', 'BF2025', 'BF50', 'AHA5', '2025-10-26 15:00', 155000, '0912345678', N'Trần Bá', 3.0, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 15, N'Tiêu chuẩn', 'KH2'),
-('DH003', N'Đã giao', '2025-10-27 08:30', '2025-10-27 13:30', 'WEEKEND20', 'WKND20', 'LOYAL15', '2025-10-27 07:30', 120000, '0987654321', N'Lê Quang', 4.0, N'Quận 5, TP.HCM', N'Quận 1, TP.HCM', 25, N'Giao nhanh', 'KH3'),
-('DH004', N'Đã hủy', '2025-10-28 10:00', '2025-10-28 14:00', 'TET2026', 'TETLIXI', 'NEWUSER', '2025-10-28 09:00', 200000, '0977112233', N'Lê Hoa', 5.5, N'Quận 7, TP.HCM', N'Bình Dương', 0, N'Tiêu chuẩn', 'KH4'),
-('DH005', N'Đang giao', '2025-10-29 07:45', '2025-10-29 12:00', 'KMHE2025', 'SUMMER10', 'AHA5', '2025-10-29 07:00', 95000, '0327333277', N'Phạm Hòa', 2.0, N'Phú Nhuận, TP.HCM', N'Quận 3, TP.HCM', 12, N'Giao nhanh', 'KH5'),
-('DH006', N'Đã giao', '2025-10-29 10:00', '2025-10-29 14:00', NULL, NULL, 'LOYAL10', '2025-10-29 09:00', 130000, '0327333222', N'Nguyễn Hải', 4.5, N'Quận 1, TP.HCM', N'Gò Vấp, TP.HCM', 18, N'Tiêu chuẩn', 'KH6'),
-('DH007', N'Đang xử lý', NULL, '2025-10-30 13:00', NULL, NULL, 'FREESHIP', '2025-10-30 09:00', 230000, '0912345678', N'Trần Đăng', 3.2, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 10, N'Tiêu chuẩn', 'KH2'),
-('DH008', N'Đã giao', '2025-10-30 11:00', '2025-10-30 16:00', 'WEEKEND20', 'WKND20', NULL, '2025-10-30 10:30', 180000, '0987654321', N'Lê Hoàng', 6.0, N'Bình Thạnh, TP.HCM', N'Quận 5, TP.HCM', 15, N'Tiêu chuẩn', 'KH3'),
-('DH009', N'Đã giao', '2025-10-30 13:00', '2025-10-30 17:30', 'KMHE2025', 'SUMMERFREE', 'VCFREE15', '2025-10-30 12:00', 175000, '0901234567', N'Nguyễn Văn B', 2.0, N'Quận 1, TP.HCM', N'Thủ Đức', 20, N'Giao nhanh', 'KH1'),
-('DH010', N'Đang xử lý', '2025-10-31 08:00', '2025-10-31 13:00', 'BF2025', 'BF50', 'LOYAL15', '2025-10-31 07:30', 240000, '0977112233', N'Lê Mai', 5.0, N'Quận 7, TP.HCM', N'Bình Dương', 5, N'Tiêu chuẩn', 'KH4');
+('DH001', N'Đang giao hàng', '2025-10-26 08:00', '2025-10-26 11:00', 'KMHE2025', 'SUMMER10', 'VCFREE15', '2025-10-25 09:00', 85000, 50000, 7500, 42500, 12.5, '0901110001', N'Nguyễn Minh', 2.5, N'Quận 3, TP.HCM', N'Quận 1, TP.HCM', 10, N'Giao nhanh', 'KH1'),
+('DH002', N'Giao hàng thành công', '2025-10-27 09:00', '2025-10-27 12:30', 'BF2025', 'BF50', 'AHA5', '2025-10-26 15:00', 155000, 60000, 9000, 51000, 15.2, '0912345678', N'Trần Bá', 3.0, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 15, N'Tiêu chuẩn', 'KH2'),
+('DH003', N'Giao hàng thành công', '2025-10-27 08:30', '2025-10-27 13:30', 'WEEKEND20', 'WKND20', 'LOYAL15', '2025-10-27 07:30', 120000, 70000, 10500, 59500, 18.0, '0987654321', N'Lê Quang', 4.0, N'Quận 5, TP.HCM', N'Quận 1, TP.HCM', 25, N'Giao nhanh', 'KH3'),
+('DH004', N'Giao hàng thất bại', '2025-10-28 10:00', '2025-10-28 14:00', 'TET2026', 'TETLIXI', 'NEWUSER', '2025-10-28 09:00', 200000, 80000, 12000, 68000, 25.0, '0977112233', N'Lê Hoa', 5.5, N'Quận 7, TP.HCM', N'Bình Dương', 0, N'Tiêu chuẩn', 'KH4'),
+('DH005', N'Đang giao hàng', '2025-10-29 07:45', '2025-10-29 12:00', 'KMHE2025', 'SUMMER10', 'AHA5', '2025-10-29 07:00', 95000, 45000, 6750, 38250, 8.7, '0327333277', N'Phạm Hòa', 2.0, N'Phú Nhuận, TP.HCM', N'Quận 3, TP.HCM', 12, N'Giao nhanh', 'KH5'),
+('DH006', N'Giao hàng thành công', '2025-10-29 10:00', '2025-10-29 14:00', NULL, NULL, 'LOYAL10', '2025-10-29 09:00', 130000, 55000, 5500, 49500, 10.5, '0327333222', N'Nguyễn Hải', 4.5, N'Quận 1, TP.HCM', N'Gò Vấp, TP.HCM', 18, N'Tiêu chuẩn', 'KH6'),
+('DH007', N'Đang tìm tài xế', NULL, '2025-10-30 13:00', NULL, NULL, 'FREESHIP', '2025-10-30 09:00', 230000, 65000, 0, 65000, 20.0, '0912345678', N'Trần Đăng', 3.2, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 10, N'Tiêu chuẩn', 'KH2'),
+('DH008', N'Giao hàng thành công', '2025-10-30 11:00', '2025-10-30 16:00', 'WEEKEND20', 'WKND20', NULL, '2025-10-30 10:30', 180000, 75000, 11250, 63750, 22.5, '0987654321', N'Lê Hoàng', 6.0, N'Bình Thạnh, TP.HCM', N'Quận 5, TP.HCM', 15, N'Tiêu chuẩn', 'KH3'),
+('DH009', N'Đã hoàn thành', '2025-10-30 13:00', '2025-10-30 17:30', 'KMHE2025', 'SUMMERFREE', 'VCFREE15', '2025-10-30 12:00', 175000, 52000, 7800, 44200, 14.0, '0901234567', N'Nguyễn Văn B', 2.0, N'Quận 1, TP.HCM', N'Thủ Đức', 20, N'Giao nhanh', 'KH1'),
+('DH010', N'Đang xử lý', '2025-10-31 08:00', '2025-10-31 13:00', 'BF2025', 'BF50', 'LOYAL15', '2025-10-31 07:30', 240000, 90000, 13500, 76500, 30.0, '0977112233', N'Lê Mai', 5.0, N'Quận 7, TP.HCM', N'Bình Dương', 5, N'Tiêu chuẩn', 'KH4');
 GO
 
-PRINT N'--- Chèn dữ liệu HOA_DON ---';
-INSERT INTO HOA_DON (Ma_hoa_don, Ma_thanh_toan, Ma_don_hang, So_tien_goc, so_tien_sau_khi_giam, thoi_gian_tao) VALUES
-('HD001', 'TT001', 'DH001', 85000, 76500, '2025-10-25 09:35'),
-('HD002', 'TT002', 'DH002', 155000, 139500, '2025-10-26 15:05'),
-('HD003', 'TT003', 'DH003', 120000, 108000, '2025-10-27 11:15'),
-('HD004', 'TT004', 'DH004', 200000, 0, '2025-10-28 08:30'),
-('HD005', 'TT005', 'DH005', 95000, 85500, '2025-10-29 16:25'),
-('HD006', 'TT006', 'DH006', 130000, 117000, '2025-10-29 17:30'),
-('HD007', 'TT007', 'DH007', 230000, 207000, '2025-10-30 10:00'),
-('HD008', 'TT008', 'DH008', 180000, 162000, '2025-10-30 11:10'),
-('HD009', 'TT009', 'DH009', 175000, 157500, '2025-10-30 14:30'),
-('HD010', 'TT010', 'DH010', 240000, 216000, '2025-10-31 10:45');
-GO
+-- HOA_DON ĐÃ BỊ XÓA - Thông tin thanh toán đã được tích hợp vào DON_HANG
 
 PRINT N'--- Chèn dữ liệu KHO ---';
 INSERT INTO KHO (Vi_tri, Tinh_trang) VALUES
@@ -909,25 +939,32 @@ INSERT INTO DON_HANG_HUY (Ma_don_hang, Ma_khach_hang, Thoi_gian_huy, Ly_do_huy) 
 ('DH004', 'KH4', '2025-10-28 15:00', N'Khách không nhận hàng, yêu cầu hủy đơn');
 GO
 
-PRINT N'--- Chèn dữ liệu CHUYEN_GIAO_HANG ---';
-INSERT INTO CHUYEN_GIAO_HANG (DeliveryID, Tong_quang_duong_van_chuyen, Thu_tu_lay_hang, Thu_tu_giao_hang, DriverID, VehicleID, ThoiGianBatDau, ThoiGianKetThuc, TrangThaiChuyen) VALUES
-('CGH001', 12.5, 1, 1, 'DRV001', 'VHC001', '2025-10-25 08:30', '2025-10-25 10:30', N'Hoàn thành'),
-('CGH002', 15.2, 1, 2, 'DRV002', 'VHC002', '2025-10-26 14:00', '2025-10-26 17:00', N'Hoàn thành'),
-('CGH003', 18.0, 1, 1, 'DRV003', 'VHC004', '2025-10-27 07:45', '2025-10-27 12:30', N'Hoàn thành'),
-('CGH004', 8.7, 1, 1, 'DRV006', 'VHC006', '2025-10-29 07:00', '2025-10-29 10:00', N'Hoàn thành'),
-('CGH005', 20.0, 1, 2, 'DRV008', 'VHC008', '2025-10-30 09:30', '2025-10-30 13:00', N'Hoàn thành');
+-- ===========================
+--           UPDATE          
+-- ===========================
+PRINT N'--- Chèn dữ liệu CHUYEN_GIAO_HANG (FIX: Bỏ VehicleID) ---';
+-- Loại bỏ cột VehicleID khỏi danh sách cột và danh sách VALUES
+INSERT INTO CHUYEN_GIAO_HANG (DeliveryID, so_luong_don_gop, DriverID, TrangThaiChuyen) VALUES
+('CGH001', 1, 'DRV001', N'Hoàn thành'),
+('CGH002', 1, 'DRV002', N'Hoàn thành'),
+('CGH003', 1, 'DRV003', N'Hoàn thành'),
+('CGH004', 2, 'DRV006', N'Hoàn thành'),
+('CGH005', 3, 'DRV008', N'Hoàn thành');
 GO
-
-PRINT N'--- Chèn dữ liệu DON_HANG_DUOC_GIAO ---';
-INSERT INTO DON_HANG_DUOC_GIAO (DeliveryID, Ma_don_hang, Thoi_diem_giao_du_kien, Thoi_diem_giao_hang_thuc_te, Thoi_gian_lay_hang_thuc_te, ThuTuGiao) VALUES
-('CGH001', 'DH001', '2025-10-26 11:00', '2025-10-26 10:50', '2025-10-26 08:00', 1),
-('CGH002', 'DH002', '2025-10-27 12:30', '2025-10-27 12:10', '2025-10-27 09:00', 1),
-('CGH003', 'DH003', '2025-10-27 13:30', '2025-10-27 13:00', '2025-10-27 08:30', 1),
-('CGH004', 'DH005', '2025-10-29 12:00', '2025-10-29 11:50', '2025-10-29 07:45', 1),
-('CGH004', 'DH006', '2025-10-29 14:00', '2025-10-29 13:40', '2025-10-29 10:00', 2),
-('CGH005', 'DH007', '2025-10-30 13:00', NULL, '2025-10-30 09:00', 1),
-('CGH005', 'DH008', '2025-10-30 16:00', '2025-10-30 15:30', '2025-10-30 11:00', 2),
-('CGH005', 'DH009', '2025-10-30 17:30', '2025-10-30 17:00', '2025-10-30 13:00', 3);
+-- ===========================
+--           UPDATE          
+-- ===========================
+PRINT N'--- Chèn dữ liệu DON_HANG_DUOC_GIAO (FIX: Bỏ Thoi_diem_giao_du_kien) ---';
+-- Cập nhật danh sách cột: Bỏ Thoi_diem_giao_du_kien
+INSERT INTO DON_HANG_DUOC_GIAO (DeliveryID, Ma_don_hang, Thoi_gian_giao_hang_thuc_te, Thoi_gian_lay_hang_thuc_te, Thu_tu_lay_hang, Thu_tu_giao_hang, ThuTuGiao, Thoi_diem_gop_don) VALUES
+('CGH001', 'DH001', '2025-10-26 10:50', '2025-10-26 08:00', 1, 1, 1, '2025-10-26 07:45'), 
+('CGH002', 'DH002', '2025-10-27 12:10', '2025-10-27 09:00', 1, 1, 1, '2025-10-27 08:45'),
+('CGH003', 'DH003', '2025-10-27 13:00', '2025-10-27 08:30', 1, 1, 1, '2025-10-27 08:15'),
+('CGH004', 'DH005', '2025-10-29 11:50', '2025-10-29 07:45', 1, 1, 1, '2025-10-29 07:30'),
+('CGH004', 'DH006', '2025-10-29 13:40', '2025-10-29 10:00', 2, 2, 2, '2025-10-29 09:45'),
+('CGH005', 'DH007', NULL, '2025-10-30 09:00', 1, 1, 1, '2025-10-30 08:45'), -- Đơn hàng DH007 chưa giao thành công (NULL)
+('CGH005', 'DH008', '2025-10-30 15:30', '2025-10-30 11:00', 2, 2, 2, '2025-10-30 10:45'),
+('CGH005', 'DH009', '2025-10-30 17:00', '2025-10-30 13:00', 3, 3, 3, '2025-10-30 12:45');
 GO
 
 PRINT N'--- Chèn dữ liệu KHOANG_CACH_VAN_CHUYEN ---';
@@ -981,10 +1018,10 @@ INSERT INTO DANH_GIA_CUA_KHACH_HANG VALUES
 PRINT N'';
 PRINT N'=====================================================================';
 PRINT N'5. KIỂM TRA DỮ LIỆU ĐÃ INSERT';
-PRINT N'=====================================================================';
+PRINT N'====================================================================='; 
 GO
 
-/*PRINT N'--- Dữ liệu bảng NHANVIEN ---'; SELECT * FROM NHANVIEN;
+PRINT N'--- Dữ liệu bảng NHANVIEN ---'; SELECT * FROM NHANVIEN;
 GO
 PRINT N'--- Dữ liệu bảng CA_LAM_VIEC_CUA_NHAN_VIEN ---'; SELECT * FROM CA_LAM_VIEC_CUA_NHAN_VIEN;
 GO
@@ -1010,8 +1047,9 @@ PRINT N'--- Dữ liệu bảng MA_GIAM_GIA_THEO_HANG ---'; SELECT * FROM MA_GIAM
 GO
 PRINT N'--- Dữ liệu bảng DON_HANG ---'; SELECT * FROM DON_HANG;
 GO
-PRINT N'--- Dữ liệu bảng HOA_DON ---'; SELECT * FROM HOA_DON;
-GO
+-- Bảng HOA_DON đã bị xóa, bỏ qua
+-- PRINT N'--- Dữ liệu bảng HOA_DON ---'; SELECT * FROM HOA_DON;
+-- GO 
 PRINT N'--- Dữ liệu bảng NHANVIEN_XU_LI_DON_HANG ---'; SELECT * FROM NHANVIEN_XU_LI_DON_HANG;
 GO
 PRINT N'--- Dữ liệu bảng DON_HANG_DUOC_TIEP_NHAN ---'; SELECT * FROM DON_HANG_DUOC_TIEP_NHAN;
@@ -1075,7 +1113,7 @@ GO
 PRINT N'=====================================================================';
 PRINT N'HOÀN TẤT KIỂM TRA DỮ LIỆU';
 PRINT N'=====================================================================';
-GO*/
+GO
 
 -- =====================================================================
 -- 6. FUNCTIONS VÀ STORED PROCEDURES
@@ -1087,7 +1125,8 @@ PRINT N'=====================================================================';
 GO
 
 -- Function 1: Top Khách Hàng Theo Doanh Thu
-PRINT N'--- Tạo function fn_TopKhachHangTheoDoanhThu ---';
+PRINT N'--- Tạo function fn_TopKhachHangTheoDoanhThu (FIX: Không dùng HOA_DON đã bị xóa) ---';
+GO
 CREATE OR ALTER FUNCTION fn_TopKhachHangTheoDoanhThu
 (
     @TopN INT,
@@ -1109,15 +1148,16 @@ BEGIN
     INSERT INTO @Result
     SELECT TOP (@TopN)
            KH.Ma_khach_hang,
-           SUM(HD.so_tien_sau_khi_giam) AS TongDoanhThu
+           -- FIX: Tính doanh thu từ DON_HANG (phí vận chuyển + giá trị hàng hóa)
+           SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) AS TongDoanhThu
     FROM KHACH_HANG KH
     JOIN DON_HANG DH ON KH.Ma_khach_hang = DH.Ma_khach_hang
-    JOIN HOA_DON HD ON DH.Ma_don_hang = HD.Ma_don_hang
-    WHERE DH.Trang_thai_don = N'Đã giao'
-      AND CAST(DH.thoi_gian_dat_don AS DATE) BETWEEN @TuNgay AND @DenNgay
+    -- BỎ JOIN HOA_DON (đã bị xóa khỏi ERD)
+    WHERE DH.Trang_thai_don IN (N'Giao hàng thành công', N'Đã hoàn thành') -- Chỉ tính đơn thành công
+      AND CAST(DH.thoi_gian_dat_don AS DATE) BETWEEN @TuNgay AND @DenNgay  
     GROUP BY KH.Ma_khach_hang
-    HAVING SUM(HD.so_tien_sau_khi_giam) > 0
-    ORDER BY SUM(HD.so_tien_sau_khi_giam) DESC;
+    HAVING SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) > 0  
+    ORDER BY SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) DESC; 
 
     RETURN;
 END;
@@ -1125,6 +1165,7 @@ GO
 
 -- Function 2: Top Tài Xế Đơn Giản
 PRINT N'--- Tạo function fn_TopTaiXeDonGian ---';
+GO
 CREATE OR ALTER FUNCTION fn_TopTaiXeDonGian
 (
     @TopN INT,
@@ -1146,9 +1187,9 @@ BEGIN
         COUNT(CGH.DeliveryID) AS SoChuyenGiao,
         TX.Rating
     FROM TAI_XE TX
-    LEFT JOIN CHUYEN_GIAO_HANG CGH
-           ON TX.DriverID = CGH.DriverID
-          AND CGH.TrangThaiChuyen = N'Hoàn thành'
+    LEFT JOIN CHUYEN_GIAO_HANG CGH 
+           ON TX.DriverID = CGH.DriverID 
+          AND CGH.TrangThaiChuyen = N'Hoàn thành'  
     WHERE TX.Rating >= @MinStar
     GROUP BY TX.DriverID, TX.Ho_ten, TX.Rating
     ORDER BY SoChuyenGiao DESC, TX.Rating DESC;
@@ -1167,6 +1208,7 @@ GO
 
 -- Stored Procedure 1: Tạo Đơn Hàng
 PRINT N'--- Tạo stored procedure sp_TaoDonHang ---';
+GO
 CREATE OR ALTER PROCEDURE sp_TaoDonHang
 (
     @MaKH VARCHAR(10),
@@ -1188,10 +1230,10 @@ BEGIN
         BEGIN TRAN;
 
         -- Kiểm tra input cơ bản
-        IF @MaKH IS NULL
-            OR @SDTNhan IS NULL
-            OR @TenNguoiNhan IS NULL
-            OR @DiaChiLay IS NULL
+        IF @MaKH IS NULL 
+            OR @SDTNhan IS NULL 
+            OR @TenNguoiNhan IS NULL 
+            OR @DiaChiLay IS NULL 
             OR @DiaChiGiao IS NULL
             OR @CanNang <= 0
             OR @PhiVanChuyen <= 0
@@ -1211,7 +1253,7 @@ BEGIN
 
         -- Sinh mã đơn
         DECLARE @MaDon VARCHAR(10);
-        SELECT @MaDon = 'DH' +
+        SELECT @MaDon = 'DH' + 
             RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_don_hang, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
         FROM DON_HANG;
 
@@ -1257,6 +1299,7 @@ GO
 
 -- Stored Procedure 2: Hủy Đơn Hàng
 PRINT N'--- Tạo stored procedure sp_HuyDonHang ---';
+GO
 CREATE OR ALTER PROCEDURE sp_HuyDonHang
 (
     @MaDon VARCHAR(10),
@@ -1280,7 +1323,7 @@ BEGIN
         -- Lấy trạng thái và mã khách hàng
         DECLARE @TrangThai NVARCHAR(50), @MaKH VARCHAR(10);
 
-        SELECT
+        SELECT 
             @TrangThai = Trang_thai_don,
             @MaKH = Ma_khach_hang
         FROM DON_HANG
@@ -1316,92 +1359,137 @@ BEGIN
 END;
 GO
 
-
 PRINT N'=====================================================================';
 PRINT N'HOÀN TẤT TẠO FUNCTIONS VÀ STORED PROCEDURES';
 PRINT N'=====================================================================';
 GO
 
+-- =====================================================================
+-- 7. CÁC TRIGGER (Tối ưu hóa sau khi xóa HOA_DON)
+-- =====================================================================
 PRINT N'';
 PRINT N'=====================================================================';
-PRINT N'7. TRIGGER.';
+PRINT N'7. ĐỊNH NGHĨA TRIGGERS (Tối ưu SET-based)';
 PRINT N'=====================================================================';
 GO
 
-
-CREATE OR ALTER TRIGGER trg_capNhatTrangThaiDonHangDaGiao
-ON DON_HANG_DUOC_GIAO AFTER INSERT AS
+-- 1. Trigger Cập nhật Trạng thái Đơn hàng
+-- Nhiệm vụ: Đảm bảo cột Trang_thai_don trong DON_HANG luôn đồng bộ với bản ghi mới nhất trong lịch sử xử lý.
+-- Chạy trước Trigger 2 để đảm bảo Trạng thái đơn được cập nhật trước khi tính điểm.
+CREATE OR ALTER TRIGGER trg_capNhatTrangThaiDonHang
+ON THONG_TIN_XU_LI_DON_HANG AFTER INSERT AS
 BEGIN
-	IF CURSOR_STATUS('global', 'cur') >= -1
-	BEGIN
-	    CLOSE cur;
-	    DEALLOCATE cur;
-	END
-
-	DECLARE cur CURSOR FOR SELECT Ma_don_hang FROM inserted;
-	DECLARE @Ma_don_hang VARCHAR(10);
-
-	OPEN cur;
-
-	FETCH NEXT FROM cur INTO @Ma_don_hang;
-
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		UPDATE DON_HANG
-		SET Trang_thai_don = 'Đã giao'
-		WHERE Ma_don_hang = @Ma_don_hang;
-
-		FETCH NEXT FROM cur INTO @Ma_don_hang;
-	END;
-
-	CLOSE cur;
-END;
-
+	-- Cập nhật trạng thái đơn hàng (SET based operation)
+	UPDATE DH
+	SET Trang_thai_don = I.Tinh_trang
+	FROM DON_HANG DH
+	JOIN inserted I ON DH.Ma_don_hang = I.Ma_don_hang;
+END
 GO
 
-CREATE OR ALTER TRIGGER trg_capNhatDiemThanhVienKhiTaoHoaDon
-ON HOA_DON AFTER INSERT AS
+-- 2. Trigger Cập nhật Điểm Thành viên
+-- Nhiệm vụ: Cập nhật Diem_thanh_vien và Ten_hang trong KHACH_HANG khi đơn hàng đạt trạng thái thành công.
+CREATE OR ALTER TRIGGER trg_capNhatDiemThanhVienKhiDonHangThanhCong
+ON THONG_TIN_XU_LI_DON_HANG AFTER INSERT AS
 BEGIN
-	DECLARE @Ma_khach_hang VARCHAR(10), @Ma_don_hang VARCHAR(10), @Ma_thanh_toan VARCHAR(10);
+    -- Chỉ xử lý khi trạng thái mới được chèn là 'Giao hàng thành công' hoặc tương đương
+	IF NOT EXISTS (SELECT 1 FROM inserted WHERE Tinh_trang IN ( N'Đã hoàn thành')) RETURN;
 
-	SELECT * INTO #temp FROM inserted
-
-	WHILE 1 = 1
-	BEGIN
-		SELECT TOP(1) @Ma_don_hang = Ma_don_hang, @Ma_thanh_toan = Ma_thanh_toan FROM #temp
-		IF NOT @@ROWCOUNT <> 0 BEGIN BREAK; END
-
-		SELECT @Ma_khach_hang = t.Ma_khach_hang FROM THANH_TOAN t WHERE t.Ma_thanh_toan = @Ma_thanh_toan;
-
-		DECLARE @Diem INT;
-		SELECT @Diem = d.Diem_tich_luy FROM DON_HANG d WHERE d.Ma_don_hang = @Ma_don_hang;
-		SET @Diem = @Diem + (SELECT k.Diem_thanh_vien FROM KHACH_HANG k WHERE k.Ma_khach_hang = @Ma_khach_hang);
-
-		UPDATE KHACH_HANG
-		SET
-			Diem_thanh_vien = @Diem,
-			Ten_hang = (
-				SELECT TOP(1) h.Ten_hang
-				FROM HANG_THANH_VIEN h
-				WHERE @Diem >= h.Diem_thanh_vien_toi_thieu
-				ORDER BY h.Diem_thanh_vien_toi_thieu DESC
-			)
-		WHERE Ma_khach_hang = @Ma_khach_hang;
-
-		DELETE FROM #temp WHERE Ma_don_hang = @Ma_don_hang;
-	END;
-END;
-
--- Test TRIGGER bằng cách thêm 1 value vào TABLE.
-INSERT INTO DON_HANG_DUOC_GIAO (DeliveryID, Ma_don_hang, Thoi_diem_giao_du_kien, Thoi_diem_giao_hang_thuc_te, Thoi_gian_lay_hang_thuc_te, ThuTuGiao) VALUES
-('CGH005', 'DH010', '2025-10-30 17:30', '2025-10-30 17:00', '2025-10-30 13:00', 3);
+	-- Cập nhật điểm và hạng thành viên cho tất cả khách hàng liên quan (Sử dụng SET-based)
+	UPDATE KH
+	SET 
+		-- Cộng điểm tích lũy của đơn hàng vào tổng điểm hiện tại
+		Diem_thanh_vien = T.Diem_hien_tai + T.Diem_tich_luy_moi,
+		
+		-- Tìm hạng thành viên mới dựa trên tổng điểm mới
+		Ten_hang = H.New_Ten_hang,
+		
+		-- Cập nhật ngày lên hạng nếu hạng thay đổi
+		Ngay_len_hang = CASE 
+			WHEN KH.Ten_hang <> H.New_Ten_hang THEN GETDATE() 
+			ELSE KH.Ngay_len_hang 
+		END
+	
+	FROM KHACH_HANG KH
+	JOIN (
+        -- Bảng tạm T tính tổng điểm mới (cho phép xử lý nhiều đơn hàng/khách hàng được chèn cùng lúc)
+		SELECT 
+            DH.Ma_khach_hang,
+            SUM(DH.diem_tich_luy) AS Diem_tich_luy_moi,
+            MAX(KH_Old.Diem_thanh_vien) AS Diem_hien_tai
+        FROM inserted I
+		JOIN DON_HANG DH ON DH.Ma_don_hang = I.Ma_don_hang
+        JOIN KHACH_HANG KH_Old ON KH_Old.Ma_khach_hang = DH.Ma_khach_hang
+        -- Chỉ tính điểm cho các đơn hàng vừa chuyển sang trạng thái thành công
+		WHERE I.Tinh_trang IN ( N'Đã hoàn thành')
+        GROUP BY DH.Ma_khach_hang
+	) AS T ON KH.Ma_khach_hang = T.Ma_khach_hang
+    
+    -- CROSS APPLY để tìm hạng mới dựa trên tổng điểm tính toán
+    CROSS APPLY (
+        SELECT TOP(1) HTV.Ten_hang AS New_Ten_hang
+        FROM HANG_THANH_VIEN HTV
+        WHERE T.Diem_hien_tai + T.Diem_tich_luy_moi >= HTV.Diem_thanh_vien_toi_thieu
+        ORDER BY HTV.Diem_thanh_vien_toi_thieu DESC
+    ) AS H;
+END
 GO
 
-PRINT N'Test trg_capNhatTrangThaiDonHangDaGiao:';
-SELECT * FROM DON_HANG WHERE Ma_don_hang = 'DH010';
+-- =====================================================================
+-- 8. TEST CASES CHO TRIGGERS
+-- =====================================================================
+PRINT N'';
+PRINT N'=====================================================================';
+PRINT N'8. TEST CASES CHO TRIGGERS (Cập nhật Trạng thái & Điểm thành viên)';
+PRINT N'=====================================================================';
 GO
 
-PRINT N'=====================================================================';
-PRINT N'HOÀN TẤT TẠO TRIGGER';
-PRINT N'=====================================================================';
+-------------------------------------------------------------------------
+-- KHỞI TẠO TEST DỮ LIỆU BAN ĐẦU
+-------------------------------------------------------------------------
+PRINT N'--- Dữ liệu KHÁCH HÀNG (KH1) và ĐƠN HÀNG (DH007) trước khi test ---';
+-- KH1: 150 điểm, Hạng Đồng. DH007: 10 điểm, Trang_thai_don = Đã tạo
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH1';
+SELECT Ma_don_hang, Trang_thai_don, diem_tich_luy FROM DON_HANG WHERE Ma_don_hang = 'DH007';
+
+-------------------------------------------------------------------------
+-- TEST 1: CHÈN TRẠNG THÁI 'ĐANG XỬ LÝ' (Kiểm tra Trigger Trạng thái)
+-------------------------------------------------------------------------
+PRINT N'--- TEST 1: Cập nhật trạng thái cho DH007 (Đang xử lý) ---';
+INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
+VALUES ('DH007', GETDATE() + 1, N'Đang xử lý', 'NV0003');
+GO
+
+PRINT N'Kết quả sau TEST 1: (Trạng thái DH007 phải là "Đang xử lý")';
+SELECT Ma_don_hang, Trang_thai_don FROM DON_HANG WHERE Ma_don_hang = 'DH007';
+
+-------------------------------------------------------------------------
+-- TEST 2: CHÈN TRẠNG THÁI 'GIAO HÀNG THÀNH CÔNG' (Kiểm tra cả 2 Triggers)
+-------------------------------------------------------------------------
+PRINT N'--- TEST 2: Cập nhật trạng thái cho DH007 (Đã hoàn thành) ---';
+INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
+VALUES ('DH007', GETDATE() + 2, N'Đã hoàn thành', 'NV0003');
+GO
+
+PRINT N'Kết quả sau TEST 2:';
+PRINT N'1. Trạng thái DH007: (Phải là "Đã hoàn thành")';
+SELECT Ma_don_hang, Trang_thai_don FROM DON_HANG WHERE Ma_don_hang = 'DH007';
+
+PRINT N'2. Điểm và Hạng KH1: (150 điểm + 10 điểm = 160 điểm. Hạng vẫn là Đồng)';
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH1';
+
+-------------------------------------------------------------------------
+-- TEST 3: ĐƠN HÀNG KHÁC VÀ KHÁCH HÀNG LÊN HẠNG (KH2)
+-------------------------------------------------------------------------
+PRINT N'--- Dữ liệu KHÁCH HÀNG (KH2) và ĐƠN HÀNG (DH002) trước khi test ---';
+-- KH2: 499 điểm, Hạng Đồng. DH002: 15 điểm.
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH2';
+
+PRINT N'--- TEST 3: Đơn DH002 thành công (499 + 15 = 514 điểm -> Lên Hạng Bạc) ---';
+INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
+VALUES ('DH002', GETDATE() + 3, N'Đã hoàn thành', 'NV0003');
+GO
+
+PRINT N'Kết quả sau TEST 3: (KH2 phải có 514 điểm, Hạng Bạc)';
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH2';
 GO
