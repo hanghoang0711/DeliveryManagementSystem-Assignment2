@@ -1,53 +1,51 @@
-﻿-- =====================================================================
--- 1. TẠO LOGIN VÀ USER
--- =====================================================================
-USE master;
-GO
-
--- Tạo SQL Server Login nếu chưa tồn tại
-IF NOT EXISTS (SELECT name FROM sys.server_principals WHERE name = 'sManager')
-BEGIN
-    CREATE LOGIN sManager WITH PASSWORD = 'Nhom6251';
-    PRINT N' Đã tạo SQL Server Login: sManager';
-END
-ELSE
-BEGIN
-    PRINT N' Login sManager đã tồn tại';
-END
-GO
-
--- =====================================================================
--- 2. TẠO DATABASE VÀ SỬ DỤNG
--- =====================================================================
-IF NOT EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'QuanLyGiaoHang_Nhom06')
-BEGIN
-    CREATE DATABASE QuanLyGiaoHang_Nhom06;
-    PRINT N' Đã tạo database QuanLyGiaoHang_Nhom06 thành công';
-END
-ELSE
-BEGIN
-    PRINT N' Database QuanLyGiaoHang_Nhom06 đã tồn tại';
-END
-GO
-
+﻿-- ======================================================================
+-- 1. DROP LOGIN VÀ USER NẾU TỒN TẠI
+-- ======================================================================
 USE QuanLyGiaoHang_Nhom06;
 GO
 
--- Tạo Database User và gán quyền
-IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'sManager')
+-- Xóa database user nếu tồn tại
+IF EXISTS (SELECT 1 FROM sys.database_principals WHERE name = N'sManager')
 BEGIN
-    CREATE USER sManager FOR LOGIN sManager;
-    PRINT N' Đã tạo database user: sManager';
+    DROP USER [sManager];
+    PRINT N'Database user sManager đã bị xóa.';
 END
 ELSE
-BEGIN
-    PRINT N' Database user sManager đã tồn tại';
-END
+    PRINT N'Database user sManager không tồn tại, bỏ qua.';
 GO
 
--- Gán quyền db_owner cho user (full permissions)
-ALTER ROLE db_owner ADD MEMBER sManager;
-PRINT N' Đã gán quyền db_owner cho sManager';
+USE master;
+GO
+
+-- Xóa login nếu tồn tại
+IF EXISTS (SELECT 1 FROM sys.server_principals WHERE name = N'sManager')
+BEGIN
+    DROP LOGIN [sManager];
+    PRINT N'Login sManager đã bị xóa.';
+END
+ELSE
+    PRINT N'Login sManager không tồn tại, bỏ qua.';
+GO
+
+-- ======================================================================
+-- 2️. TẠO LẠI LOGIN VÀ DATABASE USER
+-- ======================================================================
+-- Tạo login mới
+CREATE LOGIN [sManager] WITH PASSWORD = N'Nhom6251';
+PRINT N'Login sManager đã được tạo.';
+GO
+
+-- Tạo database user
+USE QuanLyGiaoHang_Nhom06;
+GO
+
+CREATE USER [sManager] FOR LOGIN [sManager];
+PRINT N'Database user sManager đã được tạo.';
+GO
+
+-- Gán quyền db_owner
+ALTER ROLE db_owner ADD MEMBER [sManager];
+PRINT N'Đã gán quyền db_owner cho sManager.';
 GO
 
 -- =====================================================================
@@ -478,11 +476,11 @@ CREATE TABLE CHUYEN_GIAO_HANG (
     
     so_luong_don_gop INT DEFAULT 0 CHECK (so_luong_don_gop >= 0), -- TRƯỜNG MỚI: Số đơn gộp trong chuyến (0 khi mới tạo)
     
-    DriverID VARCHAR(10) NOT NULL,
+    DriverID VARCHAR(10) ,
     --ThoiGianBatDau DATETIME NOT NULL DEFAULT GETDATE(),
     --ThoiGianKetThuc DATETIME,
     TrangThaiChuyen NVARCHAR(50) DEFAULT N'Đang thực hiện',
-    CONSTRAINT FK_CGH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID),
+    CONSTRAINT FK_CGH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID) ON DELETE SET NULL ,
     --CONSTRAINT FK_CGH_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID),
     --CONSTRAINT CK_CGH_ThoiGian CHECK (ThoiGianKetThuc IS NULL OR ThoiGianKetThuc >= ThoiGianBatDau)
 );
@@ -584,7 +582,7 @@ CREATE TABLE SU_DUNG_XE_MAY (
     DriverID VARCHAR(10) NOT NULL,
     VehicleID VARCHAR(10) NOT NULL,
     PRIMARY KEY (DriverID, VehicleID),
-    CONSTRAINT FK_SDXM_TAIXEXEMAY FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_MAY(DriverID),
+    CONSTRAINT FK_SDXM_TAIXEXEMAY FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_MAY(DriverID) ON DELETE CASCADE ,
     CONSTRAINT FK_SDXM_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID)
 );
 GO
@@ -594,7 +592,7 @@ CREATE TABLE SU_DUNG_XE_TAI (
     DriverID VARCHAR(10) NOT NULL,
     VehicleID VARCHAR(10) NOT NULL,
     PRIMARY KEY (DriverID, VehicleID),
-    CONSTRAINT FK_SDXT_TAIXEXETAI FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_TAI(DriverID),
+    CONSTRAINT FK_SDXT_TAIXEXETAI FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_TAI(DriverID)ON DELETE CASCADE ,
     CONSTRAINT FK_SDXT_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID)
 );
 GO
@@ -630,7 +628,7 @@ CREATE TABLE DANH_GIA_CUA_KHACH_HANG (
     DriverID VARCHAR(10), -- Thêm DriverID nếu đánh giá cả tài xế
     CONSTRAINT FK_DGCKH_KHACHHANG FOREIGN KEY (Ma_khach_hang) REFERENCES KHACH_HANG(Ma_khach_hang),
     CONSTRAINT FK_DGCKH_DONHANG FOREIGN KEY (Ma_don_hang) REFERENCES DON_HANG(Ma_don_hang),
-    CONSTRAINT FK_DGCKH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID)
+    CONSTRAINT FK_DGCKH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID) ON DELETE CASCADE 
     -- Nên có ràng buộc UNIQUE(Ma_khach_hang, Ma_don_hang) để mỗi đơn hàng chỉ được đánh giá 1 lần?
 );
 GO
@@ -747,7 +745,7 @@ GO
 
 PRINT N'--- Chèn dữ liệu QUAN_TRI_VIEN, NHAN_VIEN_QUAN_LY_TAI_XE,... ---';
 INSERT INTO QUAN_TRI_VIEN(Ma_nhan_vien, Cap_quan_tri) VALUES ('NV0001', N'Admin hệ thống');
-INSERT INTO NHAN_VIEN_QUAN_LY_TAI_XE(Ma_nhan_vien, So_luong_tai_xe_dang_phu_trach) VALUES ('NV0002', 50);
+INSERT INTO NHAN_VIEN_QUAN_LY_TAI_XE(Ma_nhan_vien, So_luong_tai_xe_dang_phu_trach) VALUES ('NV0002', 10);
 INSERT INTO NHANVIEN_XU_LI_DON_HANG(Ma_nhan_vien, So_luong_don_hang_da_xu_li) VALUES ('NV0003', 10);
 INSERT INTO NHANVIEN_HO_TRO(Ma_nhan_vien, So_luong_ho_tro_da_xu_li) VALUES ('NV0004', 70), ('NV0006', 15);
 INSERT INTO NHANVIEN_TAI_CHINH(Ma_nhan_vien, So_luong_giao_dich_da_xu_li) VALUES ('NV0005', 100);
@@ -1469,6 +1467,8 @@ BEGIN
 END
 GO
 
+
+
 -- =====================================================================
 -- 8. TEST CASES CHO TRIGGERS
 -- =====================================================================
@@ -1527,3 +1527,6 @@ GO
 PRINT N'Kết quả sau TEST 3: (KH2 phải có 514 điểm, Hạng Bạc)';
 SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH2';
 GO
+
+------------------------------------------------------------------------
+
