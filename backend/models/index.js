@@ -46,55 +46,41 @@ db.DonHangDuocGiao = require('./DonHangDuocGiao.js')(sequelize, Sequelize);
 // db.NhanVienQuanLyTaiXe.belongsTo(db.NhanVien, { foreignKey: "Ma_nhan_vien" });
 // db.NhanVien.hasOne(db.NhanVienQuanLyTaiXe, { foreignKey: "Ma_nhan_vien" });
 
-db.TaiXe.belongsTo(db.NhanVienQuanLyTaiXe, {foreignKey: "Ma_Nhan_Vien_quan_li",});
-db.NhanVienQuanLyTaiXe.hasMany(db.TaiXe, {
-    foreignKey: "Ma_Nhan_Vien_quan_li",
+db.TaiXe.belongsTo(db.NhanVienQuanLyTaiXe, { 
+  foreignKey: "Ma_Nhan_Vien_quan_li",
+  targetKey: "Ma_nhan_vien",
 });
 
-db.TaiXe.hasOne(db.TaiXeXeMay, {
-    foreignKey: "DriverID",
-    onDelete: "CASCADE",  // xóa tài xế thì xóa luôn hồ sơ xe gắn liền
+db.NhanVienQuanLyTaiXe.hasMany(db.TaiXe, { 
+  foreignKey: "Ma_Nhan_Vien_quan_li",
+  sourceKey: "Ma_nhan_vien",
 });
-db.TaiXeXeMay.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
-
-db.TaiXe.hasOne(db.TaiXeXeTai, {
-    foreignKey: "DriverID",
-    onDelete: "CASCADE",
+db.TaiXe.hasOne(db.TaiXeXeMay, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
 });
-db.TaiXeXeTai.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
-
-db.TaiXe.hasMany(db.TaiXeSDT, {
-    foreignKey: "DriverID",
-    onDelete: "CASCADE",  // xóa tài xế xoá các số điện thoại
+db.TaiXeXeMay.belongsTo(db.TaiXe, { 
+  foreignKey: "DriverID", 
+  targetKey: "DriverID" 
 });
-db.TaiXeSDT.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
-
-db.TaiXe.hasMany(db.GhiChuQuanLyTaiXe, {
-    foreignKey: "Ma_tai_xe",
-    onDelete: "CASCADE",
+db.TaiXe.hasMany(db.TaiXeSDT, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
 });
-db.GhiChuQuanLyTaiXe.belongsTo(db.TaiXe, { foreignKey: "Ma_tai_xe" });
-
-db.Mentorship.belongsTo(db.TaiXe, {
-    as: "Mentor",
-    foreignKey: "MentorID",
- 
+db.TaiXe.hasMany(db.GhiChuQuanLyTaiXe, { 
+  foreignKey: "Ma_tai_xe",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
 });
+db.TaiXe.hasMany(db.Mentorship, { as: "MentorRecords", foreignKey: "MentorID", sourceKey: "DriverID" });
+db.TaiXe.hasMany(db.Mentorship, { as: "MenteeRecords", foreignKey: "MenteeID", sourceKey: "DriverID" });
 
-db.Mentorship.belongsTo(db.TaiXe, {
-    as: "Mentee",
-    foreignKey: "MenteeID",
-  
-});
-
-db.TaiXe.hasMany(db.Mentorship, {
-    as: "MentorRecords",
-    foreignKey: "MentorID"
-});
-
-db.TaiXe.hasMany(db.Mentorship, {
-    as: "MenteeRecords",
-    foreignKey: "MenteeID"
+db.TaiXe.hasMany(db.ChuyenGiaoHang, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "SET NULL"
 });
 
 // ChuyenGiaoHang associations are defined in ChuyenGiaoHang.associate() - see below
