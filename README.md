@@ -5,45 +5,27 @@
 
 ## 📋 Tổng Quan Hệ Thống
 
-**Delivery Management System** là một hệ thống quản lý giao hàng toàn diện, bao gồm:
+**Delivery Management System** là hệ thống quản lý giao hàng với các tính năng:
 - 🗄️ **Database Schema** với MS SQL Server
 - 🔌 **RESTful API Backend** với Node.js và Express
 - 📚 **Interactive API Documentation** với Swagger UI
-- 🧪 **Comprehensive Testing** với Postman và Swagger
+- 🧪 **Comprehensive Testing** với 26 test cases
+- 🚚 **Delivery Trip Management** - Quản lý chuyến giao hàng và gộp đơn
+- 💰 **Auto Shipping Calculation** - Tự động tính phí vận chuyển
+- 📊 **11 Order Statuses** - Quản lý chi tiết trạng thái đơn hàng
 
 ---
 
-## 🏗️ Kiến Trúc Hệ Thống
-
-```
-DeliveryManagementSystem-Assignment2/
-├── BTL2_Part1_v2.sql           # Database schema chính thức
-├── backend/                     # RESTful API Server
-│   ├── config/                  # Cấu hình database & Swagger
-│   ├── controllers/             # API logic handlers
-│   ├── middleware/              # Auth & validation
-│   ├── models/                  # Sequelize ORM models
-│   ├── routes/                  # API endpoints
-│   ├── server.js                # Entry point
-│   ├── seed.js                  # Database seeding
-│   ├── TEST_GUIDE.md            # Hướng dẫn test Powershell
-│   ├── TEST_GUIDE_POSTMAN.md    # Hướng dẫn test Postman
-│   ├── TEST_GUIDE_SWAGGER.md    # Hướng dẫn test Swagger UI
-│   ├── TEST_CASE.md             # Kết quả test 29 test cases
-│   └── README.md                # Backend documentation
-└── README.md                    # This file
-```
-
----
 
 ## 🗄️ Database Schema
 
 ### Thông Tin Cơ Sở Dữ Liệu
 - **Database:** `QuanLyGiaoHang_Nhom06`
 - **DBMS:** Microsoft SQL Server 2022
-- **Schema File:** `BTL2_Part1_v2.sql`
+- **Schema File:** `sql/BTL2_QuanLyGiaoHang_Nhom06_v2.sql`
 - **Authentication:** SQL Server Authentication
 - **Login:** `sManager` / `Nhom6251`
+- **Version:**  - Tích hợp thanh toán vào đơn hàng, quản lý chuyến giao
 
 ### Các Nhóm Bảng Chính
 
@@ -75,15 +57,12 @@ DeliveryManagementSystem-Assignment2/
 - `SO_DIEN_THOAI_CUA_KHACH_HANG` - SDT khách hàng (đa trị)
 - `DIA_CHI_CUA_KHACH_HANG` - Địa chỉ khách hàng (đa trị)
 
-#### 4. Quản Lý Đơn Hàng (8 bảng)
-- `DON_HANG` - Đơn hàng chính
-- `HOA_DON` - Hóa đơn thanh toán
-- `DON_HANG_DUOC_TIEP_NHAN` - Nhân viên tiếp nhận
-- `DON_HANG_DUOC_GIAO` - Chi tiết giao hàng
-- `DON_HANG_HUY` - Đơn hàng hủy
-- `DON_HANG_HOAN_VE_KHO` - Đơn hàng hoàn về kho
-- `THONG_TIN_XU_LI_DON_HANG` - Lịch sử trạng thái
-- `DANH_GIA_CUA_KHACH_HANG` - Đánh giá của khách hàng
+#### 4. Quản Lý Đơn Hàng ( - 2 bảng)
+- `DON_HANG` - Đơn hàng với 11 trạng thái, tự động tính phí vận chuyển
+  * **4 Trường Phí Vận Chuyển:** phi_van_chuyen_goc, so_tien_duoc_giam, phi_van_chuyen_sau_giam, quang_duong
+  * **11 Trạng Thái:** Đang xử lý, Đang tìm tài xế, Đã tìm được tài xế, Đang lấy hàng, Lấy hàng thành công, Lấy hàng thất bại, Đang giao hàng, Giao hàng thành công, Giao hàng thất bại, Đã hoàn về kho, Đã hoàn thành
+  * **Tích Hợp Thanh Toán:** Thông tin thanh toán được lưu trực tiếp trong DON_HANG (không còn bảng HOA_DON)
+- `DON_HANG_DUOC_GIAO` - Junction table cho relationship giữa DON_HANG và CHUYEN_GIAO_HANG
 
 #### 5. Quản Lý Khuyến Mãi (4 bảng)
 - `CHUONG_TRINH_KHUYEN_MAI` - Chương trình khuyến mãi
@@ -91,12 +70,14 @@ DeliveryManagementSystem-Assignment2/
 - `MA_GIAM_GIA` - Mã giảm giá
 - `MA_GIAM_GIA_THEO_HANG` - Mã giảm giá theo hạng thành viên
 
-#### 6. Quản Lý Giao Hàng (5 bảng)
-- `CHUYEN_GIAO_HANG` - Chuyến giao hàng
+#### 6. Quản Lý Giao Hàng
+- `CHUYEN_GIAO_HANG` - Chuyến giao hàng (Tính năng mới )
+  * **Gộp Đơn:** Một chuyến có thể giao nhiều đơn hàng
+  * **Tự Động Tính Khoảng Cách:** Tổng khoảng cách từ các đơn hàng trong chuyến
+  * **3 Trạng Thái:** Đang thực hiện, Hoàn thành, Đã hủy
+  * **Thứ Tự Giao:** Thu_tu_lay_hang và Thu_tu_giao_hang cho tối ưu route
 - `XE` - Phương tiện (xe máy/xe tải)
 - `KHO` - Kho hàng
-- `KHOANG_CACH_VAN_CHUYEN` - Khoảng cách vận chuyển
-- `YEU_CAU_HO_TRO` - Yêu cầu hỗ trợ
 
 #### 7. Quản Lý Thanh Toán (2 bảng)
 - `THANH_TOAN` - Giao dịch thanh toán
@@ -113,9 +94,8 @@ DeliveryManagementSystem-Assignment2/
 - `sp_HuyDonHang` - Hủy đơn hàng với kiểm tra trạng thái
 
 #### Triggers (2)
-- `trg_capNhatTrangThaiDonHangDaGiao` - Cập nhật trạng thái đơn hàng khi đơn hàng giao thành công.
-- `trg_capNhatDiemThanhVienKhiTaoHoaDon` - Cập nhật điểm và hạng của khách hàng khi hoá đơn mới được tạo.
-
+- `trg_capNhatTrangThaiDonHang` - Cập nhật trạng thái đơn hàng (Trang_thai_don) trong bảng DON_HANG bằng trạng thái mới nhất (Tinh_trang) được chèn vào bảng lịch sử THONG_TIN_XU_LI_DON_HANG.
+- `trg_capNhatDiemThanhVienKhiDonHangThanhCong` - Cập nhật điểm (Diem_thanh_vien) và hạng (Ten_hang) của khách hàng trong bảng KHACH_HANG khi một đơn hàng chuyển sang trạng thái "Đã hoàn thành" (dựa trên việc INSERT vào THONG_TIN_XU_LI_DON_HANG).
 ---
 
 ## 🔌 Backend API
@@ -137,7 +117,7 @@ DeliveryManagementSystem-Assignment2/
 - Token expiration: 1 hour
 - Middleware protection cho protected routes
 
-#### 📊 API Endpoints (14 endpoints)
+#### 📊 API Endpoints (20 endpoints - )
 
 **Authentication (1)**
 - POST `/api/auth/login` - Đăng nhập và nhận JWT token
@@ -149,39 +129,52 @@ DeliveryManagementSystem-Assignment2/
 - PUT `/api/driver/:id` - Cập nhật tài xế
 - DELETE `/api/driver/:id` - Xóa tài xế
 
-**Order Management (5)**
-- GET `/api/don-hang` - Lấy danh sách đơn hàng (filter, sort, pagination)
+**Order Management (5) - **
+- GET `/api/don-hang` - Lấy danh sách đơn hàng (filter by 11 statuses, sort, pagination)
 - GET `/api/don-hang/:id` - Lấy đơn hàng theo ID
-- POST `/api/don-hang` - Tạo đơn hàng mới
-- PUT `/api/don-hang/:id` - Cập nhật đơn hàng
-- DELETE `/api/don-hang/:id` - Xóa đơn hàng
+- POST `/api/don-hang` - Tạo đơn hàng mới (tự động tính 4 trường phí vận chuyển)
+- PUT `/api/don-hang/:id` - Cập nhật đơn hàng (validate 11 trạng thái)
+- DELETE `/api/don-hang/:id` - Xóa đơn hàng (kiểm tra DON_HANG_DUOC_GIAO)
+
+**Delivery Trip Management (6) - TÍNH NĂNG MỚI **
+- GET `/api/chuyen-giao-hang` - Lấy danh sách chuyến giao hàng
+- GET `/api/chuyen-giao-hang/:id` - Lấy chi tiết chuyến giao hàng
+- GET `/api/chuyen-giao-hang/:id/total-distance` - Tính tổng khoảng cách chuyến
+- POST `/api/chuyen-giao-hang` - Tạo chuyến giao hàng mới
+- POST `/api/chuyen-giao-hang/:id/add-don-hang` - Gộp đơn vào chuyến
+- PUT `/api/chuyen-giao-hang/:id` - Cập nhật trạng thái chuyến
 
 **Reports (2)**
 - GET `/api/bao-cao/top-tai-xe` - Top tài xế theo rating
 - GET `/api/bao-cao/top-khach-hang` - Top khách hàng theo doanh thu
 
 #### 🎯 Advanced Features
-- **Filtering:** Lọc theo trạng thái, khách hàng
-- **Sorting:** Sắp xếp ASC/DESC theo bất kỳ field nào
+- **Auto Shipping Calculation:** Tự động tính 4 trường phí vận chuyển (phi_van_chuyen_goc, so_tien_duoc_giam, phi_van_chuyen_sau_giam, quang_duong)
+- **11 Order Statuses:** Validate enum với 11 trạng thái từ Đang xử lý → Đã hoàn thành
+- **Delivery Trip Management:** Gộp nhiều đơn vào 1 chuyến, tự động tính tổng khoảng cách
+- **Auto-Increment:** Ma_don_hang format DHxxxx, DeliveryID format CGHxxx
+- **Filtering:** Lọc theo 11 trạng thái, khách hàng, quang_duong
+- **Sorting:** Sắp xếp theo quang_duong, phi_van_chuyen_sau_giam, v.v.
 - **Pagination:** page, limit với metadata đầy đủ
-- **Foreign Key Validation:** Kiểm tra 4 bảng liên quan trước khi DELETE
-- **Unicode Support:** Hỗ trợ đầy đủ tiếng Việt (LIKE pattern matching)
+- **Foreign Key Validation:** Kiểm tra DON_HANG_DUOC_GIAO trước khi DELETE
+- **Unicode Support:** Hỗ trợ đầy đủ tiếng Việt
 - **Error Handling:** Comprehensive error messages
-- **Input Validation:** Request body validation
 
 ---
 
 ## 📚 API Documentation
 
-### 🌐 Swagger UI (Interactive)
+### 🌐 Swagger UI (Interactive) - 
 Truy cập: **http://localhost:3000/api-docs**
 
 **Tính năng:**
-- 🔍 Browse 14 endpoints với schemas chi tiết
+- 🔍 Browse 20 endpoints  với schemas chi tiết
 - 🧪 Test trực tiếp trên browser với "Try it out"
 - 🔐 Built-in JWT authentication
 - 📖 Auto-generated từ code (luôn up-to-date)
 - 💾 Download responses, copy cURL commands
+- 🚚 Test Delivery Trip Management (tính năng mới)
+- 💰 Test Auto Shipping Calculation
 - 🎨 UI sạch đẹp, organized theo tags
 
 **Cách sử dụng:**
@@ -191,17 +184,15 @@ Truy cập: **http://localhost:3000/api-docs**
 4. Click "Authorize" 🔓 → Paste token
 5. Test bất kỳ endpoint nào
 
-Xem hướng dẫn chi tiết: `backend/TEST_GUIDE_SWAGGER.md`
-
-### 📮 Postman Collection
-Import collection từ: `backend/TEST_GUIDE_POSTMAN.md`
+Xem hướng dẫn chi tiết: `backend/TEST_GUIDE_SWAGGER_V2.md` (26 test cases cho )
 
 **Bao gồm:**
-- ✅ 29 test cases đầy đủ
+- ✅ 26 test cases cho 
+- ✅ Test Delivery Trip Management (6 tests)
+- ✅ Test Auto Shipping Calculation
+- ✅ Test 11 Order Statuses
 - ✅ Environment variables pre-configured
 - ✅ Auto-save token after login
-- ✅ Test scripts cho validation
-- ✅ Full request/response examples
 
 ---
 
@@ -219,7 +210,7 @@ Import collection từ: `backend/TEST_GUIDE_POSTMAN.md`
 ```sql
 -- 1. Kết nối SQL Server (Windows Authentication hoặc SA)
 -- 2. Mở SQL Server Management Studio (SSMS)
--- 3. Chạy file BTL2_Part1_v2.sql
+-- 3. Chạy file BTL2_QuanLyGiaoHang_Nhom06_v2.sql
 -- File sẽ tự động:
 --   - Tạo database QuanLyGiaoHang_Nhom06
 --   - Tạo bảng với constraints
@@ -244,8 +235,6 @@ npm install
 node seed.js
 # Tạo:
 #   - SQL Server login: sManager/Nhom6251
-#   - Admin user: admin/admin123
-#   - Employee: NV001
 
 # Khởi động server
 node server.js
@@ -265,7 +254,7 @@ node server.js
 
 ### Bước 3: Test API
 
-#### Option 1: Swagger UI (Nhanh nhất)
+#### Swagger UI
 ```
 1. Mở browser: http://localhost:3000/api-docs
 2. Click endpoint "POST /api/auth/login" → "Try it out"
@@ -275,49 +264,28 @@ node server.js
 6. Test các endpoints khác
 ```
 
-#### Option 2: Postman
-```
-1. Mở Postman
-2. Import collection từ backend/TEST_GUIDE_POSTMAN.md
-3. Setup environment: base_url = http://localhost:3000
-4. Run collection (29 tests)
-```
-
-#### Option 3: cURL
-```powershell
-# Login
-curl -X POST http://localhost:3000/api/auth/login `
-  -H "Content-Type: application/json" `
-  -d '{"username":"admin","password":"admin123"}'
-
-# Get drivers (with token)
-curl http://localhost:3000/api/driver `
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
 
 ---
 
 ## 🧪 Testing
 
 ### Test Coverage
-- **Total Test Cases:** 29
+- **Total Test Cases:** 26
 - **Categories:**
   - Authentication: 3 tests
   - Driver Management: 6 tests
-  - Order Management: 16 tests
-  - Reports: 4 tests
-- **Success Rate:** 100% ✅ (29/29 passed)
-- **Test Date:** November 15-16, 2025
+  - Order Management: 6 tests ( - test 11 statuses, auto calculation)
+  - Delivery Trip Management: 6 tests (TÍNH NĂNG MỚI)
+  - Reports: 5 tests
+- **Success Rate:** 100% ✅ (26/26 passed)
+- **Test Date:** November 22, 2025
+- **Test Documentation:** `backend/TEST_GUIDE_SWAGGER_V2.md`
 
-### Test Documentation Files
-1. **TEST_CASE.md** - Chi tiết 29 test cases với kết quả
-2. **TEST_GUIDE_POSTMAN.md** - Hướng dẫn test bằng Postman
-3. **TEST_GUIDE_SWAGGER.md** - Hướng dẫn test bằng Swagger UI
 
 ### Test Scenarios
 
 #### Authentication Tests
-- ✅ Login thành công với admin account
+- ✅ Login thành công với sManager account
 - ✅ Login thất bại - sai username
 - ✅ Login thất bại - sai password
 
@@ -473,6 +441,5 @@ This project is created for educational purposes as part of Database course assi
 ---
 
 
-**📅 Last Updated:** November 16, 2025  
-**🔖 Version:** 1.0.0  
+**📅 Last Updated:** November 22, 2025  
 **👨‍💻 Maintained by:** Nhóm 06 - HK251

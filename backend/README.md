@@ -1,7 +1,7 @@
 # Backend API - Delivery Management System
 
 ## 📋 Description
-RESTful API backend for Delivery Management System built with Node.js, Express, and Sequelize ORM. Features comprehensive API documentation with Swagger UI and complete testing guides for both Postman and Swagger.
+RESTful API backend cho Delivery Management System với Node.js, Express, và Sequelize ORM. Tính năng mới: Quản lý chuyến giao hàng, tự động tính phí vận chuyển, 11 trạng thái đơn hàng. API documentation với Swagger UI.
 
 ## 🛠️ Tech Stack
 - **Node.js** v22.20.0
@@ -15,13 +15,24 @@ RESTful API backend for Delivery Management System built with Node.js, Express, 
 ## 📁 Project Structure
 ```
 backend/
-├── config/          # Database configuration
-├── controllers/     # Request handlers
-├── middleware/      # Authentication & validation
-├── models/          # Sequelize models
-├── routes/          # API routes
-├── server.js        # Entry point
-└── seed.js          # Database seeding
+├── config/                      # Database & Swagger configuration
+├── controllers/                 # Request handlers
+│   ├── donHangController.js     # Orders
+│   ├── chuyenGiaoHangController.js  # Delivery trips (NEW)
+│   ├── driver.controller.js     # Driver management
+│   ├── baoCaoController.js      # Reports
+│   └── auth.controller.js       # Authentication
+├── middleware/                  # Authentication & validation
+├── models/                      # Sequelize models
+│   ├── DonHang.js               # 11 statuses, 4 shipping fields
+│   ├── ChuyenGiaoHang.js        # Delivery trips (NEW)
+│   ├── DonHangDuocGiao.js       # Junction table (NEW)
+│   └── ...                      # Other models
+├── routes/                      # API routes (20 endpoints)
+├── server.js                    # Entry point
+├── seed.js                      # Database seeding
+├── TEST_GUIDE_SWAGGER_V2.md     # 26 test cases 
+└── TEST_RESULT_SUMMARY.md       # Test results
 ```
 
 ## ⚙️ Setup
@@ -60,73 +71,61 @@ node server.js
 ```
 Server will run at: **http://localhost:3000**
 
-### 6. Test API
-Login to get JWT token:
-```bash
-POST http://localhost:3000/api/auth/login
-Body: {"username": "admin", "password": "admin123"}
-```
-Use the token in Authorization header for other endpoints:
-```
-Authorization: Bearer <your_token>
-```
 
 ## 📚 API Documentation
 
-### 🌐 Interactive Documentation - Swagger UI
+### 🌐 Interactive Documentation - Swagger UI 
 Access interactive API documentation at: **http://localhost:3000/api-docs**
 
 **Features:**
-- 🔍 Browse all 14 API endpoints with detailed schemas
-- 🧪 Test APIs directly in browser with "Try it out" button
-- 🔐 Built-in JWT authentication with "Authorize" button
-- 📖 Auto-generated from code comments (always up-to-date)
-- 💾 Download responses and copy cURL commands
-- 🎨 Clean UI with organized endpoint groups
+- 🔍 Browse 20 API endpoints  với schemas chi tiết
+- 🧪 Test APIs directly với "Try it out" button
+- 🔐 Built-in JWT authentication
+- 📖 Auto-generated from code (always up-to-date)
+- 💾 Download responses và copy cURL commands
+- 🚚 Test Delivery Trip Management (NEW)
+- 💰 Test Auto Shipping Calculation (NEW)
+- 🎨 Clean UI với organized groups
 
 **Quick Start:**
 1. Start server: `node server.js`
 2. Open browser: http://localhost:3000/api-docs
 3. Login via POST /api/auth/login → Copy token
-4. Click "Authorize" 🔓 → Paste token → Click "Authorize"
+4. Click "Authorize" 🔓 → Paste token → Authorize
 5. Test any endpoint with "Try it out"
 
-See `TEST_GUIDE_SWAGGER.md` for comprehensive Swagger UI testing guide.
+See `TEST_GUIDE_SWAGGER_V2.md` for 26 test cases .
 
 ---
 
-### 📮 Testing with Postman
-Complete Postman collection with 29 test cases available in `TEST_GUIDE_POSTMAN.md`.
-
-**Features:**
-- ✅ Pre-configured environment variables
-- ✅ Auto-save JWT token after login
-- ✅ Test scripts for validation
-- ✅ JSON collection template for import
-- ✅ Full request/response examples
-
----
-
-### 🔌 API Endpoints
+### 🔌 API Endpoints (20 endpoints - )
 
 #### Authentication
-- **POST** `/api/auth/login` - Login and get JWT token (No auth required)
+- **POST** `/api/auth/login` - Login and get JWT token
 
-#### Driver Management (Quản Lý Tài Xế)
+#### Driver Management
 - **GET** `/api/driver` - Get all drivers
 - **GET** `/api/driver/:id` - Get driver by ID
 - **POST** `/api/driver` - Create new driver
 - **PUT** `/api/driver/:id` - Update driver
 - **DELETE** `/api/driver/:id` - Delete driver
 
-#### Orders (Đơn Hàng)
-- **GET** `/api/don-hang` - Get all orders (with filter, sort, pagination)
+#### Orders 
+- **GET** `/api/don-hang` - Get orders 
 - **GET** `/api/don-hang/:id` - Get order by ID
-- **POST** `/api/don-hang` - Create new order
-- **PUT** `/api/don-hang/:id` - Update order
+- **POST** `/api/don-hang` - Create order (auto calculate 4 shipping fields)
+- **PUT** `/api/don-hang/:id` - Update order (validate 11 statuses)
 - **DELETE** `/api/don-hang/:id` - Delete order
 
-#### Reports (Báo Cáo)
+#### Delivery Trips (NEW - )
+- **GET** `/api/chuyen-giao-hang` - Get all delivery trips
+- **GET** `/api/chuyen-giao-hang/:id` - Get delivery trip by ID
+- **GET** `/api/chuyen-giao-hang/:id/total-distance` - Calculate total distance
+- **POST** `/api/chuyen-giao-hang` - Create delivery trip
+- **POST** `/api/chuyen-giao-hang/:id/add-don-hang` - Add order to trip
+- **PUT** `/api/chuyen-giao-hang/:id` - Update trip status
+
+#### Reports
 - **GET** `/api/bao-cao/top-tai-xe` - Top drivers by rating
 - **GET** `/api/bao-cao/top-khach-hang` - Top customers by revenue
 
@@ -136,44 +135,31 @@ All endpoints (except login) require JWT token in Authorization header:
 Authorization: Bearer <your_jwt_token>
 ```
 
-## 🎯 Features
+## 🎯 Features 
 - ✅ JWT authentication
 - ✅ Driver Management (Full CRUD)
-- ✅ Order Management (Full CRUD)
-- ✅ Advanced filtering, sorting, and pagination
+- ✅ Order Management (Full CRUD) - 11 statuses, auto shipping calculation
+- ✅ **Delivery Trip Management (NEW)** - Gộp nhiều đơn vào 1 chuyến
+- ✅ **Auto Shipping Calculation** - 4 fields: phi_van_chuyen_goc, so_tien_duoc_giam, phi_van_chuyen_sau_giam, quang_duong
+- ✅ **11 Order Statuses** - From Đang xử lý to Đã hoàn thành
+- ✅ Advanced filtering (11 statuses), sorting (quang_duong), pagination
 - ✅ SQL Functions for reports
-- ✅ Foreign key constraint checking
+- ✅ Foreign key validation (DON_HANG_DUOC_GIAO)
 - ✅ Input validation & error handling
 - ✅ Unicode support (Vietnamese)
 
-## 📊 Test Results
-- **Total Tests:** 29
-- **Passed:** 29 ✅
+## 📊 Test Results 
+- **Total Tests:** 26
+- **Passed:** 26 ✅
 - **Failed:** 0
 - **Success Rate:** 100% 🎉
-- **Test Date:** November 15-16, 2025
+- **Test Date:** November 22, 2025
 
-### Test Documentation
-- 📋 **TEST_CASE.md** - Detailed test results with pass/fail status
-- 📮 **TEST_GUIDE_POSTMAN.md** - Postman testing guide (29 test cases)
-- 📚 **TEST_GUIDE_SWAGGER.md** - Interactive Swagger UI testing guide
+### Test Documentation 
+- 📚 **TEST_GUIDE_SWAGGER_V2.md** - 26 test cases for 
+  * Authentication: 3 tests
+  * Driver Management: 6 tests
+  * Order Management: 6 tests (11 statuses, auto calculation)
+  * Delivery Trips: 6 tests (NEW)
+  * Reports: 5 tests
 
-### Testing Options
-You can test the API using **3 methods**:
-1. **Swagger UI** (Recommended for quick testing)
-   - Access: http://localhost:3000/api-docs
-   - Interactive browser-based testing
-   - No installation required
-   
-2. **Postman** (Recommended for comprehensive testing)
-   - Import collection from `TEST_GUIDE_POSTMAN.md`
-   - Automated test scripts
-   - Environment variable management
-   
-3. **Manual HTTP requests**
-   - cURL, REST Client, or any HTTP tool
-   - Copy requests from Swagger UI or Postman guide
-
-
-## 🧪 Testing
-See `TEST_CASE.md` for comprehensive test cases and results.
