@@ -35,7 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     Ngay_Bat_Dau_Quan_Ly: { type: DataTypes.DATE, allowNull: false }
   }, {
     tableName: "TAI_XE",
-    timestamps: false
+    timestamps: false,
+    freezeTableName: true
   });
 
   return TaiXe; // <--- phải return model

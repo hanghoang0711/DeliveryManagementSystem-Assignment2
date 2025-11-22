@@ -32,12 +32,7 @@ db.ChuyenGiaoHang = require('./ChuyenGiaoHang.js')(sequelize, Sequelize);
 // ============================================
 db.KhachHang = require('./KhachHang.js')(sequelize, Sequelize);
 db.DonHang = require('./DonHang.js')(sequelize, Sequelize);
-// db.HoaDon = require('./HoaDon.js')(sequelize, Sequelize); // ❌ REMOVED in ERD v2
-
-// ============================================
-// IMPORT MODELS - (DELIVERY DOMAIN - ERD v2)
-// ============================================
-db.DonHangDuocGiao = require('./DonHangDuocGiao.js')(sequelize, Sequelize);
+db.HoaDon = require('./HoaDon.js')(sequelize, Sequelize);
 
 // ============================================
 // ASSOCIATIONS - (DRIVER DOMAIN)
@@ -46,92 +41,119 @@ db.DonHangDuocGiao = require('./DonHangDuocGiao.js')(sequelize, Sequelize);
 // db.NhanVienQuanLyTaiXe.belongsTo(db.NhanVien, { foreignKey: "Ma_nhan_vien" });
 // db.NhanVien.hasOne(db.NhanVienQuanLyTaiXe, { foreignKey: "Ma_nhan_vien" });
 
-db.TaiXe.belongsTo(db.NhanVienQuanLyTaiXe, {foreignKey: "Ma_Nhan_Vien_quan_li",});
-db.NhanVienQuanLyTaiXe.hasMany(db.TaiXe, {
-    foreignKey: "Ma_Nhan_Vien_quan_li",
-});
+// Quan hệ TaiXe ↔ NhanVienQuanLyTaiXe
 
-db.TaiXe.hasOne(db.TaiXeXeMay, {
-    foreignKey: "DriverID",
-    onDelete: "CASCADE",  // xóa tài xế thì xóa luôn hồ sơ xe gắn liền
-});
-db.TaiXeXeMay.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
-
-db.TaiXe.hasOne(db.TaiXeXeTai, {
-    foreignKey: "DriverID",
-    onDelete: "CASCADE",
-});
-db.TaiXeXeTai.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
-
-db.TaiXe.hasMany(db.TaiXeSDT, {
-    foreignKey: "DriverID",
-    onDelete: "CASCADE",  // xóa tài xế xoá các số điện thoại
-});
-db.TaiXeSDT.belongsTo(db.TaiXe, { foreignKey: "DriverID" });
-
-db.TaiXe.hasMany(db.GhiChuQuanLyTaiXe, {
-    foreignKey: "Ma_tai_xe",
-    onDelete: "CASCADE",
-});
-db.GhiChuQuanLyTaiXe.belongsTo(db.TaiXe, { foreignKey: "Ma_tai_xe" });
-
-db.Mentorship.belongsTo(db.TaiXe, {
-    as: "Mentor",
-    foreignKey: "MentorID",
+db.TaiXe.belongsTo(db.NhanVienQuanLyTaiXe, { 
+  foreignKey: "Ma_Nhan_Vien_quan_li",
+  targetKey: "Ma_nhan_vien",
  
 });
 
-db.Mentorship.belongsTo(db.TaiXe, {
-    as: "Mentee",
-    foreignKey: "MenteeID",
-  
+db.NhanVienQuanLyTaiXe.hasMany(db.TaiXe, { 
+  foreignKey: "Ma_Nhan_Vien_quan_li",
+  sourceKey: "Ma_nhan_vien",
+ 
 });
 
-db.TaiXe.hasMany(db.Mentorship, {
-    as: "MentorRecords",
-    foreignKey: "MentorID"
+// Quan hệ TaiXe ↔ XeMáy
+db.TaiXe.hasOne(db.TaiXeXeMay, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
+});
+db.TaiXeXeMay.belongsTo(db.TaiXe, { 
+  foreignKey: "DriverID", 
+  targetKey: "DriverID" 
 });
 
-db.TaiXe.hasMany(db.Mentorship, {
-    as: "MenteeRecords",
-    foreignKey: "MenteeID"
+// Quan hệ TaiXe ↔ XeTải
+db.TaiXe.hasOne(db.TaiXeXeTai, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
+});
+db.TaiXeXeTai.belongsTo(db.TaiXe, { 
+  foreignKey: "DriverID", 
+  targetKey: "DriverID" 
 });
 
-// ChuyenGiaoHang associations are defined in ChuyenGiaoHang.associate() - see below
+// Quan hệ TaiXe ↔ Số điện thoại
+db.TaiXe.hasMany(db.TaiXeSDT, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
+});
+db.TaiXeSDT.belongsTo(db.TaiXe, { 
+  foreignKey: "DriverID", 
+  targetKey: "DriverID" 
+});
+
+// Quan hệ TaiXe ↔ Ghi chú quản lý
+db.TaiXe.hasMany(db.GhiChuQuanLyTaiXe, { 
+  foreignKey: "Ma_tai_xe",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
+});
+db.GhiChuQuanLyTaiXe.belongsTo(db.TaiXe, { 
+  foreignKey: "Ma_tai_xe", 
+  targetKey: "DriverID"
+});
+
+// Quan hệ TaiXe ↔ Mentorship
+db.TaiXe.hasMany(db.Mentorship, { 
+  as: "MentorRecords",
+  foreignKey: "MentorID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
+});
+db.TaiXe.hasMany(db.Mentorship, { 
+  as: "MenteeRecords",
+  foreignKey: "MenteeID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
+});
+db.Mentorship.belongsTo(db.TaiXe, { 
+  as: "Mentor",
+  foreignKey: "MentorID",
+  targetKey: "DriverID"
+});
+db.Mentorship.belongsTo(db.TaiXe, { 
+  as: "Mentee",
+  foreignKey: "MenteeID",
+  targetKey: "DriverID"
+});
+
+// Quan hệ TaiXe ↔ Chuyến giao hàng
+db.TaiXe.hasMany(db.ChuyenGiaoHang, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "SET NULL"
+});
+db.ChuyenGiaoHang.belongsTo(db.TaiXe, { 
+  foreignKey: "DriverID", 
+  targetKey: "DriverID"
+});
+
 
 // ============================================
 // ASSOCIATIONS (ORDER DOMAIN)
 // ============================================
-// DonHang <-> KhachHang associations are defined in DonHang.associate() - see below
+db.DonHang.belongsTo(db.KhachHang, {
+  foreignKey: 'Ma_khach_hang',
+  as: 'khachHang'
+});
 
 db.KhachHang.hasMany(db.DonHang, {
   foreignKey: 'Ma_khach_hang',
   as: 'donHangs'
 });
 
-// ❌ REMOVED in ERD v2: DonHang <-> HoaDon associations
-// db.DonHang.hasOne(db.HoaDon, { foreignKey: 'Ma_don_hang', as: 'hoaDon' });
-// db.HoaDon.belongsTo(db.DonHang, { foreignKey: 'Ma_don_hang', as: 'donHang' });
-
-// ============================================
-// ASSOCIATIONS (DELIVERY DOMAIN - ERD v2)
-// ============================================
-// Call associate functions from models
-if (db.DonHang.associate) {
-  db.DonHang.associate(db);
-}
-
-if (db.ChuyenGiaoHang.associate) {
-  db.ChuyenGiaoHang.associate(db);
-}
-
-// DonHangDuocGiao associations
-db.DonHangDuocGiao.belongsTo(db.ChuyenGiaoHang, {
-  foreignKey: 'DeliveryID',
-  as: 'chuyenGiaoHang'
+db.DonHang.hasOne(db.HoaDon, {
+  foreignKey: 'Ma_don_hang',
+  as: 'hoaDon'
 });
 
-db.DonHangDuocGiao.belongsTo(db.DonHang, {
+db.HoaDon.belongsTo(db.DonHang, {
   foreignKey: 'Ma_don_hang',
   as: 'donHang'
 });

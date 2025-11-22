@@ -177,12 +177,53 @@
 **Expected Response (200):**
 ```json
 {
-  "message": "Thông tin tài xế",
+  "message": "Thông tin tài xế chi tiết",
   "data": {
     "DriverID": "DRV001",
     "Ho_ten": "Nguyễn Văn Rê",
     "CCCD": "079123456781",
-    "Rating": 5
+    "Gioi_Tinh": "Nam",
+    "Ngay_Sinh": "1998-03-11",
+    "Ngay_Bat_Dau_Lam_Viec": "2023-11-10",
+    "Rating": 5,
+    "Ma_Nhan_Vien_quan_li": "NV0002",
+    "Trang_Thai": "Sẵn sàng",
+    "Ngay_Bat_Dau_Quan_Ly": "2025-11-10",
+    "TAI_XE_SDTs": [
+      {
+        "DriverID": "DRV001",
+        "SDT": "0905111222"
+      },
+      {
+        "DriverID": "DRV001",
+        "SDT": "0905333444"
+      }
+    ],
+    "TAI_XE_XE_MAY": {
+      "DriverID": "DRV001",
+      "Bang_lai_A_A1": "A1",
+      "Bien_ban_hoat_dong": null,
+      "Loai_hang_chuyen_cho": "Hàng hóa nhẹ"
+    },
+    "CHUYEN_GIAO_HANGs": [
+      {
+        "DeliveryID": "CGH001",
+        "so_luong_don_gop": 1,
+        "DriverID": "DRV001",
+        "TrangThaiChuyen": "Hoàn thành"
+      }
+    ],
+    "GHI_CHU_QUAN_LY_TAI_XEs": [
+      {
+        "Ma_tai_xe": "DRV001",
+        "Thoi_gian": "2025-11-20T02:51:39.550Z",
+        "Noi_dung": "Hoàn thành tốt chuyến giao đầu tiên"
+      }
+    ],
+    "NHAN_VIEN_QUAN_LY_TAI_XE": {
+      "Ma_nhan_vien": "NV0002",
+      "So_luong_tai_xe_dang_phu_trach": 50
+    }
   }
 }
 ```

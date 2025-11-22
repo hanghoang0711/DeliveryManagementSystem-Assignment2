@@ -40,7 +40,7 @@ router.get("/", verifyToken, taixeController.getAllTaiXe);
  * @swagger
  * /api/driver/{id}:
  *   get:
- *     summary: Get driver by ID
+ *     summary: Get driver detail by ID
  *     tags: [Driver Management]
  *     parameters:
  *       - in: path
@@ -55,7 +55,7 @@ router.get("/", verifyToken, taixeController.getAllTaiXe);
  *       404:
  *         description: Driver not found
  */
-router.get("/:id", verifyToken, validateDriverIDParam, handleValidation, taixeController.getTaiXeById);
+router.get("/:id", verifyToken, validateDriverIDParam, handleValidation,taixeController.getTaiXeDetail);
 
 /**
  * @swagger

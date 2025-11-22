@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     Vai_tro: { type: DataTypes.STRING(50), allowNull: false },
   }, {
     tableName: "NHANVIEN",
-    timestamps: false // ⭐ Schema mới không có createdAt/updatedAt
+    timestamps: false 
   });
 
   return NhanVien; // <--- trả về model

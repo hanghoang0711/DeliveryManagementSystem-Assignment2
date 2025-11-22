@@ -1,11 +1,27 @@
-const { TaiXe, TaiXeXeMay, TaiXeXeTai, TaiXeSDT, GhiChuQuanLyTaiXe, NhanVienQuanLyTaiXe, NhanVien, ChuyenGiaoHang, Mentorship } = require("../models");
+const { TaiXe, TaiXeXeMay, TaiXeXeTai, TaiXeSDT, GhiChuQuanLyTaiXe, NhanVienQuanLyTaiXe, ChuyenGiaoHang, Mentorship } = require("../models");
 const { Op } = require("sequelize");
+
 
 // Create TaiXe
 exports.createTaiXe = async (req, res) => {
   try {
+
     const newTaiXe = await TaiXe.create(req.body);
-    res.status(201).json({ message: "Tài xế tạo thành công", data: newTaiXe });
+
+    if (req.body.Ma_Nhan_Vien_quan_li) {
+      await NhanVienQuanLyTaiXe.increment(
+        { So_luong_tai_xe_dang_phu_trach: 1 },
+        { where: { Ma_nhan_vien: req.body.Ma_Nhan_Vien_quan_li } }
+      );
+    }
+
+    const taiXeData = newTaiXe.toJSON();
+
+    res.status(201).json({
+      message: "Tài xế tạo thành công",
+      data: taiXeData
+    });
+
   } catch (error) {
     console.error('CREATE Driver Error:', error);
 
@@ -19,13 +35,14 @@ exports.createTaiXe = async (req, res) => {
       console.error(fieldErrors);
     }
 
-    res.status(400).json({ 
-      message: "Lỗi khi tạo tài xế", 
+    res.status(400).json({
+      message: "Lỗi khi tạo tài xế",
       error: error.message || error.toString(),
       fieldErrors
     });
   }
 };
+
 
 // Update TaiXe
 exports.updateTaiXe = async (req, res) => {
@@ -33,6 +50,16 @@ exports.updateTaiXe = async (req, res) => {
     const { id } = req.params;
     const taixe = await TaiXe.findByPk(id);
     if (!taixe) return res.status(404).json({ message: "Không tìm thấy tài xế" });
+     if (req.body.Ma_Nhan_Vien_quan_li && req.body.Ma_Nhan_Vien_quan_li !== taixe.Ma_Nhan_Vien_quan_li) {
+      await NhanVienQuanLyTaiXe.decrement(
+        { So_luong_tai_xe_dang_phu_trach: 1 },
+        { where: { Ma_nhan_vien: taixe.Ma_Nhan_Vien_quan_li } }
+      );
+      await NhanVienQuanLyTaiXe.increment(
+        { So_luong_tai_xe_dang_phu_trach: 1 },
+        { where: { Ma_nhan_vien: req.body.Ma_Nhan_Vien_quan_li } }
+      );
+    }
 
     await taixe.update(req.body);
     res.json({ message: "Cập nhật tài xế thành công", data: taixe });
@@ -73,7 +100,10 @@ exports.deleteTaiXe = async (req, res) => {
         message: "Không thể xóa tài xế: còn chuyến giao hàng chưa hoàn thành"
       });
     }
-
+    await NhanVienQuanLyTaiXe.decrement(
+      { So_luong_tai_xe_dang_phu_trach: 1 },
+      { where: { Ma_nhan_vien: driver.Ma_Nhan_Vien_quan_li } }
+    );
     await Mentorship.destroy({ where: { MentorID: id } });
     await Mentorship.destroy({ where: { MenteeID: id } });
     await driver.destroy();
@@ -116,18 +146,53 @@ exports.getAllTaiXe = async (req, res) => {
   }
 };
 
-// Get TaiXe by ID (không cần fieldErrors)
-exports.getTaiXeById = async (req, res) => {
+exports.getTaiXeDetail = async (req, res) => {
   try {
     const { id } = req.params;
-    const taixe = await TaiXe.findByPk(id);
-    if (!taixe) return res.status(404).json({ message: "Không tìm thấy tài xế" });
-    res.json({ message: "Thông tin tài xế", data: taixe });
+
+    // Lấy tài xế kèm các quan hệ
+    let taixe = await TaiXe.findOne({
+      where: { DriverID: id },
+      include: [
+        // Số điện thoại
+        { model: TaiXeSDT, foreignKey: "DriverID", sourceKey: "DriverID" },
+        // Xe máy
+        { model: TaiXeXeMay, foreignKey: "DriverID", sourceKey: "DriverID" },
+        // Xe tải
+        { model: TaiXeXeTai, foreignKey: "DriverID", sourceKey: "DriverID" },
+        // Chuyến giao hàng
+        { model: ChuyenGiaoHang, foreignKey: "DriverID", sourceKey: "DriverID" },
+        // Ghi chú quản lý tài xế
+        { model: GhiChuQuanLyTaiXe, foreignKey: "Ma_tai_xe", sourceKey: "DriverID" },
+        // Nhân viên quản lý tài xế
+        { model: NhanVienQuanLyTaiXe, foreignKey: "Ma_nhan_vien", targetKey: "Ma_Nhan_Vien_quan_li" }
+      ]
+    });
+
+    if (!taixe) {
+      return res.status(404).json({ message: "Không tìm thấy tài xế" });
+    }
+
+    // Chuyển Sequelize instance sang plain object
+    taixe = taixe.toJSON();
+
+    // Ẩn xe máy nếu không tồn tại
+    if (!taixe.TAI_XE_XE_MAY || Object.keys(taixe.TAI_XE_XE_MAY).length === 0) {
+      delete taixe.TAI_XE_XE_MAY;
+    }
+
+    // Ẩn xe tải nếu không tồn tại
+    if (!taixe.TAI_XE_XE_TAI || Object.keys(taixe.TAI_XE_XE_TAI).length === 0) {
+      delete taixe.TAI_XE_XE_TAI;
+    }
+
+    res.json({ message: "Thông tin tài xế chi tiết", data: taixe });
+
   } catch (error) {
-    console.error('GET Driver By ID Error:', error);
-    res.status(500).json({ 
-      message: "Lỗi khi lấy thông tin tài xế", 
-      error: error.name || error.message || error.toString()
+    console.error("GET Driver Detail Error:", error);
+    res.status(500).json({
+      message: "Lỗi khi lấy chi tiết tài xế",
+      error: error.message || error.toString()
     });
   }
 };

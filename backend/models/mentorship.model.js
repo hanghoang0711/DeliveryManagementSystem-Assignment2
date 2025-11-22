@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     Danh_Gia: { type: DataTypes.TEXT }
   }, {
     tableName: "MENTORSHIP",
-    timestamps: false
+    timestamps: false,
+    freezeTableName: true
   });
 
   return Mentorship;
