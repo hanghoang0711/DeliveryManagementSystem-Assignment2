@@ -26,13 +26,18 @@ db.NhanVienQuanLyTaiXe = require('./nhanvienquanlytaixe.model.js')(sequelize, Se
 db.GhiChuQuanLyTaiXe = require('./ghichu.model.js')(sequelize, Sequelize);
 db.User = require('./user.model.js')(sequelize, Sequelize);
 db.Mentorship = require('./mentorship.model.js')(sequelize, Sequelize);
-db.ChuyenGiaoHang = require('./chuyengiaohang.model.js')(sequelize, Sequelize);
+db.ChuyenGiaoHang = require('./ChuyenGiaoHang.js')(sequelize, Sequelize);
 // ============================================
 // IMPORT MODELS - (ORDER DOMAIN)
 // ============================================
 db.KhachHang = require('./KhachHang.js')(sequelize, Sequelize);
 db.DonHang = require('./DonHang.js')(sequelize, Sequelize);
-db.HoaDon = require('./HoaDon.js')(sequelize, Sequelize);
+// db.HoaDon = require('./HoaDon.js')(sequelize, Sequelize); // ❌ REMOVED in ERD v2
+
+// ============================================
+// IMPORT MODELS - (DELIVERY DOMAIN - ERD v2)
+// ============================================
+db.DonHangDuocGiao = require('./DonHangDuocGiao.js')(sequelize, Sequelize);
 
 // ============================================
 // ASSOCIATIONS - (DRIVER DOMAIN)
@@ -92,33 +97,41 @@ db.TaiXe.hasMany(db.Mentorship, {
     foreignKey: "MenteeID"
 });
 
-db.ChuyenGiaoHang.belongsTo(db.TaiXe, {
-    foreignKey: "DriverID",
-    onDelete: "SET NULL", 
-   
-});
-db.TaiXe.hasMany(db.ChuyenGiaoHang, { foreignKey: "DriverID" });
-
+// ChuyenGiaoHang associations are defined in ChuyenGiaoHang.associate() - see below
 
 // ============================================
 // ASSOCIATIONS (ORDER DOMAIN)
 // ============================================
-db.DonHang.belongsTo(db.KhachHang, {
-  foreignKey: 'Ma_khach_hang',
-  as: 'khachHang'
-});
+// DonHang <-> KhachHang associations are defined in DonHang.associate() - see below
 
 db.KhachHang.hasMany(db.DonHang, {
   foreignKey: 'Ma_khach_hang',
   as: 'donHangs'
 });
 
-db.DonHang.hasOne(db.HoaDon, {
-  foreignKey: 'Ma_don_hang',
-  as: 'hoaDon'
+// ❌ REMOVED in ERD v2: DonHang <-> HoaDon associations
+// db.DonHang.hasOne(db.HoaDon, { foreignKey: 'Ma_don_hang', as: 'hoaDon' });
+// db.HoaDon.belongsTo(db.DonHang, { foreignKey: 'Ma_don_hang', as: 'donHang' });
+
+// ============================================
+// ASSOCIATIONS (DELIVERY DOMAIN - ERD v2)
+// ============================================
+// Call associate functions from models
+if (db.DonHang.associate) {
+  db.DonHang.associate(db);
+}
+
+if (db.ChuyenGiaoHang.associate) {
+  db.ChuyenGiaoHang.associate(db);
+}
+
+// DonHangDuocGiao associations
+db.DonHangDuocGiao.belongsTo(db.ChuyenGiaoHang, {
+  foreignKey: 'DeliveryID',
+  as: 'chuyenGiaoHang'
 });
 
-db.HoaDon.belongsTo(db.DonHang, {
+db.DonHangDuocGiao.belongsTo(db.DonHang, {
   foreignKey: 'Ma_don_hang',
   as: 'donHang'
 });

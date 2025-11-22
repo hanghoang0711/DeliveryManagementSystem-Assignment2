@@ -15,7 +15,7 @@ const { Op } = require('sequelize');
 
 const DonHang = db.DonHang;
 const KhachHang = db.KhachHang;
-const HoaDon = db.HoaDon;
+// const HoaDon = db.HoaDon; // ❌ REMOVED in ERD v2
 
 /**
  * ============================================
@@ -142,12 +142,8 @@ exports.getDonHangById = async (req, res) => {
           model: KhachHang,
           as: 'khachHang',
           attributes: ['Ma_khach_hang', 'email', 'Ten_hang', 'Diem_thanh_vien']
-        },
-        {
-          model: HoaDon,
-          as: 'hoaDon',
-          attributes: ['Ma_hoa_don', 'So_tien_goc', 'so_tien_sau_khi_giam', 'thoi_gian_tao']
         }
+        // HoaDon removed in ERD v2 - payment info integrated into DON_HANG
       ]
     });
 
@@ -218,17 +214,24 @@ exports.createDonHang = async (req, res) => {
     }
 
     // ========== SINH MÃ ĐƠN HÀNG TỰ ĐỘNG ==========
-    const lastDonHang = await DonHang.findOne({
-      order: [['Ma_don_hang', 'DESC']],
-      attributes: ['Ma_don_hang']
+    // Lấy tất cả đơn hàng để tìm mã lớn nhất (sort by number, not string)
+    const allDonHang = await DonHang.findAll({
+      attributes: ['Ma_don_hang'],
+      raw: true
     });
 
     let newMaDonHang = 'DH0001';
-    if (lastDonHang) {
-      // Lấy số từ mã đơn hàng (DH0001 -> 1, DH0006 -> 6, DH0123 -> 123)
-      const lastNumber = parseInt(lastDonHang.Ma_don_hang.replace('DH', ''));
-      const newNumber = lastNumber + 1;
-      newMaDonHang = 'DH' + String(newNumber).padStart(4, '0');
+    if (allDonHang && allDonHang.length > 0) {
+      // Extract numbers and find max
+      const numbers = allDonHang
+        .map(dh => parseInt(dh.Ma_don_hang.replace('DH', '')))
+        .filter(num => !isNaN(num));
+      
+      if (numbers.length > 0) {
+        const maxNumber = Math.max(...numbers);
+        const newNumber = maxNumber + 1;
+        newMaDonHang = 'DH' + String(newNumber).padStart(4, '0');
+      }
     }
 
     // ========== FORMAT DATETIME for SQL Server ==========
@@ -244,6 +247,15 @@ exports.createDonHang = async (req, res) => {
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
+    // ========== TÍNH TOÁN PHÍ VẬN CHUYỂN (ERD v2) ==========
+    // TODO: Implement actual distance calculation using Google Maps API or similar
+    // For now, use default values based on weight and delivery method
+    const quang_duong = 10.5; // km (default, should calculate from addresses)
+    const baseRate = 15000; // 15k VND per km
+    const phi_van_chuyen_goc = Math.round(quang_duong * baseRate);
+    const so_tien_duoc_giam = 0; // Will be calculated if discount codes applied
+    const phi_van_chuyen_sau_giam = phi_van_chuyen_goc - so_tien_duoc_giam;
+
     // ========== TẠO ĐƠN HÀNG MỚI (Use Raw SQL to avoid timezone issues) ==========
     const now = formatForSQL(new Date());
     const expectedDelivery = formatForSQL(Thoi_gian_giao_hang_du_kien);
@@ -254,12 +266,14 @@ exports.createDonHang = async (req, res) => {
         Ma_don_hang, Ma_khach_hang, SDT_nguoi_nhan, ten_nguoi_nhan,
         dia_chi_lay_hang, dia_chi_giao_hang, can_nang, 
         gia_tri_hang_hoa_phi_van_chuyen, phuong_thuc_giao_hang,
+        phi_van_chuyen_goc, so_tien_duoc_giam, phi_van_chuyen_sau_giam, quang_duong,
         Thoi_gian_giao_hang_du_kien, Thoi_gian_lay_hang_du_kien,
         Trang_thai_don, thoi_gian_dat_don, diem_tich_luy
       ) VALUES (
         :ma_don_hang, :ma_khach_hang, :sdt, :ten,
         :dia_chi_lay, :dia_chi_giao, :can_nang,
         :gia_tri, :phuong_thuc,
+        :phi_goc, :giam_gia, :phi_sau_giam, :khoang_cach,
         :giao_du_kien, :lay_du_kien,
         :trang_thai, :dat_don, :diem
       )`,
@@ -274,9 +288,13 @@ exports.createDonHang = async (req, res) => {
           can_nang,
           gia_tri: gia_tri_hang_hoa_phi_van_chuyen,
           phuong_thuc: phuong_thuc_giao_hang,
+          phi_goc: phi_van_chuyen_goc,
+          giam_gia: so_tien_duoc_giam,
+          phi_sau_giam: phi_van_chuyen_sau_giam,
+          khoang_cach: quang_duong,
           giao_du_kien: expectedDelivery,
           lay_du_kien: expectedPickup,
-          trang_thai: 'Đã tạo',
+          trang_thai: 'Đang xử lý', // ERD v2: Trạng thái ban đầu
           dat_don: now,
           diem: 0
         },
@@ -334,8 +352,8 @@ exports.updateDonHang = async (req, res) => {
     const updatedDonHang = await DonHang.findOne({
       where: { Ma_don_hang: id },
       include: [
-        { model: KhachHang, as: 'khachHang' },
-        { model: HoaDon, as: 'hoaDon' }
+        { model: KhachHang, as: 'khachHang' }
+        // HoaDon removed in ERD v2
       ]
     });
 
@@ -383,12 +401,9 @@ exports.deleteDonHang = async (req, res) => {
     }
 
     // Kiểm tra có bản ghi liên quan không (FK constraint check)
-    // Check các bảng: DON_HANG_DUOC_TIEP_NHAN, DON_HANG_DUOC_GIAO, HOA_DON, etc.
+    // Check các bảng: DON_HANG_DUOC_GIAO (ERD v2 - HOA_DON đã bị xóa)
     const checkTables = [
-      'DON_HANG_DUOC_TIEP_NHAN',
-      'DON_HANG_DUOC_GIAO',
-      'THONG_TIN_XU_LI_DON_HANG',
-      'HOA_DON'
+      'DON_HANG_DUOC_GIAO'
     ];
 
     for (const table of checkTables) {

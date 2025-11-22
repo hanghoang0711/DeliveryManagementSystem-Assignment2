@@ -13,7 +13,22 @@ module.exports = (sequelize, DataTypes) => {
     Trang_thai_don: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      defaultValue: 'Đã tạo'
+      defaultValue: 'Đang xử lý', // ERD v2: Trạng thái ban đầu
+      validate: {
+        isIn: [[
+          'Đang xử lý',
+          'Đang tìm tài xế',
+          'Đã tìm được tài xế',
+          'Đang lấy hàng',
+          'Lấy hàng thành công',
+          'Lấy hàng thất bại',
+          'Đang giao hàng',
+          'Giao hàng thành công',
+          'Giao hàng thất bại',
+          'Đã hoàn về kho',
+          'Đã hoàn thành'
+        ]]
+      }
     },
     Thoi_gian_lay_hang_du_kien: {
       type: DataTypes.DATE,
@@ -47,6 +62,38 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
+    // ===== ERD v2: 4 TRƯỜNG MỚI =====
+    phi_van_chuyen_goc: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0
+      }
+    },
+    so_tien_duoc_giam: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: 0,
+      validate: {
+        min: 0
+      }
+    },
+    phi_van_chuyen_sau_giam: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0
+      }
+    },
+    quang_duong: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0
+      },
+      comment: 'Quãng đường vận chuyển (km)'
+    },
+    // ================================
     SDT_nguoi_nhan: {
       type: DataTypes.STRING(15),
       allowNull: false
@@ -91,6 +138,23 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
     freezeTableName: true
   });
+
+  // Associations
+  DonHang.associate = (models) => {
+    // Một đơn hàng thuộc về một khách hàng
+    DonHang.belongsTo(models.KhachHang, {
+      foreignKey: 'Ma_khach_hang',
+      as: 'khachHang'
+    });
+
+    // Một đơn hàng có thể có nhiều chuyến giao hàng (qua bảng trung gian)
+    DonHang.belongsToMany(models.ChuyenGiaoHang, {
+      through: 'DON_HANG_DUOC_GIAO',
+      foreignKey: 'Ma_don_hang',
+      otherKey: 'DeliveryID',
+      as: 'chuyenGiaoHangs'
+    });
+  };
 
   return DonHang;
 };

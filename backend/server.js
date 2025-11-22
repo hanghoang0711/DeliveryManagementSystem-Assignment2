@@ -40,6 +40,12 @@ const baoCaoRoutes = require('./routes/baoCaoRoutes');
 app.use('/api/bao-cao', baoCaoRoutes);
 
 // ============================================
+// ROUTES - (DELIVERY DOMAIN - ERD v2)
+// ============================================
+const chuyenGiaoHangRoutes = require('./routes/chuyenGiaoHangRoutes');
+app.use('/api/chuyen-giao-hang', chuyenGiaoHangRoutes);
+
+// ============================================
 // SERVER START
 // ============================================
 const PORT = process.env.PORT || 3000;
@@ -51,6 +57,7 @@ app.listen(PORT, () => {
   console.log(`📍 Auth: http://localhost:${PORT}/api/auth/login`);
   console.log(`📍 Driver: http://localhost:${PORT}/api/driver`);
   console.log(`📍 Orders: http://localhost:${PORT}/api/don-hang`);
+  console.log(`📍 Delivery: http://localhost:${PORT}/api/chuyen-giao-hang`);
   console.log(`📍 Reports: http://localhost:${PORT}/api/bao-cao`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
 });

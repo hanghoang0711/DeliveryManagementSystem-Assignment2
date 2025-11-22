@@ -186,6 +186,59 @@ const options = {
               description: 'Expected pickup time (optional)'
             }
           }
+        },
+        ChuyenGiaoHang: {
+          type: 'object',
+          required: ['DriverID'],
+          properties: {
+            DeliveryID: {
+              type: 'string',
+              example: 'CGH001',
+              description: 'Delivery trip ID (auto-generated)'
+            },
+            DriverID: {
+              type: 'string',
+              example: 'DRV001',
+              description: 'Driver ID'
+            },
+            so_luong_don_gop: {
+              type: 'integer',
+              example: 0,
+              description: 'Number of orders grouped (default 0)'
+            },
+            TrangThaiChuyen: {
+              type: 'string',
+              enum: ['Đang thực hiện', 'Hoàn thành', 'Đã hủy'],
+              example: 'Đang thực hiện',
+              description: 'Trip status'
+            },
+            tong_quang_duong_tinh_toan: {
+              type: 'string',
+              example: '25.50',
+              description: 'Total distance calculated (km)'
+            }
+          }
+        },
+        AddOrderToDelivery: {
+          type: 'object',
+          required: ['Ma_don_hang', 'Thu_tu_lay_hang', 'Thu_tu_giao_hang'],
+          properties: {
+            Ma_don_hang: {
+              type: 'string',
+              example: 'DH001',
+              description: 'Order ID to add to delivery trip'
+            },
+            Thu_tu_lay_hang: {
+              type: 'integer',
+              example: 1,
+              description: 'Pickup sequence number'
+            },
+            Thu_tu_giao_hang: {
+              type: 'integer',
+              example: 1,
+              description: 'Delivery sequence number'
+            }
+          }
         }
       }
     },

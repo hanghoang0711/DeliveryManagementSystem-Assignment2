@@ -1,23 +1,57 @@
-﻿-- 1. TẠO DATABASE VÀ SỬ DỤNG
+﻿-- =====================================================================
+-- 1. TẠO LOGIN VÀ USER
+-- =====================================================================
 USE master;
 GO
 
-IF NOT EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'QuanLyGiaoHang_Nhom06')
+-- Tạo SQL Server Login nếu chưa tồn tại
+IF NOT EXISTS (SELECT name FROM sys.server_principals WHERE name = 'sManager')
 BEGIN
-    CREATE DATABASE QuanLyGiaoHang_Nhom06;
-    PRINT N'Đã tạo database QuanLyGiaoHang_Nhom06_v2 thành công';
+    CREATE LOGIN sManager WITH PASSWORD = 'Nhom6251';
+    PRINT N' Đã tạo SQL Server Login: sManager';
 END
 ELSE
 BEGIN
-    PRINT N'Database QuanLyGiaoHang_Nhom06_v2 đã tồn tại';
+    PRINT N' Login sManager đã tồn tại';
+END
+GO
+
+-- =====================================================================
+-- 2. TẠO DATABASE VÀ SỬ DỤNG
+-- =====================================================================
+IF NOT EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'QuanLyGiaoHang_Nhom06')
+BEGIN
+    CREATE DATABASE QuanLyGiaoHang_Nhom06;
+    PRINT N' Đã tạo database QuanLyGiaoHang_Nhom06 thành công';
+END
+ELSE
+BEGIN
+    PRINT N' Database QuanLyGiaoHang_Nhom06 đã tồn tại';
 END
 GO
 
 USE QuanLyGiaoHang_Nhom06;
 GO
 
+-- Tạo Database User và gán quyền
+IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'sManager')
+BEGIN
+    CREATE USER sManager FOR LOGIN sManager;
+    PRINT N' Đã tạo database user: sManager';
+END
+ELSE
+BEGIN
+    PRINT N' Database user sManager đã tồn tại';
+END
+GO
+
+-- Gán quyền db_owner cho user (full permissions)
+ALTER ROLE db_owner ADD MEMBER sManager;
+PRINT N' Đã gán quyền db_owner cho sManager';
+GO
+
 -- =====================================================================
--- 2. XÓA BẢNG CŨ
+-- 3. XÓA BẢNG CŨ
 -- =====================================================================
 PRINT N'Đang xóa các bảng cũ (nếu có)...';
 -- FIX: Xóa tất cả Foreign Key constraints trước để tránh lỗi dependency
@@ -89,7 +123,7 @@ PRINT N'Đã xóa xong các bảng cũ.';
 GO
 
 -- =====================================================================
--- 3. TẠO CÁC BẢNG THEO 43 BẢNG MAPPING
+-- 4. TẠO CÁC BẢNG THEO 43 BẢNG MAPPING
 -- =====================================================================
 
 -- Bảng 1: NHANVIEN
@@ -442,13 +476,13 @@ CREATE TABLE CHUYEN_GIAO_HANG (
     -- Tong_quang_duong_van_chuyen đã bị XÓA (có thể tính từ DON_HANG)
     -- Thu_tu_lay_hang, Thu_tu_giao_hang đã CHUYỂN sang DON_HANG_DUOC_GIAO
     
-    so_luong_don_gop INT DEFAULT 1 CHECK (so_luong_don_gop >= 1), -- TRƯỜNG MỚI: Số đơn gộp trong chuyến
+    so_luong_don_gop INT DEFAULT 0 CHECK (so_luong_don_gop >= 0), -- TRƯỜNG MỚI: Số đơn gộp trong chuyến (0 khi mới tạo)
     
-    DriverID VARCHAR(10) ,
+    DriverID VARCHAR(10) NOT NULL,
     --ThoiGianBatDau DATETIME NOT NULL DEFAULT GETDATE(),
     --ThoiGianKetThuc DATETIME,
     TrangThaiChuyen NVARCHAR(50) DEFAULT N'Đang thực hiện',
-    CONSTRAINT FK_CGH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID) ON DELETE SET NULL ,
+    CONSTRAINT FK_CGH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID),
     --CONSTRAINT FK_CGH_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID),
     --CONSTRAINT CK_CGH_ThoiGian CHECK (ThoiGianKetThuc IS NULL OR ThoiGianKetThuc >= ThoiGianBatDau)
 );
@@ -550,7 +584,7 @@ CREATE TABLE SU_DUNG_XE_MAY (
     DriverID VARCHAR(10) NOT NULL,
     VehicleID VARCHAR(10) NOT NULL,
     PRIMARY KEY (DriverID, VehicleID),
-    CONSTRAINT FK_SDXM_TAIXEXEMAY FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_MAY(DriverID) ON DELETE CASCADE ,
+    CONSTRAINT FK_SDXM_TAIXEXEMAY FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_MAY(DriverID),
     CONSTRAINT FK_SDXM_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID)
 );
 GO
@@ -560,7 +594,7 @@ CREATE TABLE SU_DUNG_XE_TAI (
     DriverID VARCHAR(10) NOT NULL,
     VehicleID VARCHAR(10) NOT NULL,
     PRIMARY KEY (DriverID, VehicleID),
-    CONSTRAINT FK_SDXT_TAIXEXETAI FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_TAI(DriverID)ON DELETE CASCADE,
+    CONSTRAINT FK_SDXT_TAIXEXETAI FOREIGN KEY (DriverID) REFERENCES TAI_XE_XE_TAI(DriverID),
     CONSTRAINT FK_SDXT_XE FOREIGN KEY (VehicleID) REFERENCES XE(VehicleID)
 );
 GO
@@ -596,7 +630,7 @@ CREATE TABLE DANH_GIA_CUA_KHACH_HANG (
     DriverID VARCHAR(10), -- Thêm DriverID nếu đánh giá cả tài xế
     CONSTRAINT FK_DGCKH_KHACHHANG FOREIGN KEY (Ma_khach_hang) REFERENCES KHACH_HANG(Ma_khach_hang),
     CONSTRAINT FK_DGCKH_DONHANG FOREIGN KEY (Ma_don_hang) REFERENCES DON_HANG(Ma_don_hang),
-    CONSTRAINT FK_DGCKH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID) ON DELETE CASCADE
+    CONSTRAINT FK_DGCKH_TAIXE FOREIGN KEY (DriverID) REFERENCES TAI_XE(DriverID)
     -- Nên có ràng buộc UNIQUE(Ma_khach_hang, Ma_don_hang) để mỗi đơn hàng chỉ được đánh giá 1 lần?
 );
 GO
