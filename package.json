@@ -1,6 +1,10 @@
 {
   "dependencies": {
     "express": "^5.1.0",
-    "mssql": "^12.1.0"
+    "localforage": "^1.10.0",
+    "match-sorter": "^8.1.0",
+    "mssql": "^12.1.0",
+    "react-router-dom": "^7.9.6",
+    "sort-by": "^1.2.0"
   }
 }
