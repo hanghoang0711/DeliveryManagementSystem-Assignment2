@@ -8,18 +8,17 @@ interface SidebarProps {
 
 export function Sidebar({ activeView, onViewChange }: SidebarProps) {
   const menuItems = [
-    { id: 'trips' as ViewType, label: 'Trip Management', icon: ClipboardList },
-    { id: 'vehicles-drivers' as ViewType, label: 'Vehicles & Drivers', icon: Truck },
-    { id: 'exceptions' as ViewType, label: 'Exceptions', icon: AlertTriangle },
-    { id: 'clients' as ViewType, label: 'Clients', icon: Users },
-    { id: 'billing' as ViewType, label: 'Billing', icon: DollarSign },
-    { id: 'reporting' as ViewType, label: 'Reports', icon: BarChart3 },
+    { id: 'trips' as ViewType, label: 'Quản lý đơn hàng', icon: ClipboardList },
+    { id: 'vehicles-drivers' as ViewType, label: 'Phương tiện & Tài xế', icon: Truck },
+    { id: 'clients' as ViewType, label: 'Khách hàng', icon: Users },
+    { id: 'billing' as ViewType, label: 'Thanh toán', icon: DollarSign },
+    { id: 'reporting' as ViewType, label: 'Phân tích & Báo cáo', icon: BarChart3 },
   ];
 
   return (
     <aside className="w-64 bg-gray-900 text-white flex flex-col">
       <div className="p-6">
-        <h1 className="text-xl">Dispatch Control</h1>
+        <h1 className="text-xl">Hệ thống quản lý</h1>
         <p className="text-gray-400 text-sm mt-1">Admin Panel</p>
       </div>
       

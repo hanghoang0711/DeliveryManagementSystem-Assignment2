@@ -166,8 +166,8 @@ export function BillingReconciliation() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h2 className="text-2xl mb-2">Billing & Reconciliation</h2>
-        <p className="text-gray-600">Review trip billing, resolve discrepancies, and finalize invoices</p>
+        <h2 className="text-2xl mb-2">Thanh toán & Đối soát</h2>
+        <p className="text-gray-600">Xem chi tiết giá tiền, xử lý sai lệch và xuất hóa đơn</p>
       </div>
 
       {/* Stats */}

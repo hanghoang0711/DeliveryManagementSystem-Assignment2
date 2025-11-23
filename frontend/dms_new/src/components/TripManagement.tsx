@@ -149,8 +149,8 @@ export function TripManagement() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h2 className="text-2xl mb-2">Trip Management</h2>
-        <p className="text-gray-600">Review, assign, and monitor all transportation trips</p>
+        <h2 className="text-2xl mb-2">Quản lý đơn hàng</h2>
+        <p className="text-gray-600">Xem xét, phân công và theo dõi toàn bộ chuyến xe</p>
       </div>
 
       <div className="flex gap-4 mb-6">
@@ -271,14 +271,14 @@ export function TripManagement() {
                   <div className="flex items-start gap-2">
                     <MapPin className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm">Pickup: {trip.pickupLocation}</div>
+                      <div className="text-sm">Điểm lấy hàng: {trip.pickupLocation}</div>
                       <div className="text-xs text-gray-500">{formatTime(trip.scheduledPickup)}</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <MapPin className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm">Drop-off: {trip.dropoffLocation}</div>
+                      <div className="text-sm">Điểm giao hàng: {trip.dropoffLocation}</div>
                       <div className="text-xs text-gray-500">{formatTime(trip.scheduledDropoff)}</div>
                     </div>
                   </div>

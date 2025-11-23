@@ -59,8 +59,8 @@ export function Reporting() {
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl mb-2">Reports & Analytics</h2>
-          <p className="text-gray-600">Track operational metrics, performance, and business insights</p>
+          <h2 className="text-2xl mb-2">Phân tích & Báo cáo</h2>
+          <p className="text-gray-600">Theo dõi các chỉ số vận hành, hiệu suất và thông tin phân tích kinh doanh</p>
         </div>
         <div className="flex gap-3">
           <Select value={timeRange} onValueChange={setTimeRange}>

@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TripManagement } from './components/TripManagement';
 import { VehicleDriverSetup } from './components/VehicleDriverSetup';
-import { ExceptionHandling } from './components/ExceptionHandling';
 import { ClientManagement } from './components/ClientManagement';
 import { BillingReconciliation } from './components/BillingReconciliation';
 import { Reporting } from './components/Reporting';
 
-export type ViewType = 'live-map' | 'trips' | 'vehicles-drivers' | 'exceptions' | 'clients' | 'billing' | 'reporting';
+export type ViewType = 'trips' | 'vehicles-drivers' | 'clients' | 'billing' | 'reporting';
 
 export default function App() {
   const [activeView, setActiveView] = useState<ViewType>('live-map');
@@ -18,8 +17,6 @@ export default function App() {
         return <TripManagement />;
       case 'vehicles-drivers':
         return <VehicleDriverSetup />;
-      case 'exceptions':
-        return <ExceptionHandling />;
       case 'clients':
         return <ClientManagement />;
       case 'billing':

@@ -123,8 +123,8 @@ export function VehicleDriverSetup() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h2 className="text-2xl mb-2">Vehicles & Drivers</h2>
-        <p className="text-gray-600">Manage fleet vehicles, assign drivers, and configure availability</p>
+        <h2 className="text-2xl mb-2">Phương tiện & Tài xế</h2>
+        <p className="text-gray-600">Quản lý đội xe và tài xế</p>
       </div>
 
       <Tabs defaultValue="vehicles" className="space-y-6">
