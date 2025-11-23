@@ -64,6 +64,17 @@ db.TaiXeXeMay.belongsTo(db.TaiXe, {
   foreignKey: "DriverID", 
   targetKey: "DriverID" 
 });
+
+db.TaiXe.hasOne(db.TaiXeXeTai, { 
+  foreignKey: "DriverID",
+  sourceKey: "DriverID",
+  onDelete: "CASCADE"
+});
+db.TaiXeXeTai.belongsTo(db.TaiXe, { 
+  foreignKey: "DriverID", 
+  targetKey: "DriverID" 
+});
+
 db.TaiXe.hasMany(db.TaiXeSDT, { 
   foreignKey: "DriverID",
   sourceKey: "DriverID",
