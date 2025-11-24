@@ -35,16 +35,16 @@ const chuyenGiaoHangController = require('../controllers/chuyenGiaoHangControlle
  *           default: 10
  *         description: Số lượng bản ghi mỗi trang
  *       - in: query
- *         name: DriverID
+ *         name: driver_id
  *         schema:
  *           type: string
  *         description: Lọc theo mã tài xế
  *       - in: query
- *         name: TrangThaiChuyen
+ *         name: trang_thai
  *         schema:
  *           type: string
- *           enum: [Đang thực hiện, Hoàn thành, Đã hủy]
- *         description: Lọc theo trạng thái chuyến
+ *           enum: ['', 'Đang thực hiện', 'Hoàn thành', 'Đã hủy', 'Không tồn tại']
+ *         description: Lọc theo trạng thái chuyến (để trống để lấy tất cả, chọn "Không tồn tại" để test empty result)
  *     responses:
  *       200:
  *         description: Danh sách chuyến giao hàng

@@ -39,13 +39,39 @@ exports.getAllChuyenGiaoHang = async (req, res) => {
     const offset = (parseInt(page) - 1) * parseInt(limit);
     const limitInt = parseInt(limit);
 
+    // 🐛 DEBUG: Log received filter values
+    console.log('🔍 Filter params:', { trang_thai, driver_id });
+
     // Build where conditions
     const whereConditions = {};
     if (trang_thai) {
-      whereConditions.TrangThaiChuyen = trang_thai;
+      // Trim whitespace để tránh lỗi khoảng trắng thừa
+      whereConditions.TrangThaiChuyen = trang_thai.trim();
     }
     if (driver_id) {
-      whereConditions.DriverID = driver_id;
+      whereConditions.DriverID = driver_id.trim();
+    }
+
+    // 🐛 DEBUG: Log where conditions
+    console.log('🔍 Where conditions:', whereConditions);
+
+    // ✅ FIX: If no results found with filters, return empty instead of all records
+    // Check if filter is applied but no results
+    if (trang_thai || driver_id) {
+      const hasResults = await ChuyenGiaoHang.count({ where: whereConditions });
+      if (hasResults === 0) {
+        return res.status(200).json({
+          success: true,
+          message: 'Không tìm thấy chuyến giao hàng phù hợp với bộ lọc',
+          pagination: {
+            total: 0,
+            totalPages: 0,
+            currentPage: parseInt(page),
+            limit: limitInt
+          },
+          data: []
+        });
+      }
     }
 
     // Query with pagination

@@ -149,18 +149,23 @@ exports.getTopKhachHang = async (req, res) => {
       });
     }
     
+    // ✅ FIX: Thêm tiêu chí phụ - số đơn hàng để tránh trùng doanh thu
     // Gọi function và JOIN với KHACH_HANG + SO_DIEN_THOAI_CUA_KHACH_HANG để lấy Email, SDT
-    // Function chỉ trả về Ma_khach_hang, TongDoanhThu
-    // Test expect: Ma_khach_hang, Email, SDT, total_revenue
+    // + COUNT đơn hàng để làm tiêu chí sắp xếp phụ
+    // Test expect: Ma_khach_hang, Email, SDT, total_revenue, so_don_hang
     const results = await db.sequelize.query(
-      `SELECT 
+      `SELECT TOP (:topN)
         f.Ma_khach_hang,
         kh.email as Email,
         sdt.So_dien_thoai as SDT,
-        f.TongDoanhThu as total_revenue
-      FROM dbo.fn_TopKhachHangTheoDoanhThu(:topN, :startDate, :endDate) f
+        f.TongDoanhThu as total_revenue,
+        COUNT(dh.Ma_don_hang) as so_don_hang
+      FROM dbo.fn_TopKhachHangTheoDoanhThu(100, :startDate, :endDate) f
       LEFT JOIN KHACH_HANG kh ON f.Ma_khach_hang = kh.Ma_khach_hang
-      LEFT JOIN SO_DIEN_THOAI_CUA_KHACH_HANG sdt ON f.Ma_khach_hang = sdt.Ma_khach_hang`,
+      LEFT JOIN SO_DIEN_THOAI_CUA_KHACH_HANG sdt ON f.Ma_khach_hang = sdt.Ma_khach_hang
+      LEFT JOIN DON_HANG dh ON f.Ma_khach_hang = dh.Ma_khach_hang
+      GROUP BY f.Ma_khach_hang, kh.email, sdt.So_dien_thoai, f.TongDoanhThu
+      ORDER BY f.TongDoanhThu DESC, COUNT(dh.Ma_don_hang) DESC`,
       {
         replacements: { 
           topN, 

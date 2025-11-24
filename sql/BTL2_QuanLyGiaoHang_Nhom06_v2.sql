@@ -1,4 +1,23 @@
 ﻿-- ======================================================================
+-- 0. TẠO DATABASE
+-- ======================================================================
+USE master;
+GO
+
+-- Kiểm tra nếu database tồn tại thì xóa đi để tạo mới (tránh lỗi conflict dữ liệu cũ)
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'QuanLyGiaoHang_Nhom06')
+BEGIN
+    -- Đưa về chế độ Single User để kick hết kết nối cũ ra trước khi drop
+    ALTER DATABASE QuanLyGiaoHang_Nhom06 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE QuanLyGiaoHang_Nhom06;
+END
+GO
+
+-- Tạo lại database mới
+CREATE DATABASE QuanLyGiaoHang_Nhom06;
+GO
+
+-- ======================================================================
 -- 1. DROP LOGIN VÀ USER NẾU TỒN TẠI
 -- ======================================================================
 USE QuanLyGiaoHang_Nhom06;
@@ -10,8 +29,6 @@ BEGIN
     DROP USER [sManager];
     PRINT N'Database user sManager đã bị xóa.';
 END
-ELSE
-    PRINT N'Database user sManager không tồn tại, bỏ qua.';
 GO
 
 USE master;
@@ -23,8 +40,6 @@ BEGIN
     DROP LOGIN [sManager];
     PRINT N'Login sManager đã bị xóa.';
 END
-ELSE
-    PRINT N'Login sManager không tồn tại, bỏ qua.';
 GO
 
 -- ======================================================================
@@ -977,9 +992,9 @@ GO
 PRINT N'--- Chèn dữ liệu CHUYEN_GIAO_HANG (FIX: Bỏ VehicleID) ---';
 -- Loại bỏ cột VehicleID khỏi danh sách cột và danh sách VALUES
 INSERT INTO CHUYEN_GIAO_HANG (DeliveryID, so_luong_don_gop, DriverID, TrangThaiChuyen) VALUES
-('CGH001', 1, 'DRV001', N'Hoàn thành'),
-('CGH002', 1, 'DRV002', N'Hoàn thành'),
-('CGH003', 1, 'DRV003', N'Hoàn thành'),
+('CGH001', 1, 'DRV001', N'Đang thực hiện'),
+('CGH002', 1, 'DRV002', N'Đang thực hiện'),
+('CGH003', 1, 'DRV003', N'Đã hủy'),
 ('CGH004', 2, 'DRV006', N'Hoàn thành'),
 ('CGH005', 3, 'DRV008', N'Hoàn thành');
 GO
@@ -1148,7 +1163,7 @@ PRINT N'=====================================================================';
 GO
 
 -- =====================================================================
--- 6. FUNCTIONS VÀ STORED PROCEDURES
+-- 6. FUNCTIONS VÀ STORED PROCEDURES (ĐÃ FIX LỖI MSG 208)
 -- =====================================================================
 PRINT N'';
 PRINT N'=====================================================================';
@@ -1156,10 +1171,17 @@ PRINT N'6. FUNCTIONS VÀ STORED PROCEDURES';
 PRINT N'=====================================================================';
 GO
 
+-- ---------------------------------------------------------------------
 -- Function 1: Top Khách Hàng Theo Doanh Thu
-PRINT N'--- Tạo function fn_TopKhachHangTheoDoanhThu (FIX: Không dùng HOA_DON đã bị xóa) ---';
+-- ---------------------------------------------------------------------
+PRINT N'--- Tạo function fn_TopKhachHangTheoDoanhThu ---';
 GO
-CREATE OR ALTER FUNCTION fn_TopKhachHangTheoDoanhThu
+-- Xóa function nếu đã tồn tại
+IF OBJECT_ID('fn_TopKhachHangTheoDoanhThu', 'TF') IS NOT NULL 
+    DROP FUNCTION fn_TopKhachHangTheoDoanhThu;
+GO
+
+CREATE FUNCTION fn_TopKhachHangTheoDoanhThu
 (
     @TopN INT,
     @TuNgay DATE,
@@ -1180,12 +1202,11 @@ BEGIN
     INSERT INTO @Result
     SELECT TOP (@TopN)
            KH.Ma_khach_hang,
-           -- FIX: Tính doanh thu từ DON_HANG (phí vận chuyển + giá trị hàng hóa)
+           -- FIX: Tính doanh thu từ DON_HANG
            SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) AS TongDoanhThu
     FROM KHACH_HANG KH
     JOIN DON_HANG DH ON KH.Ma_khach_hang = DH.Ma_khach_hang
-    -- BỎ JOIN HOA_DON (đã bị xóa khỏi ERD)
-    WHERE DH.Trang_thai_don IN (N'Giao hàng thành công', N'Đã hoàn thành') -- Chỉ tính đơn thành công
+    WHERE DH.Trang_thai_don IN (N'Giao hàng thành công', N'Đã hoàn thành')
       AND CAST(DH.thoi_gian_dat_don AS DATE) BETWEEN @TuNgay AND @DenNgay  
     GROUP BY KH.Ma_khach_hang
     HAVING SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) > 0  
@@ -1195,10 +1216,17 @@ BEGIN
 END;
 GO
 
+-- ---------------------------------------------------------------------
 -- Function 2: Top Tài Xế Đơn Giản
+-- ---------------------------------------------------------------------
 PRINT N'--- Tạo function fn_TopTaiXeDonGian ---';
 GO
-CREATE OR ALTER FUNCTION fn_TopTaiXeDonGian
+-- Xóa function nếu đã tồn tại
+IF OBJECT_ID('fn_TopTaiXeDonGian', 'TF') IS NOT NULL 
+    DROP FUNCTION fn_TopTaiXeDonGian;
+GO
+
+CREATE FUNCTION fn_TopTaiXeDonGian
 (
     @TopN INT,
     @MinStar DECIMAL(2,1)
@@ -1238,10 +1266,17 @@ PRINT N'Test fn_TopTaiXeDonGian:';
 SELECT * FROM fn_TopTaiXeDonGian(5, 4.0);
 GO
 
+-- ---------------------------------------------------------------------
 -- Stored Procedure 1: Tạo Đơn Hàng
+-- ---------------------------------------------------------------------
 PRINT N'--- Tạo stored procedure sp_TaoDonHang ---';
 GO
-CREATE OR ALTER PROCEDURE sp_TaoDonHang
+-- Xóa procedure nếu đã tồn tại (FIX LỖI MSG 208 Ở ĐÂY)
+IF OBJECT_ID('sp_TaoDonHang', 'P') IS NOT NULL 
+    DROP PROCEDURE sp_TaoDonHang;
+GO
+
+CREATE PROCEDURE sp_TaoDonHang
 (
     @MaKH VARCHAR(10),
     @SDTNhan VARCHAR(15),
@@ -1301,7 +1336,11 @@ BEGIN
             dia_chi_lay_hang,
             dia_chi_giao_hang,
             phuong_thuc_giao_hang,
-            Ma_khach_hang
+            Ma_khach_hang,
+            -- Các trường NOT NULL mới thêm vào cần giá trị mặc định hoặc tính toán
+            phi_van_chuyen_goc,
+            phi_van_chuyen_sau_giam,
+            quang_duong
         )
         VALUES
         (
@@ -1314,7 +1353,11 @@ BEGIN
             @DiaChiLay,
             @DiaChiGiao,
             @PhuongThucGiao,
-            @MaKH
+            @MaKH,
+            -- Giả định giá trị cho các trường mới để tránh lỗi INSERT
+            @PhiVanChuyen, -- phi_van_chuyen_goc
+            @PhiVanChuyen, -- phi_van_chuyen_sau_giam (tạm thời chưa giảm)
+            5.0            -- quang_duong (giả định 5km)
         );
 
         COMMIT;
@@ -1329,10 +1372,17 @@ BEGIN
 END;
 GO
 
+-- ---------------------------------------------------------------------
 -- Stored Procedure 2: Hủy Đơn Hàng
+-- ---------------------------------------------------------------------
 PRINT N'--- Tạo stored procedure sp_HuyDonHang ---';
 GO
-CREATE OR ALTER PROCEDURE sp_HuyDonHang
+-- Xóa procedure nếu đã tồn tại (FIX LỖI MSG 208 Ở ĐÂY)
+IF OBJECT_ID('sp_HuyDonHang', 'P') IS NOT NULL 
+    DROP PROCEDURE sp_HuyDonHang;
+GO
+
+CREATE PROCEDURE sp_HuyDonHang
 (
     @MaDon VARCHAR(10),
     @LyDo NVARCHAR(255) = NULL
@@ -1374,7 +1424,7 @@ BEGIN
         SET Trang_thai_don = N'Đã hủy'
         WHERE Ma_don_hang = @MaDon;
 
-        -- Thêm vào bảng ĐƠN_HÀNG_HỦY
+        -- Thêm vào bảng DON_HANG_HUY
         INSERT INTO DON_HANG_HUY (Ma_khach_hang, Thoi_gian_huy, Ly_do_huy, Ma_don_hang)
         VALUES (@MaKH, GETDATE(), @LyDo, @MaDon);
 
