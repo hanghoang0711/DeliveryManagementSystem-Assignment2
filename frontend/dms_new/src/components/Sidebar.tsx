@@ -1,5 +1,6 @@
 import { Truck, MapPin, AlertTriangle, Users, DollarSign, BarChart3, ClipboardList } from 'lucide-react';
 import { ViewType } from '../App';
+import { Logout } from './Login';
 
 interface SidebarProps {
   activeView: ViewType;
@@ -44,17 +45,15 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
         })}
       </nav>
       
-      <div className="p-4 border-t border-gray-800">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
-            A
-          </div>
-          <div>
-            <div>Admin User</div>
-            <div className="text-sm text-gray-400">admin@dispatch.com</div>
-          </div>
-        </div>
+      <div className='p-4'>
+        <button
+          className="w-full h-full py-2 bg-blue-500 hover:bg-gray-800 rounded-xl cursor-pointer"
+          onClick={() => Logout()}
+        >
+          Sign out
+        </button>
       </div>
+
     </aside>
   );
 }

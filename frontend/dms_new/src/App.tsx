@@ -5,14 +5,33 @@ import { VehicleDriverSetup } from './components/VehicleDriverSetup';
 import { ClientManagement } from './components/ClientManagement';
 import { BillingReconciliation } from './components/BillingReconciliation';
 import { Reporting } from './components/Reporting';
+import { LoginPage } from './components/Login';
+import axios from 'axios';
 
-export type ViewType = 'trips' | 'vehicles-drivers' | 'clients' | 'billing' | 'reporting';
+export type ViewType = 'login' | 'trips' | 'vehicles-drivers' | 'clients' | 'billing' | 'reporting';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<ViewType>('live-map');
+  const [activeView, setActiveView] = useState<ViewType>('trips');
 
+  let token = localStorage.getItem('authToken');
+  console.log(token);
+	
+  if (!token) {
+    return (
+      <div className="h-screen flex bg-gray-50">
+        <main className="flex-1 overflow-auto">
+            <LoginPage />
+        </main>
+      </div>
+    )
+  }
+
+  axios.defaults.headers.common['Authorization'] = token;
+  
   const renderView = () => {
     switch (activeView) {
+      case 'login':
+        return <LoginPage />
       case 'trips':
         return <TripManagement />;
       case 'vehicles-drivers':
