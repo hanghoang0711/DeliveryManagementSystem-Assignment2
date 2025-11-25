@@ -1328,36 +1328,43 @@ BEGIN
         INSERT INTO DON_HANG
         (
             Ma_don_hang,
-            Thoi_gian_giao_hang_du_kien,
-            gia_tri_hang_hoa_phi_van_chuyen,
+            Ma_khach_hang,
             SDT_nguoi_nhan,
             ten_nguoi_nhan,
-            can_nang,
             dia_chi_lay_hang,
             dia_chi_giao_hang,
+            can_nang,
+            gia_tri_hang_hoa_phi_van_chuyen,
             phuong_thuc_giao_hang,
-            Ma_khach_hang,
-            -- Các trường NOT NULL mới thêm vào cần giá trị mặc định hoặc tính toán
+            Thoi_gian_giao_hang_du_kien,
+            Trang_thai_don,              --FIX: Thêm trường này
             phi_van_chuyen_goc,
             phi_van_chuyen_sau_giam,
-            quang_duong
+            so_tien_duoc_giam,
+            quang_duong,
+            thoi_gian_dat_don,           --FIX: Thêm trường này
+            diem_tich_luy
         )
         VALUES
         (
             @MaDon,
-            @ThoiGianGiaoDuKien,
-            @GiaTri,
+            @MaKH,
             @SDTNhan,
             @TenNguoiNhan,
-            @CanNang,
             @DiaChiLay,
             @DiaChiGiao,
+            @CanNang,
+            @GiaTri,
             @PhuongThucGiao,
-            @MaKH,
-            -- Giả định giá trị cho các trường mới để tránh lỗi INSERT
-            @PhiVanChuyen, -- phi_van_chuyen_goc
-            @PhiVanChuyen, -- phi_van_chuyen_sau_giam (tạm thời chưa giảm)
-            5.0            -- quang_duong (giả định 5km)
+            @ThoiGianGiaoDuKien,
+            --GIÁ TRỊ MẶC ĐỊNH CHO CÁC TRƯỜNG MỚI
+            N'Đang xử lý',               -- Trang_thai_don (phải khớp CHECK constraint)
+            @PhiVanChuyen,               -- phi_van_chuyen_goc
+            @PhiVanChuyen,               -- phi_van_chuyen_sau_giam (chưa giảm)
+            0,                           -- so_tien_duoc_giam (chưa có giảm giá)
+            5.0,                         -- quang_duong (giả định 5km)
+            GETDATE(),                   -- hoi_gian_dat_don (thời gian hiện tại)
+            0                            -- diem_tich_luy (mặc định 0)
         );
 
         COMMIT;

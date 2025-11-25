@@ -220,7 +220,7 @@ exports.createDonHang = async (req, res) => {
       raw: true
     });
 
-    let newMaDonHang = 'DH0001';
+    let newMaDonHang = 'DH001';
     if (allDonHang && allDonHang.length > 0) {
       // Extract numbers and find max
       const numbers = allDonHang
@@ -230,7 +230,8 @@ exports.createDonHang = async (req, res) => {
       if (numbers.length > 0) {
         const maxNumber = Math.max(...numbers);
         const newNumber = maxNumber + 1;
-        newMaDonHang = 'DH' + String(newNumber).padStart(4, '0');
+        // ✅ FIX: Sử dụng 3 chữ số thay vì 4 (DH001, DH002, ..., DH010, DH011)
+        newMaDonHang = 'DH' + String(newNumber).padStart(3, '0');
       }
     }
 

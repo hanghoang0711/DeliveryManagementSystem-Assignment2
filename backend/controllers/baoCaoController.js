@@ -8,6 +8,7 @@
 
 const db = require('../models');
 const { QueryTypes } = require('sequelize');
+const moment = require('moment'); // Ensure moment is imported for date formatting
 
 /**
  * ============================================
@@ -121,6 +122,174 @@ exports.getTopTaiXe = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Lỗi server khi lấy báo cáo top tài xế',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * ============================================
+ * TẠO ĐƠN HÀNG SỬ DỤNG STORED PROCEDURE
+ * ============================================
+ * Endpoint: POST /api/bao-cao/tao-don-hang-sp
+ * 
+ * Frontend gửi lên 8 params:
+ * - Ma_khach_hang, SDT_nguoi_nhan, ten_nguoi_nhan
+ * - dia_chi_lay_hang, dia_chi_giao_hang
+ * - can_nang, gia_tri_hang_hoa, phuong_thuc_giao_hang
+ * 
+ * Backend tự tính:
+ * - PhiVanChuyen = 15,000 * 5 (giả định 5km)
+ * - ThoiGianGiaoDuKien = Hiện tại + 3 ngày
+ * 
+ * Stored Procedure: sp_TaoDonHang
+ */
+exports.createOrderUsingSP = async (req, res) => {
+  try {
+    // ========== 1. LẤY DỮ LIỆU TỪ REQUEST BODY ==========
+    const {
+      Ma_khach_hang,
+      SDT_nguoi_nhan,
+      ten_nguoi_nhan,
+      dia_chi_lay_hang,
+      dia_chi_giao_hang,
+      can_nang,
+      gia_tri_hang_hoa,
+      phuong_thuc_giao_hang
+    } = req.body;
+
+    // ========== 2. VALIDATION CƠ BẢN ==========
+    if (!Ma_khach_hang || !SDT_nguoi_nhan || !ten_nguoi_nhan ||
+        !dia_chi_lay_hang || !dia_chi_giao_hang || !can_nang ||
+        !gia_tri_hang_hoa || !phuong_thuc_giao_hang) {
+      return res.status(400).json({
+        success: false,
+        message: 'Thiếu thông tin bắt buộc'
+      });
+    }
+
+    // ========== 3. KIỂM TRA SỰ TỒN TẠI CỦA KHÁCH HÀNG ==========
+    const customerExists = await db.sequelize.query(
+      'SELECT 1 FROM KHACH_HANG WHERE Ma_khach_hang = :maKH',
+      {
+        replacements: { maKH: Ma_khach_hang },
+        type: QueryTypes.SELECT
+      }
+    );
+
+    if (!customerExists || customerExists.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Khách hàng không tồn tại'
+      });
+    }
+
+    // ========== 4. TÍNH TOÁN THAM SỐ TỰ ĐỘNG ==========
+    // PhiVanChuyen: Giả định 5km * 15,000 VND/km
+    const quangDuongGiaDinh = 5.0;
+    const donGiaKm = 15000;
+    const phiVanChuyen = quangDuongGiaDinh * donGiaKm;
+
+    // ThoiGianGiaoDuKien: Hiện tại + 3 ngày
+    const thoiGianGiaoDuKien = moment().add(3, 'days').format('YYYY-MM-DD HH:mm:ss');
+
+    // ========== 5. GỌI STORED PROCEDURE ==========
+    /**
+     * SQL Server Stored Procedure:
+     * EXEC sp_TaoDonHang 
+     *   @MaKH, @SDTNhan, @TenNguoiNhan,
+     *   @DiaChiLay, @DiaChiGiao, @CanNang,
+     *   @GiaTri, @PhiVanChuyen, @PhuongThucGiao, @ThoiGianGiaoDuKien
+     */
+    const result = await db.sequelize.query(
+      `EXEC sp_TaoDonHang 
+        @MaKH = :maKH,
+        @SDTNhan = :sdtNhan,
+        @TenNguoiNhan = :tenNguoiNhan,
+        @DiaChiLay = :diaChiLay,
+        @DiaChiGiao = :diaChiGiao,
+        @CanNang = :canNang,
+        @GiaTri = :giaTri,
+        @PhiVanChuyen = :phiVanChuyen,
+        @PhuongThucGiao = :phuongThucGiao,
+        @ThoiGianGiaoDuKien = :thoiGianGiaoDuKien`,
+      {
+        replacements: {
+          maKH: Ma_khach_hang,
+          sdtNhan: SDT_nguoi_nhan,
+          tenNguoiNhan: ten_nguoi_nhan,
+          diaChiLay: dia_chi_lay_hang,
+          diaChiGiao: dia_chi_giao_hang,
+          canNang: can_nang,
+          giaTri: gia_tri_hang_hoa,
+          phiVanChuyen: phiVanChuyen,
+          phuongThucGiao: phuong_thuc_giao_hang,
+          thoiGianGiaoDuKien: thoiGianGiaoDuKien
+        },
+        type: QueryTypes.SELECT
+      }
+    );
+
+    // ========== 6. XỬ LÝ KẾT QUẢ ==========
+    if (!result || result.length === 0) {
+      return res.status(500).json({
+        success: false,
+        message: 'Không thể tạo đơn hàng. Vui lòng kiểm tra lại dữ liệu.'
+      });
+    }
+
+    // Stored Procedure trả về: MaDonHangMoi
+    const maDonHangMoi = result[0].MaDonHangMoi;
+
+    // ========== 7. TRẢ VỀ KẾT QUẢ ==========
+    res.status(201).json({
+      success: true,
+      message: 'Tạo đơn hàng thành công bằng stored procedure',
+      data: {
+        Ma_don_hang: maDonHangMoi,
+        Trang_thai_don: 'Đang xử lý',
+        phi_van_chuyen: phiVanChuyen,
+        thoi_gian_giao_du_kien: thoiGianGiaoDuKien,
+        quang_duong_gia_dinh: quangDuongGiaDinh
+      },
+      calculatedParams: {
+        phiVanChuyen: phiVanChuyen,
+        thoiGianGiaoDuKien: thoiGianGiaoDuKien,
+        quangDuongGiaDinh: quangDuongGiaDinh
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Lỗi khi tạo đơn hàng bằng stored procedure:', error);
+
+    // Kiểm tra lỗi cụ thể
+    if (error.message.includes('Could not find stored procedure')) {
+      return res.status(500).json({
+        success: false,
+        message: 'Stored procedure sp_TaoDonHang chưa tồn tại trong database',
+        error: error.message
+      });
+    }
+
+    if (error.message.includes('Khách hàng không tồn tại')) {
+      return res.status(404).json({
+        success: false,
+        message: 'Khách hàng không tồn tại',
+        error: error.message
+      });
+    }
+
+    if (error.message.includes('CHECK constraint')) {
+      return res.status(500).json({
+        success: false,
+        message: 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các giá trị đầu vào.',
+        error: error.message
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server khi tạo đơn hàng bằng stored procedure',
       error: error.message
     });
   }

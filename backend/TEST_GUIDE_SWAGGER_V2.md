@@ -777,6 +777,51 @@ http://localhost:3000/api-docs
 
 ---
 
+### ✅ TC-RPT-06: Tạo đơn hàng bằng Stored Procedure
+
+**Endpoint:** `POST /api/bao-cao/tao-don-hang-sp`
+
+**Request Body:**
+```json
+{
+  "Ma_khach_hang": "KH1",
+  "SDT_nguoi_nhan": "0901234567",
+  "ten_nguoi_nhan": "Nguyen Van Test SP",
+  "dia_chi_lay_hang": "123 Le Loi, Q1, TPHCM",
+  "dia_chi_giao_hang": "456 Nguyen Hue, Q3, TPHCM",
+  "can_nang": 2.5,
+  "gia_tri_hang_hoa": 150000,
+  "phuong_thuc_giao_hang": "Giao nhanh"
+}
+```
+
+**Expected Response (201):**
+```json
+{
+  "success": true,
+  "message": "Tạo đơn hàng thành công bằng stored procedure",
+  "data": {
+    "Ma_don_hang": "DH011",
+    "Trang_thai_don": "Đang xử lý",
+    "phi_van_chuyen": 75000,
+    "thoi_gian_giao_du_kien": "2025-11-28T14:30:00.000Z",
+    "quang_duong_gia_dinh": 5
+  },
+  "calculatedParams": {
+    "phiVanChuyen": 75000,
+    "thoiGianGiaoDuKien": "2025-11-28T14:30:00.000Z",
+    "quangDuongGiaDinh": 5
+  }
+}
+```
+
+**Ghi chú:** 
+- Backend tự tính `PhiVanChuyen = 5km * 15,000 = 75,000 VND`
+- Backend tự tính `ThoiGianGiaoDuKien = Hiện tại + 3 ngày`
+- Mã đơn hàng format: `DH011`, `DH012`, ... (3 chữ số)
+
+---
+
 ## 📝 QUY TRÌNH TEST GIAI ĐOẠN 2
 
 ### Bước 1: Test Order Management
@@ -801,6 +846,7 @@ http://localhost:3000/api-docs
 3. TC-RPT-03 → Top customers default
 4. TC-RPT-04 → Top customers filtered
 5. TC-RPT-05 → Invalid params
+6. TC-RPT-06 → Create order using SP
 
 ---
 
@@ -828,14 +874,15 @@ http://localhost:3000/api-docs
 | TC-RPT-03 | /api/bao-cao/top-khach-hang | GET | 200 ✅ |
 | TC-RPT-04 | /api/bao-cao/top-khach-hang | GET | 200 ✅ |
 | TC-RPT-05 | /api/bao-cao/top-tai-xe | GET | 400 ❌ |
+| TC-RPT-06 | /api/bao-cao/tao-don-hang-sp | POST | 201 ✅ |
 
 ---
 
 ## 📈 TỔNG KẾT TOÀN BỘ
 
-**Tổng số test:** 26 testcases  
+**Tổng số test:** 27 testcases  
 - Giai đoạn 1: 9 tests (Auth + Driver)  
-- Giai đoạn 2: 17 tests (Order + Delivery + Report)
+- Giai đoạn 2: 18 tests (Order + Delivery + Report)
 
 ---
 
