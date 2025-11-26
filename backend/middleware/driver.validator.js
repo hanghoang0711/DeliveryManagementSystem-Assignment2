@@ -3,8 +3,7 @@ const { body, param, validationResult } = require("express-validator");
 // Validation rules
 const validateTaiXe = [
   body("DriverID")
-    .notEmpty().withMessage("DriverID không được để trống"),
-
+    .optional(),
   body("Ho_ten")
     .notEmpty().withMessage("Họ tên không được để trống"),
 

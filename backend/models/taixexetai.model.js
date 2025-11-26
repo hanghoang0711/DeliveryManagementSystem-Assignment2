@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     Kinh_nghiem_van_chuyen: { type: DataTypes.STRING (255)}
   }, {
     tableName: "TAI_XE_XE_TAI",
-    timestamps: false
+    timestamps: false,
+    freezeTableName: true
   });
 
   return TaiXeXeTai;

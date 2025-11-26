@@ -5,6 +5,24 @@ const { Op } = require("sequelize");
 // Create TaiXe
 exports.createTaiXe = async (req, res) => {
   try {
+    delete req.body.DriverID;
+
+    // 2. Sinh DriverID tự động
+    const allDrivers = await TaiXe.findAll({ attributes: ['DriverID'], raw: true });
+    let newDriverID = 'DRV0001';
+    if (allDrivers.length > 0) {
+      const numbers = allDrivers
+        .map(d => parseInt(d.DriverID.replace('DRV', '')))
+        .filter(n => !isNaN(n));
+
+      if (numbers.length > 0) {
+        const maxNumber = Math.max(...numbers);
+        newDriverID = 'DRV' + String(maxNumber + 1).padStart(4, '0');
+      }
+    }
+
+    req.body.DriverID = newDriverID;
+
 
     const newTaiXe = await TaiXe.create(req.body);
 
@@ -15,7 +33,7 @@ exports.createTaiXe = async (req, res) => {
       );
     }
 
-    const taiXeData = newTaiXe.toJSON();
+    const taiXeData = await TaiXe.findByPk(newTaiXe.DriverID);
 
     res.status(201).json({
       message: "Tài xế tạo thành công",

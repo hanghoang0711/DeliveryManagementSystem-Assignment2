@@ -70,8 +70,8 @@ const options = {
           properties: {
             DriverID: {
               type: 'string',
-              example: 'DRVTEST10',
-              description: 'Driver ID (10 characters max)'
+              readOnly: true,
+              description: 'Driver ID (auto-generated)'
             },
             Ho_ten: {
               type: 'string',

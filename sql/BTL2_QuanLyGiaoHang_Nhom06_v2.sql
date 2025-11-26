@@ -1189,7 +1189,8 @@ CREATE FUNCTION fn_TopKhachHangTheoDoanhThu
 )
 RETURNS @Result TABLE (
     Ma_khach_hang VARCHAR(10),
-    TongDoanhThu MONEY
+    TongDoanhThu MONEY,
+    TongDonHang INT
 )
 AS
 BEGIN
@@ -1203,14 +1204,16 @@ BEGIN
     SELECT TOP (@TopN)
            KH.Ma_khach_hang,
            -- FIX: Tính doanh thu từ DON_HANG
-           SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) AS TongDoanhThu
+           SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) AS TongDoanhThu,
+           COUNT(DH.Ma_don_hang) AS TongDonHang
     FROM KHACH_HANG KH
     JOIN DON_HANG DH ON KH.Ma_khach_hang = DH.Ma_khach_hang
     WHERE DH.Trang_thai_don IN (N'Giao hàng thành công', N'Đã hoàn thành')
       AND CAST(DH.thoi_gian_dat_don AS DATE) BETWEEN @TuNgay AND @DenNgay  
     GROUP BY KH.Ma_khach_hang
     HAVING SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) > 0  
-    ORDER BY SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) DESC; 
+    ORDER BY SUM(ISNULL(DH.phi_van_chuyen_sau_giam, 0) + ISNULL(DH.gia_tri_hang_hoa_phi_van_chuyen, 0)) DESC,
+                COUNT(DH.Ma_don_hang) DESC;
 
     RETURN;
 END;
