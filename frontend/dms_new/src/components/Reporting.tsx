@@ -48,18 +48,8 @@ const rejectionReasons = [
 export function Reporting() {
   const [timeRange, setTimeRange] = useState('week');
 
-  const totalTrips = dailyVolumeData.reduce((sum, d) => sum + d.trips, 0);
-  const totalOnTime = dailyVolumeData.reduce((sum, d) => sum + d.onTime, 0);
-  const onTimeRate = ((totalOnTime / totalTrips) * 100).toFixed(1);
-
-  const totalRevenue = revenueData.reduce((sum, d) => sum + d.revenue, 0);
-  const avgRevenue = totalRevenue / revenueData.length;
-  const revenueGrowth = ((revenueData[3].revenue - revenueData[0].revenue) / revenueData[0].revenue * 100).toFixed(1);
-
   const [driverData, setDriverData] = useState([]);
-  
-  const [driverMaxStar, setdriverMaxStar] = useState(5.0);
-  const [driverMinStar, setdriverMinStar] = useState(1.0);
+  const [driverMinStar, setdriverMinStar] = useState(4.0);
 
   useEffect(() => {
     async function getData() {
@@ -68,179 +58,125 @@ export function Reporting() {
       await axios
       .get('http://localhost:3000/api/bao-cao/top-tai-xe')
       .then(res => {
-        setDriverData(res.data.data)
         console.log(res.data.data);
+
+        let data = res.data.data.filter(x => {
+          let d = x["diem_trung_binh"];
+          return driverMinStar <= d;
+        })
+
+        setDriverData(data)
+      }).catch(e => console.log(e));
+    }
+
+    getData()
+  }, [driverMinStar]);
+
+  const [topCustomer, setTopCustomer] = useState([]);
+
+  useEffect(() => {
+    async function getData() {
+      axios.defaults.headers.common['Authorization'] = localStorage.getItem('authToken');
+
+      await axios
+      .get('http://localhost:3000/api/bao-cao/top-khach-hang')
+      .then(res => {
+        console.log(res.data.data);
+        setTopCustomer(res.data.data)
       }).catch(e => console.log(e));
     }
 
     getData()
   }, []);
 
+  const [orders, setOrders] = useState([]);
+  const [ordersPageNum, setOrdersPageNum] = useState(1);
+  const [ordersPageNext, setOrdersPageNext] = useState(false);
+  const [ordersPagePrev, setOrdersPagePrev] = useState(false);
+  useEffect(() => {
+    async function getData() {
+      axios.defaults.headers.common['Authorization'] = localStorage.getItem('authToken');
+
+      await axios
+      .get('http://localhost:3000/api/don-hang', {
+        params: {
+          limit: 5,
+          page: ordersPageNum
+        }
+      })
+      .then(res => {
+        console.log(res.data);
+        setOrders(res.data.data);
+        setOrdersPageNext(res.data.pagination.hasNextPage);
+        setOrdersPagePrev(res.data.pagination.hasPrevPage);
+      }).catch(e => console.log(e));
+    }
+
+    getData()
+  }, [ordersPageNum]);
+
+  const [trips, setTrips] = useState([]);
+  const [tripsPageNum, setTripsPageNum] = useState(1);
+  const [tripsPageNext, setTripsPageNext] = useState(false);
+  const [tripsPagePrev, setTripePagePrev] = useState(false);
+  const [tripsTotalOrders, setTripsTotalOrders] = useState(0);
+  const [tripsTotalDist, setTripsTotalDist] = useState(0);
+  const [tripsNum, setTripsNum] = useState(0);
+
+  useEffect(() => {
+    async function getData() {
+      axios.defaults.headers.common['Authorization'] = localStorage.getItem('authToken');
+
+      await axios
+      .get('http://localhost:3000/api/chuyen-giao-hang', {
+        params: {
+          limit: 5,
+          page: ordersPageNum
+        }
+      })
+      .then(res => {
+        console.log(res.data);
+        let data = res.data.data;
+        setTrips(data);
+        setTripsPageNext(res.data.pagination.hasNextPage);
+        setTripePagePrev(res.data.pagination.hasPrevPage);
+
+        setTripsNum(data.length)
+
+        setTripsTotalOrders(data
+          .reduce((a: number, c: any) => 
+            a + c["so_luong_don_gop"],
+          0)
+        )
+
+        setTripsTotalDist(data
+          .reduce((a: number, c: any) => 
+            a + c["donHangs"].reduce((a: number, c: any ) => a + c["quang_duong"], 0), 
+          0)  
+        )
+        
+      }).catch(e => console.log(e));
+    }
+
+    getData()
+  }, [tripsPageNum]);
+
   return (
-    <div className="p-6">
+    <div className="p-6 gap-4">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-2xl mb-2">Phân tích & Báo cáo</h2>
-          <p className="text-gray-600">Theo dõi các chỉ số vận hành, hiệu suất và thông tin phân tích kinh doanh</p>
-        </div>
-        <div className="flex gap-3">
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-40">
-              <Calendar className="w-4 h-4 mr-2" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="week">This Week</SelectItem>
-              <SelectItem value="month">This Month</SelectItem>
-              <SelectItem value="quarter">This Quarter</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export PDF
-          </Button>
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
-          </Button>
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">Total Trips</div>
-            <BarChart3 className="w-4 h-4 text-gray-400" />
+      <Card className="p-6 mt-4">
+        <div className='flex'>
+          <h3 className="mb-4 w-full">Top tài xế</h3>
+          <div className='flex g-1'>
+            <p className='w-full'>Filter min rating: </p>
+            <input type="number" value={driverMinStar} onChange={(e) => setdriverMinStar(e.target.value)} min="0" max="5"></input>
           </div>
-          <div className="text-2xl mb-1">{totalTrips}</div>
-          <div className="flex items-center gap-1 text-sm text-green-600">
-            <TrendingUp className="w-4 h-4" />
-            <span>+12% vs last week</span>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">On-Time Rate</div>
-            <Clock className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="text-2xl mb-1">{onTimeRate}%</div>
-          <div className="flex items-center gap-1 text-sm text-green-600">
-            <TrendingUp className="w-4 h-4" />
-            <span>+2.3% improvement</span>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">Total Revenue</div>
-            <DollarSign className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="text-2xl mb-1">${totalRevenue.toLocaleString()}</div>
-          <div className="flex items-center gap-1 text-sm text-green-600">
-            <TrendingUp className="w-4 h-4" />
-            <span>+{revenueGrowth}% growth</span>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-600">Active Drivers</div>
-            <Users className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="text-2xl mb-1">{driverPerformance.length}</div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <span>All shifts covered</span>
-          </div>
-        </Card>
-      </div>
-
-      {/* Charts Grid */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
-        {/* Daily Volume Chart */}
-        <Card className="p-6">
-          <h3 className="mb-4">Daily Trip Volume</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dailyVolumeData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
-              <Bar dataKey="delayed" stackId="a" fill="#EF4444" name="Delayed" />
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
-
-        {/* Revenue Trend */}
-        <Card className="p-6">
-          <h3 className="mb-4">Revenue Trend</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="week" />
-              <YAxis />
-              <Tooltip formatter={(value) => `$${value}`} />
-              <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name="Revenue" />
-            </LineChart>
-          </ResponsiveContainer>
-        </Card>
-
-        {/* Trip Type Distribution */}
-        <Card className="p-6">
-          <h3 className="mb-4">Trip Types Distribution</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={tripTypeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {tripTypeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </Card>
-
-        {/* Rejection Reasons */}
-        <Card className="p-6">
-          <h3 className="mb-4">Trip Rejection Reasons</h3>
-          <div className="space-y-3">
-            {rejectionReasons.map((item, index) => (
-              <div key={index}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-700">{item.reason}</span>
-                  <span>{item.count}</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{
-                      width: `${(item.count / Math.max(...rejectionReasons.map(r => r.count))) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* Driver Performance Table */}
-      <Card className="p-6">
-        <h3 className="mb-4">Driver Performance Summary</h3>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -253,7 +189,7 @@ export function Reporting() {
             <tbody>
               {driverData.map((driver) => {
                 return (
-                  <tr key={driver["Ma_tai_xe"]} className="border-b hover:bg-gray-50">
+                  <tr className="border-b hover:bg-gray-50">
                     <td className="py-3 px-4">
                       <div>
                         <div>{driver["Ten_tai_xe"]}</div>
@@ -276,34 +212,156 @@ export function Reporting() {
         </div>
       </Card>
 
-      {/* Operational Efficiency */}
-      <div className="grid grid-cols-3 gap-4 mt-6">
-        <Card className="p-4">
-          <h4 className="mb-3">Avg Trip Duration</h4>
-          <div className="text-2xl mb-1">32 min</div>
-          <div className="flex items-center gap-1 text-sm text-green-600">
-            <TrendingDown className="w-4 h-4" />
-            <span>5% faster</span>
-          </div>
-        </Card>
+      <Card className="p-6 mt-4">
+        <div className='flex'>
+          <h3 className="mb-4 w-full">Top Khách hàng</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-3 px-4">Mã khách hàng</th>
+                <th className="text-left py-3 px-4">Số đơn hàng</th>
+                <th className="text-left py-3 px-4">Thu nhập</th>
+              </tr>
+            </thead>
+            <tbody>
+              {topCustomer.map(customer => {
+                return (
+                  <tr className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                        {customer["Ma_khach_hang"]}
+                    </td>
+                    <td className="py-3 px-4">{customer["so_don_hang"]}</td>
 
-        <Card className="p-4">
-          <h4 className="mb-3">Avg Distance</h4>
-          <div className="text-2xl mb-1">9.2 mi</div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <span>Stable</span>
-          </div>
-        </Card>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1">
+                        <span>{customer["total_revenue"]}</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
-        <Card className="p-4">
-          <h4 className="mb-3">Vehicle Utilization</h4>
-          <div className="text-2xl mb-1">87%</div>
-          <div className="flex items-center gap-1 text-sm text-green-600">
-            <TrendingUp className="w-4 h-4" />
-            <span>+3% increase</span>
+      <Card className="p-6 mt-4">
+        <div className='flex'>
+          <h3 className="mb-4 w-full">Đơn hàng</h3>
+          <div className='flex px-10 items-center justify-center'>
+            <button 
+              className='bg-blue-500 hover:bg-gray-800 text-white rounded-xl cursor-pointer p-2'
+              onClick={() => { if (ordersPagePrev) {setOrdersPageNum(ordersPageNum-1)} }}
+            >Trước</button>
+            <div className='flex m-4 w-10 items-center justify-center'>
+              <p className='p-5'>{ordersPageNum}</p>
+            </div>
+            <button 
+              className='bg-blue-500 hover:bg-gray-800 text-white rounded-xl cursor-pointer p-2'
+              onClick={() => { if (ordersPageNext) {setOrdersPageNum(ordersPageNum+1)} }}
+            >Sau</button>
+            {/* <input type="number" min="0" max="5"></input> */}
           </div>
-        </Card>
-      </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-3 px-4">Mã đơn hàng</th>
+                <th className="text-left py-3 px-4">Mã khách hàng</th>
+                <th className="text-left py-3 px-4">Trạng thái đơn</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map(order => {
+                return (
+                  <tr className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                        {order["Ma_don_hang"]}
+                    </td>
+                    <td className="py-3 px-4">{order["Ma_khach_hang"]}</td>
+
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1">
+                        <span>{order["Trang_thai_don"]}</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Card className="p-6 mt-4">
+        <div className='flex'>
+          <h3 className="mb-4 w-full">Chuyến giao hàng</h3>
+          <div className='flex px-10 items-center justify-center'>
+            <button 
+              className='bg-blue-500 hover:bg-gray-800 text-white rounded-xl cursor-pointer p-2'
+              onClick={() => { if (tripsPagePrev) {setTripsPageNum(tripsPageNum-1)} }}
+            >Trước</button>
+            <div className='flex m-4 w-10 items-center justify-center'>
+              <p className='p-5'>{tripsPageNum}</p>
+            </div>
+            <button 
+              className='bg-blue-500 hover:bg-gray-800 text-white rounded-xl cursor-pointer p-2'
+              onClick={() => { if (tripsPageNext) {setTripsPageNum(tripsPageNum+1)} }}
+            >Sau</button>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-3 px-4">Mã chuyến giao hàng</th>
+                <th className="text-left py-3 px-4">Số lượng đơn</th>
+                <th className="text-left py-3 px-4">Tổng quãng đường</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trips.map(trip => {
+                return (
+                  <tr className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                        {trip["DeliveryID"]}
+                    </td>
+
+                    <td className="py-3 px-4">{trip["so_luong_don_gop"]}</td>
+
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1">
+                        <span>{trip["donHangs"].reduce((a: number, c: any ) => a + c["quang_duong"], 0)}km</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mt-6">
+          <div className="p-4">
+            <h4 className="mb-3">Tổng đơn hàng xử lý</h4>
+            <div className="text-2xl mb-1">{tripsTotalOrders}</div>
+          </div>
+
+          <div className="p-4">
+            <h4 className="mb-3">Tổng quãng đường</h4>
+            <div className="text-2xl mb-1">{tripsTotalDist}km</div>
+          </div>
+
+          <div className="p-4">
+            <h4 className="mb-3">Trung bình quãng đường mỗi chuyến</h4>
+            <div className="text-2xl mb-1">{tripsNum ? tripsTotalDist / tripsNum : "N/A"}km</div>
+          </div>
+
+        </div>
+      </Card>
     </div>
   );
 }
