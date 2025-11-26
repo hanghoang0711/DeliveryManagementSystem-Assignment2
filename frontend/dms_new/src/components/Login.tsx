@@ -17,7 +17,7 @@ async function Login(username: string, password: string): Promise<string> {
 
 	await axios.post('/api/auth/login', { "username": username, "password": password })
 	.then((msg: any) => {
-		localStorage.setItem('authToken', msg.data.token);
+		localStorage.setItem('authToken', `Bearer ${msg.data.token}`);
 		window.location.reload()
 	})
 	.catch((error: any)  => {

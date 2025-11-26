@@ -14,7 +14,6 @@ export default function App() {
   const [activeView, setActiveView] = useState<ViewType>('trips');
 
   let token = localStorage.getItem('authToken');
-  console.log(token);
 	
   if (!token) {
     return (

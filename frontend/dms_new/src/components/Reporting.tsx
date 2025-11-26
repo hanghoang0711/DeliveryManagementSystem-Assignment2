@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart3, Download, Calendar, TrendingUp, TrendingDown, Clock, Users, DollarSign } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import axios from 'axios';
 
 const dailyVolumeData = [
   { day: 'Mon', trips: 42, onTime: 39, delayed: 3 },
@@ -54,6 +55,26 @@ export function Reporting() {
   const totalRevenue = revenueData.reduce((sum, d) => sum + d.revenue, 0);
   const avgRevenue = totalRevenue / revenueData.length;
   const revenueGrowth = ((revenueData[3].revenue - revenueData[0].revenue) / revenueData[0].revenue * 100).toFixed(1);
+
+  const [driverData, setDriverData] = useState([]);
+  
+  const [driverMaxStar, setdriverMaxStar] = useState(5.0);
+  const [driverMinStar, setdriverMinStar] = useState(1.0);
+
+  useEffect(() => {
+    async function getData() {
+      axios.defaults.headers.common['Authorization'] = localStorage.getItem('authToken');
+
+      await axios
+      .get('http://localhost:3000/api/bao-cao/top-tai-xe')
+      .then(res => {
+        setDriverData(res.data.data)
+        console.log(res.data.data);
+      }).catch(e => console.log(e));
+    }
+
+    getData()
+  }, []);
 
   return (
     <div className="p-6">
@@ -224,50 +245,28 @@ export function Reporting() {
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="text-left py-3 px-4">Driver</th>
-                <th className="text-left py-3 px-4">Total Trips</th>
-                <th className="text-left py-3 px-4">On-Time</th>
-                <th className="text-left py-3 px-4">On-Time %</th>
+                <th className="text-left py-3 px-4">Tài xế</th>
+                <th className="text-left py-3 px-4">Số đơn giao</th>
                 <th className="text-left py-3 px-4">Rating</th>
-                <th className="text-left py-3 px-4">Revenue</th>
-                <th className="text-left py-3 px-4">Status</th>
               </tr>
             </thead>
             <tbody>
-              {driverPerformance.map((driver) => {
-                const onTimePercent = ((driver.onTime / driver.trips) * 100).toFixed(1);
+              {driverData.map((driver) => {
                 return (
-                  <tr key={driver.id} className="border-b hover:bg-gray-50">
+                  <tr key={driver["Ma_tai_xe"]} className="border-b hover:bg-gray-50">
                     <td className="py-3 px-4">
                       <div>
-                        <div>{driver.name}</div>
-                        <div className="text-sm text-gray-500">{driver.id}</div>
+                        <div>{driver["Ten_tai_xe"]}</div>
+                        <div className="text-sm text-gray-500">{driver["Ma_tai_xe"]}</div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">{driver.trips}</td>
-                    <td className="py-3 px-4">{driver.onTime}</td>
-                    <td className="py-3 px-4">
-                      <Badge
-                        className={
-                          parseFloat(onTimePercent) >= 95
-                            ? 'bg-green-100 text-green-800'
-                            : parseFloat(onTimePercent) >= 90
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                        }
-                      >
-                        {onTimePercent}%
-                      </Badge>
-                    </td>
+                    <td className="py-3 px-4">{driver["so_don_giao"]}</td>
+
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-1">
                         <span>⭐</span>
-                        <span>{driver.rating}</span>
+                        <span>{driver["diem_trung_binh"]}</span>
                       </div>
-                    </td>
-                    <td className="py-3 px-4">${driver.revenue.toLocaleString()}</td>
-                    <td className="py-3 px-4">
-                      <Badge className="bg-green-100 text-green-800">Active</Badge>
                     </td>
                   </tr>
                 );
