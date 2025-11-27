@@ -1,0 +1,110 @@
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.order-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.order-table th {
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.order-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.order-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.order-table td {
+  padding: 10px;
+  font-size: 13px;
+}
+
+.order-id {
+  font-family: monospace;
+  background-color: #e9ecef;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* Status Badge Colors */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.badge-blue { background-color: #cfe2ff; color: #084298; }
+.badge-orange { background-color: #ffe5b4; color: #856404; }
+.badge-cyan { background-color: #cff4fc; color: #055160; }
+.badge-purple { background-color: #e7d4f8; color: #6f42c1; }
+.badge-green { background-color: #d4edda; color: #155724; }
+.badge-red { background-color: #f8d7da; color: #721c24; }
+.badge-gray { background-color: #e2e3e5; color: #383d41; }
+.badge-darkgreen { background-color: #155724; color: white; }
+
+/* Price Info */
+.price-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.original-price {
+  font-size: 12px;
+  color: #666;
+}
+
+.discount {
+  font-size: 11px;
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.final-price {
+  font-size: 13px;
+  color: #155724;
+  font-weight: 700;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.btn-view,
+.btn-edit,
+.btn-delete {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn-view { background-color: #d1ecf1; }
+.btn-edit { background-color: #fff3cd; }
+.btn-delete { background-color: #f8d7da; }
+
+.btn-view:hover,
+.btn-edit:hover,
+.btn-delete:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}

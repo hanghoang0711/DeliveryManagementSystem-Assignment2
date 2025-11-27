@@ -1,0 +1,22 @@
+.trip-filter-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* Reuse styles from OrderFilter.css */
+.filter-group,
+.filter-actions,
+.btn-apply,
+.btn-reset {
+  /* Same as OrderFilter.css */
+}

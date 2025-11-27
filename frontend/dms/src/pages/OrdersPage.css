@@ -1,0 +1,39 @@
+.orders-page {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Order Details Modal */
+.order-details-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s;
+}
+
+.order-details-modal .modal-body {
+  padding: 20px;
+}
+
+.order-details-modal pre {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Reuse styles from DriversPage */
+.orders-page .page-header,
+.orders-page .btn-primary,
+.orders-page .loading-container,
+.orders-page .error-container,
+.orders-page .no-results {
+  /* Same as DriversPage.css */
+}

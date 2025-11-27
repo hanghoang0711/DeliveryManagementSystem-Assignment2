@@ -54,7 +54,15 @@
       outDir: 'build',
     },
     server: {
+      host: true,
       port: 5000,
       open: true,
+      proxy: {
+      '/api': {
+        target: 'http://localhost:3000', // Backend của bạn
+        changeOrigin: true,
+        secure: false,
+      },
+    },
     },
   });

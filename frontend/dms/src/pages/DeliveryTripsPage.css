@@ -1,0 +1,33 @@
+.chuyen-giao-hang-page {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.trip-details-modal {
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.trip-details-modal .modal-body {
+  padding: 20px;
+}
+
+.trip-details-modal pre {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Reuse common page styles */
+.chuyen-giao-hang-page .page-header,
+.chuyen-giao-hang-page .btn-primary,
+.chuyen-giao-hang-page .loading-container,
+.chuyen-giao-hang-page .error-container,
+.chuyen-giao-hang-page .no-results {
+  /* Same as DriversPage.css & OrdersPage.css */
+}

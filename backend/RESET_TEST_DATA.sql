@@ -16,7 +16,7 @@
  */
 
 USE QuanLyGiaoHang_Nhom06;
-GO
+GO  
 
 PRINT N'========================================';
 PRINT N'RESET TEST DATA - BAT DAU';

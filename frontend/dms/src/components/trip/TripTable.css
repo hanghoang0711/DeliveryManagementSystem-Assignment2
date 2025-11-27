@@ -1,0 +1,85 @@
+.trip-table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.trip-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.trip-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.trip-table th {
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.trip-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.trip-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.trip-table td {
+  padding: 12px 15px;
+  font-size: 13px;
+}
+
+.trip-id {
+  font-weight: 700;
+  color: #667eea;
+  font-family: monospace;
+}
+
+.order-count {
+  text-align: center;
+  font-size: 14px;
+}
+
+.status-select {
+  padding: 5px 8px;
+  border: 2px solid #667eea;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.status-select:hover {
+  background-color: #f0f0f0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-add {
+  background-color: #27ae60;
+}
+
+.btn-add:hover {
+  background-color: #229954;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trip-table-container {
+    overflow-x: scroll;
+  }
+}

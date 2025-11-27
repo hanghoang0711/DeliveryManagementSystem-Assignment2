@@ -7,7 +7,7 @@ const db = require('./models');
 
 // ============================================
 // MIDDLEWARE
-// ============================================
+// ============================================  
 app.use(cors()); // Enable CORS
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -61,3 +61,5 @@ app.listen(PORT, () => {
   console.log(`📍 Reports: http://localhost:${PORT}/api/bao-cao`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
 });
+
+

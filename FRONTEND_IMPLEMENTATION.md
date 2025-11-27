@@ -16,7 +16,7 @@
 
 ---
 
-# GIAI ĐOẠN 1: SETUP & AUTHENTICATION
+# GIAI ĐOẠN 1: SETUP & AUTHENTICATION   
 
 > **Mục tiêu:** Setup project cơ bản, cấu hình Axios, implement login/logout flow   
 > **Dependencies:** React, Axios, React Router
@@ -2333,7 +2333,7 @@ npm run dev
      DriverID: DRV999
      Ho_ten: Test Driver
      CCCD: 123456789012
-     Rating: 4.5
+     Rating: 4.5   
      Status: Đang hoạt động
      ```
    - [ ] Click "Tạo mới"
@@ -4368,12 +4368,12 @@ Implement tính năng mới:
 
 **Backend Endpoints (6 endpoints):**
 ```
-POST   /api/delivery-trips          - Create trip
-GET    /api/delivery-trips          - Get all trips
-GET    /api/delivery-trips/:id      - Get trip details
-POST   /api/delivery-trips/:id/orders - Add order to trip
-PUT    /api/delivery-trips/:id      - Update trip status
-DELETE /api/delivery-trips/:id      - Delete trip
+POST   /api/chuyen-giao-hang          - Create trip
+GET    /api/chuyen-giao-hang          - Get all trips
+GET    /api/chuyen-giao-hang/:id      - Get trip details
+POST   /api/chuyen-giao-hang/:id/orders - Add order to trip
+PUT    /api/chuyen-giao-hang/:id      - Update trip status
+DELETE /api/chuyen-giao-hang/:id      - Delete trip
 ```
 
 ---
@@ -4392,7 +4392,7 @@ const deliveryTripAPI = {
    */
   getAll: async (params = {}) => {
     try {
-      const response = await api.get('/delivery-trips', { params });
+      const response = await api.get('/chuyen-giao-hang', { params });
       return response.data;
     } catch (error) {
       console.error('Get delivery trips error:', error);
@@ -4406,7 +4406,7 @@ const deliveryTripAPI = {
    */
   getById: async (id) => {
     try {
-      const response = await api.get(`/delivery-trips/${id}`);
+      const response = await api.get(`/chuyen-giao-hang/${id}`);
       return response.data;
     } catch (error) {
       console.error('Get delivery trip error:', error);
@@ -4420,7 +4420,7 @@ const deliveryTripAPI = {
    */
   create: async (tripData) => {
     try {
-      const response = await api.post('/delivery-trips', tripData);
+      const response = await api.post('/chuyen-giao-hang', tripData);
       return response.data;
     } catch (error) {
       console.error('Create delivery trip error:', error);
@@ -4435,7 +4435,7 @@ const deliveryTripAPI = {
    */
   addOrder: async (tripId, orderData) => {
     try {
-      const response = await api.post(`/delivery-trips/${tripId}/orders`, orderData);
+      const response = await api.post(`/chuyen-giao-hang/${tripId}/orders`, orderData);
       return response.data;
     } catch (error) {
       console.error('Add order to trip error:', error);
@@ -4450,7 +4450,7 @@ const deliveryTripAPI = {
    */
   update: async (id, updateData) => {
     try {
-      const response = await api.put(`/delivery-trips/${id}`, updateData);
+      const response = await api.put(`/chuyen-giao-hang/${id}`, updateData);
       return response.data;
     } catch (error) {
       console.error('Update delivery trip error:', error);
@@ -4464,7 +4464,7 @@ const deliveryTripAPI = {
    */
   delete: async (id) => {
     try {
-      const response = await api.delete(`/delivery-trips/${id}`);
+      const response = await api.delete(`/chuyen-giao-hang/${id}`);
       return response.data;
     } catch (error) {
       console.error('Delete delivery trip error:', error);
@@ -4747,7 +4747,7 @@ const DeliveryTripsPage = () => {
   };
 
   return (
-    <div className="delivery-trips-page">
+    <div className="chuyen-giao-hang-page">
       {/* Page Header */}
       <div className="page-header">
         <div>
@@ -5638,7 +5638,7 @@ export default AddOrderToTripForm;
 **File: `src/pages/DeliveryTripsPage.css`**
 
 ```css
-.delivery-trips-page {
+.chuyen-giao-hang-page {
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
@@ -5664,11 +5664,11 @@ export default AddOrderToTripForm;
 }
 
 /* Reuse common page styles */
-.delivery-trips-page .page-header,
-.delivery-trips-page .btn-primary,
-.delivery-trips-page .loading-container,
-.delivery-trips-page .error-container,
-.delivery-trips-page .no-results {
+.chuyen-giao-hang-page .page-header,
+.chuyen-giao-hang-page .btn-primary,
+.chuyen-giao-hang-page .loading-container,
+.chuyen-giao-hang-page .error-container,
+.chuyen-giao-hang-page .no-results {
   /* Same as DriversPage.css & OrdersPage.css */
 }
 ```
@@ -5684,7 +5684,7 @@ import DeliveryTripsPage from './pages/DeliveryTripsPage'; // NEW
 
 // Add route
 <Route 
-  path="/delivery-trips" 
+  path="/chuyen-giao-hang" 
   element={
     <ProtectedRoute>
       <DeliveryTripsPage />
@@ -5697,7 +5697,7 @@ import DeliveryTripsPage from './pages/DeliveryTripsPage'; // NEW
 
 ```javascript
 <div 
-  onClick={() => navigate('/delivery-trips')}
+  onClick={() => navigate('/chuyen-giao-hang')}
   style={{ 
     padding: '20px', 
     backgroundColor: '#d1ecf1', 
@@ -5721,7 +5721,7 @@ import DeliveryTripsPage from './pages/DeliveryTripsPage'; // NEW
 ### Test Checklist:
 
 1. **View Trips List:**
-   - [ ] Navigate to /delivery-trips
+   - [ ] Navigate to /chuyen-giao-hang
    - [ ] Verify table displays với 3 status colors
    - [ ] Check pagination works
 
@@ -7536,7 +7536,7 @@ function App() {
                     <ProtectedRoute><OrdersPage /></ProtectedRoute>
                   } />
                   
-                  <Route path="/delivery-trips" element={
+                  <Route path="/chuyen-giao-hang" element={
                     <ProtectedRoute><DeliveryTripsPage /></ProtectedRoute>
                   } />
                   
