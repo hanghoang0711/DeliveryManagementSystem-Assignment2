@@ -103,15 +103,21 @@ const DashboardPage = () => {
         </div>
 
         {/* Card 4 */}
-        <div style={{ 
-          padding: '20px', 
-          backgroundColor: '#f8f9fa', 
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
+        <div 
+          onClick={() => navigate('/reports')}
+          style={{ 
+            padding: '20px', 
+            backgroundColor: '#fff3cd', 
+            borderRadius: '8px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            cursor: 'pointer'
+          }}
+        >
           <h3>📊 Báo cáo</h3>
-          <p>Thống kê & báo cáo</p>
-          <p style={{ color: '#666', fontSize: '14px' }}>Coming in Stage 5</p>
+          <p>Thống kê & phân tích</p>
+          <p style={{ color: '#856404', fontSize: '14px', fontWeight: 'bold' }}>
+            ✅ Click to open (Stage 5 Complete!)
+          </p>
         </div>
       </div>
     </div>

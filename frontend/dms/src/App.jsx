@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import DriversPage from './pages/DriversPage';
 import OrdersPage from './pages/OrdersPage'; // NEW
+import ReportsPage from './pages/ReportsPage'; // NEW
 import DeliveryTripsPage from './pages/DeliveryTripsPage'; 
 
 function App() {
@@ -52,6 +53,14 @@ function App() {
               </ProtectedRoute>
             } 
           />
+
+          <Route 
+            path="/reports" 
+            element={
+              <ProtectedRoute>
+                <ReportsPage />
+              </ProtectedRoute>
+            }></Route>
 
           {/* Redirect root to dashboard */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
