@@ -213,103 +213,72 @@ exports.createDonHang = async (req, res) => {
       });
     }
 
-    // ========== SINH MÃ ĐƠN HÀNG TỰ ĐỘNG ==========
-    // Lấy tất cả đơn hàng để tìm mã lớn nhất (sort by number, not string)
-    const allDonHang = await DonHang.findAll({
-      attributes: ['Ma_don_hang'],
-      raw: true
-    });
+    // ========== GỌI STORED PROCEDURE sp_TaoDonHang ==========
+    // SP sẽ tự động sinh mã DH và tính toán các giá trị
+    const { QueryTypes } = require('sequelize');
+    const moment = require('moment');
 
-    let newMaDonHang = 'DH001';
-    if (allDonHang && allDonHang.length > 0) {
-      // Extract numbers and find max
-      const numbers = allDonHang
-        .map(dh => parseInt(dh.Ma_don_hang.replace('DH', '')))
-        .filter(num => !isNaN(num));
-      
-      if (numbers.length > 0) {
-        const maxNumber = Math.max(...numbers);
-        const newNumber = maxNumber + 1;
-        // ✅ FIX: Sử dụng 3 chữ số thay vì 4 (DH001, DH002, ..., DH010, DH011)
-        newMaDonHang = 'DH' + String(newNumber).padStart(3, '0');
-      }
-    }
+    // Tính toán tham số tự động
+    const quangDuongGiaDinh = 10.5; // km (default)
+    const donGiaKm = 15000;
+    const phiVanChuyen = Math.round(quangDuongGiaDinh * donGiaKm);
+    const thoiGianGiaoDuKien = moment(Thoi_gian_giao_hang_du_kien).format('YYYY-MM-DD HH:mm:ss');
 
-    // ========== FORMAT DATETIME for SQL Server ==========
-    const formatForSQL = (dateStr) => {
-      if (!dateStr) return null;
-      const date = new Date(dateStr);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    };
-
-    // ========== TÍNH TOÁN PHÍ VẬN CHUYỂN (ERD v2) ==========
-    // TODO: Implement actual distance calculation using Google Maps API or similar
-    // For now, use default values based on weight and delivery method
-    const quang_duong = 10.5; // km (default, should calculate from addresses)
-    const baseRate = 15000; // 15k VND per km
-    const phi_van_chuyen_goc = Math.round(quang_duong * baseRate);
-    const so_tien_duoc_giam = 0; // Will be calculated if discount codes applied
-    const phi_van_chuyen_sau_giam = phi_van_chuyen_goc - so_tien_duoc_giam;
-
-    // ========== TẠO ĐƠN HÀNG MỚI (Use Raw SQL to avoid timezone issues) ==========
-    const now = formatForSQL(new Date());
-    const expectedDelivery = formatForSQL(Thoi_gian_giao_hang_du_kien);
-    const expectedPickup = Thoi_gian_lay_hang_du_kien ? formatForSQL(Thoi_gian_lay_hang_du_kien) : null;
-
-    await db.sequelize.query(
-      `INSERT INTO DON_HANG (
-        Ma_don_hang, Ma_khach_hang, SDT_nguoi_nhan, ten_nguoi_nhan,
-        dia_chi_lay_hang, dia_chi_giao_hang, can_nang, 
-        gia_tri_hang_hoa_phi_van_chuyen, phuong_thuc_giao_hang,
-        phi_van_chuyen_goc, so_tien_duoc_giam, phi_van_chuyen_sau_giam, quang_duong,
-        Thoi_gian_giao_hang_du_kien, Thoi_gian_lay_hang_du_kien,
-        Trang_thai_don, thoi_gian_dat_don, diem_tich_luy
-      ) VALUES (
-        :ma_don_hang, :ma_khach_hang, :sdt, :ten,
-        :dia_chi_lay, :dia_chi_giao, :can_nang,
-        :gia_tri, :phuong_thuc,
-        :phi_goc, :giam_gia, :phi_sau_giam, :khoang_cach,
-        :giao_du_kien, :lay_du_kien,
-        :trang_thai, :dat_don, :diem
-      )`,
+    const result = await db.sequelize.query(
+      `EXEC sp_TaoDonHang 
+        @MaKH = :maKH,
+        @SDTNhan = :sdtNhan,
+        @TenNguoiNhan = :tenNguoiNhan,
+        @DiaChiLay = :diaChiLay,
+        @DiaChiGiao = :diaChiGiao,
+        @CanNang = :canNang,
+        @GiaTri = :giaTri,
+        @PhiVanChuyen = :phiVanChuyen,
+        @PhuongThucGiao = :phuongThucGiao,
+        @ThoiGianGiaoDuKien = :thoiGianGiaoDuKien`,
       {
         replacements: {
-          ma_don_hang: newMaDonHang,
-          ma_khach_hang: Ma_khach_hang,
-          sdt: SDT_nguoi_nhan,
-          ten: ten_nguoi_nhan,
-          dia_chi_lay: dia_chi_lay_hang,
-          dia_chi_giao: dia_chi_giao_hang,
-          can_nang,
-          gia_tri: gia_tri_hang_hoa_phi_van_chuyen,
-          phuong_thuc: phuong_thuc_giao_hang,
-          phi_goc: phi_van_chuyen_goc,
-          giam_gia: so_tien_duoc_giam,
-          phi_sau_giam: phi_van_chuyen_sau_giam,
-          khoang_cach: quang_duong,
-          giao_du_kien: expectedDelivery,
-          lay_du_kien: expectedPickup,
-          trang_thai: 'Đang xử lý', // ERD v2: Trạng thái ban đầu
-          dat_don: now,
-          diem: 0
+          maKH: Ma_khach_hang,
+          sdtNhan: SDT_nguoi_nhan,
+          tenNguoiNhan: ten_nguoi_nhan,
+          diaChiLay: dia_chi_lay_hang,
+          diaChiGiao: dia_chi_giao_hang,
+          canNang: can_nang,
+          giaTri: gia_tri_hang_hoa_phi_van_chuyen,
+          phiVanChuyen: phiVanChuyen,
+          phuongThucGiao: phuong_thuc_giao_hang,
+          thoiGianGiaoDuKien: thoiGianGiaoDuKien
         },
-        type: db.Sequelize.QueryTypes.INSERT
+        type: QueryTypes.SELECT
       }
     );
 
-    // Fetch the created order
-    const newDonHang = await DonHang.findByPk(newMaDonHang);
+    if (!result || result.length === 0) {
+      return res.status(500).json({
+        success: false,
+        message: 'Không thể tạo đơn hàng. Vui lòng kiểm tra lại dữ liệu.'
+      });
+    }
+
+    const newMaDon = result[0].NewID;
 
     res.status(201).json({
       success: true,
-      message: 'Tạo đơn hàng thành công',
-      data: newDonHang
+      message: 'Tạo đơn hàng thành công (sử dụng sp_TaoDonHang)',
+      data: {
+        Ma_don_hang: newMaDon,
+        Ma_khach_hang,
+        SDT_nguoi_nhan,
+        ten_nguoi_nhan,
+        dia_chi_lay_hang,
+        dia_chi_giao_hang,
+        can_nang,
+        gia_tri_hang_hoa_phi_van_chuyen,
+        phuong_thuc_giao_hang,
+        phi_van_chuyen: phiVanChuyen,
+        Thoi_gian_giao_hang_du_kien: thoiGianGiaoDuKien,
+        Trang_thai_don: 'Đang xử lý'
+      }
     });
 
   } catch (error) {

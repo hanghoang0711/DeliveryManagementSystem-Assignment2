@@ -43,7 +43,7 @@ END
 GO
 
 -- ======================================================================
--- 2️. TẠO LẠI LOGIN VÀ DATABASE USER
+-- 2. TẠO LẠI LOGIN VÀ DATABASE USER
 -- ======================================================================
 -- Tạo login mới
 CREATE LOGIN [sManager] WITH PASSWORD = N'Nhom6251';
@@ -693,98 +693,98 @@ GO
 
 PRINT N'--- Chèn dữ liệu KHACH_HANG ---';
 INSERT INTO KHACH_HANG (Ma_khach_hang, email, Diem_thanh_vien, Ten_hang, Ngay_len_hang, Ngay_het_han) VALUES
-('KH1', 'nguyenvanhien@email.com', 150, N'Đồng', '2025-01-15', '2026-01-14'),
-('KH2', 'tranvanbanh@email.com', 600, N'Bạc', '2025-03-20', '2026-03-19'),
-('KH3', 'cty_tnhh_sendo@email.com', 2500, N'Vàng', '2024-11-01', '2025-10-31'),
-('KH4', 'lethidung@email.com', 5500, N'Kim Cương', '2025-05-10', '2026-05-09'),
-('KH5', 'phamthanhdat@email.com', 850, N'Bạc', '2024-12-20', '2025-12-19'),
-('KH6', 'nguyendoha@email.com', 1250, N'Vàng', '2025-03-01', '2026-02-28'),
-('KH7', 'nguyenvanson@email.com', 2700, N'Đồng', '2024-11-05', '2025-11-04'),
-('KH8', 'cty_Metan@email.com', 5000, N'Kim Cương', '2024-10-01', '2025-09-30'),
-('KH9', 'gdNgoiSao@email.com', 5000, N'Kim Cương', '2024-10-01', '2025-09-30');
+('KH001', 'nguyenvanhien@email.com', 150, N'Đồng', '2025-01-15', '2026-01-14'),
+('KH002', 'tranvanbanh@email.com', 600, N'Bạc', '2025-03-20', '2026-03-19'),
+('KH003', 'cty_tnhh_sendo@email.com', 2500, N'Vàng', '2024-11-01', '2025-10-31'),
+('KH004', 'lethidung@email.com', 5500, N'Kim Cương', '2025-05-10', '2026-05-09'),
+('KH005', 'phamthanhdat@email.com', 850, N'Bạc', '2024-12-20', '2025-12-19'),
+('KH006', 'nguyendoha@email.com', 1250, N'Vàng', '2025-03-01', '2026-02-28'),
+('KH007', 'nguyenvanson@email.com', 2700, N'Đồng', '2024-11-05', '2025-11-04'),
+('KH008', 'cty_Metan@email.com', 5000, N'Kim Cương', '2024-10-01', '2025-09-30'),
+('KH009', 'gdNgoiSao@email.com', 5000, N'Kim Cương', '2024-10-01', '2025-09-30');
 GO
 
 PRINT N'--- Chèn dữ liệu KHACH_HANG_CA_NHAN & KHACH_HANG_DOANH_NGHIEP ---';
 INSERT INTO KHACH_HANG_CA_NHAN (Ma_khach_hang, Gioi_tinh, Ho_va_ten_lot, Ten, Ngay_sinh) VALUES
-('KH1', N'Nam', N'Nguyễn Văn', N'Hiền', '1995-08-21'),
-('KH2', N'Nam', N'Trần Văn', N'Bảnh', '2000-04-12'),
-('KH4', N'Nữ', N'Lê Thị', N'Dung', '1998-12-05'),
-('KH5', N'Nam', N'Phạm Thành', N'Đạt', '2005-04-13'),
-('KH6', N'Nữ', N'Nguyễn Đỗ', N'Hà', '1996-05-25'),
-('KH7', N'Nam', N'Nguyễn Văn', N'Sơn', '1999-10-12');
+('KH001', N'Nam', N'Nguyễn Văn', N'Hiền', '1995-08-21'),
+('KH002', N'Nam', N'Trần Văn', N'Bảnh', '2000-04-12'),
+('KH004', N'Nữ', N'Lê Thị', N'Dung', '1998-12-05'),
+('KH005', N'Nam', N'Phạm Thành', N'Đạt', '2005-04-13'),
+('KH006', N'Nữ', N'Nguyễn Đỗ', N'Hà', '1996-05-25'),
+('KH007', N'Nam', N'Nguyễn Văn', N'Sơn', '1999-10-12');
 
 INSERT INTO KHACH_HANG_DOANH_NGHIEP (Ma_khach_hang, Ten, Ma_so_thue) VALUES
-('KH3', N'Công ty TNHH Sen Đỏ', '0312345678'),
-('KH8', N'Công ty TNHH Metan', '0327777777'),
-('KH9', N'Công ty Cổ Phần Giáo dục Kỹ Năng Ngôi Sao', '0817888999');
+('KH003', N'Công ty TNHH Sen Đỏ', '0312345678'),
+('KH008', N'Công ty TNHH Metan', '0327777777'),
+('KH009', N'Công ty Cổ Phần Giáo dục Kỹ Năng Ngôi Sao', '0817888999');
 GO
 
 PRINT N'--- Chèn dữ liệu SO_DIEN_THOAI_CUA_KHACH_HANG & DIA_CHI_CUA_KHACH_HANG ---';
 INSERT INTO SO_DIEN_THOAI_CUA_KHACH_HANG (Ma_khach_hang, So_dien_thoai) VALUES
-('KH1', '0901234567'), ('KH1', '0901110001'),
-('KH2', '0912345678'),
-('KH3', '0987654321'), ('KH3', '0283123456'),
-('KH4', '0977112233'), ('KH4', '0325432101'), ('KH4', '0329632587'),
-('KH5', '0327333277'),
-('KH6', '0327333222'),
-('KH7', '0321654321');
+('KH001', '0901234567'), ('KH001', '0901110001'),
+('KH002', '0912345678'),
+('KH003', '0987654321'), ('KH003', '0283123456'),
+('KH004', '0977112233'), ('KH004', '0325432101'), ('KH004', '0329632587'),
+('KH005', '0327333277'),
+('KH006', '0327333222'),
+('KH007', '0321654321');
 
 INSERT INTO DIA_CHI_CUA_KHACH_HANG (Ma_khach_hang, Dia_chi) VALUES
-('KH1', N'123 Đường Nguyễn Trãi, Quận 1, TP. HCM'), ('KH1', N'KTX Khu A, ĐHQG'),
-('KH2', N'456 Đường Võ Văn Ngân, Quận Thủ Đức, TP. HCM'),
-('KH3', N'789 Đường Tân Cảng, Quận Bình Thạnh, TP. HCM'), ('KH3', N'VP Cty C, Quận 3'),
-('KH4', N'101 Đường Nguyễn Văn Linh, Quận 7, TP. HCM'), ('KH4', N'Số 1, Đường Nguyễn Công Trứ, phường Đông Hoà, Dĩ An, Bình Dương'),
-('KH5', N'25 Đường Phan Xích Long, Quận Phú Nhuận, TP. HCM'),
-('KH6', N'12A Đường Lê Duẩn, Quận 1, TP. HCM'),
-('KH7', N'89 Đường Nguyễn Văn Cừ, Quận 5, TP. HCM');
+('KH001', N'123 Đường Nguyễn Trãi, Quận 1, TP. HCM'), ('KH001', N'KTX Khu A, ĐHQG'),
+('KH002', N'456 Đường Võ Văn Ngân, Quận Thủ Đức, TP. HCM'),
+('KH003', N'789 Đường Tân Cảng, Quận Bình Thạnh, TP. HCM'), ('KH003', N'VP Cty C, Quận 3'),
+('KH004', N'101 Đường Nguyễn Văn Linh, Quận 7, TP. HCM'), ('KH004', N'Số 1, Đường Nguyễn Công Trứ, phường Đông Hoà, Dĩ An, Bình Dương'),
+('KH005', N'25 Đường Phan Xích Long, Quận Phú Nhuận, TP. HCM'),
+('KH006', N'12A Đường Lê Duẩn, Quận 1, TP. HCM'),
+('KH007', N'89 Đường Nguyễn Văn Cừ, Quận 5, TP. HCM');
 GO
 
 PRINT N'--- Chèn dữ liệu NHANVIEN ---';
 INSERT INTO NHANVIEN (Ma_nhan_vien, Gioi_tinh, Ho_va_ten_lot, Ten, Ngay_sinh, Dia_chi, SDT, email, CCCD, Ngay_bat_dau_lam, Vai_tro) VALUES
-('NV0001', N'Nữ', N'Hoàng Thị', N'Hằng', '2001-05-10', N'KTX Khu A, ĐHQG', '0911111111', 'hang.hoang@email.com', '123456789011', '2025-09-01', N'Quản trị viên'),
-('NV0002', N'Nam', N'Nguyễn Thành', N'Công', '2000-02-15', N'KTX Khu B, ĐHQG', '0922222222', 'cong.nguyen@email.com', '123456789012', '2025-09-01', N'Quản lý tài xế'),
-('NV0003', N'Nữ', N'Lê Thúy', N'Hiền', '2002-07-20', N'Dĩ An, Bình Dương', '0933333333', 'hien.le@email.com', '123456789013', '2025-10-01', N'Xử lý đơn hàng'),
-('NV0004', N'Nam', N'Đậu Minh', N'Khôi', '1999-11-25', N'Thủ Đức, TP. HCM', '0944444444', 'khoi.dau@email.com', '123456789014', '2025-10-01', N'Hỗ trợ khách hàng'),
-('NV0005', N'Nữ', N'Bùi Thị Ngọc', N'Huyền', '2003-01-30', N'Biên Hòa, Đồng Nai', '0955555555', 'huyen.bui@email.com', '123456789015', '2025-11-01', N'Tài chính'),
-('NV0006', N'Nữ', N'Nguyễn Hải', N'Đường', '2000-01-2', N'Nguyễn Văn Nghi, Gò Vấp', '0966666666','duong.nguyen@email.com', '123456789016', '2022-10-01', N'Hỗ trợ khách hàng');
+('NV001', N'Nữ', N'Hoàng Thị', N'Hằng', '2001-05-10', N'KTX Khu A, ĐHQG', '0911111111', 'hang.hoang@email.com', '123456789011', '2025-09-01', N'Quản trị viên'),
+('NV002', N'Nam', N'Nguyễn Thành', N'Công', '2000-02-15', N'KTX Khu B, ĐHQG', '0922222222', 'cong.nguyen@email.com', '123456789012', '2025-09-01', N'Quản lý tài xế'),
+('NV003', N'Nữ', N'Lê Thúy', N'Hiền', '2002-07-20', N'Dĩ An, Bình Dương', '0933333333', 'hien.le@email.com', '123456789013', '2025-10-01', N'Xử lý đơn hàng'),
+('NV004', N'Nam', N'Đậu Minh', N'Khôi', '1999-11-25', N'Thủ Đức, TP. HCM', '0944444444', 'khoi.dau@email.com', '123456789014', '2025-10-01', N'Hỗ trợ khách hàng'),
+('NV005', N'Nữ', N'Bùi Thị Ngọc', N'Huyền', '2003-01-30', N'Biên Hòa, Đồng Nai', '0955555555', 'huyen.bui@email.com', '123456789015', '2025-11-01', N'Tài chính'),
+('NV006', N'Nữ', N'Nguyễn Hải', N'Đường', '2000-01-2', N'Nguyễn Văn Nghi, Gò Vấp', '0966666666','duong.nguyen@email.com', '123456789016', '2022-10-01', N'Hỗ trợ khách hàng');
 GO
 
 PRINT N'--- Chèn dữ liệu CA_LAM_VIEC_CUA_NHAN_VIEN ---';
 INSERT INTO CA_LAM_VIEC_CUA_NHAN_VIEN (Ma_nhan_vien, Ca_lam_viec) VALUES
-('NV0001', N'Hành chính'),
-('NV0002', N'Hành chính'),
-('NV0003', N'Ca sáng'), ('NV0003', N'Ca chiều'),
-('NV0004', N'Ca sáng'), ('NV0004', N'Ca tối'),
-('NV0005', N'Hành chính');
+('NV001', N'Hành chính'),
+('NV002', N'Hành chính'),
+('NV003', N'Ca sáng'), ('NV003', N'Ca chiều'),
+('NV004', N'Ca sáng'), ('NV004', N'Ca tối'),
+('NV005', N'Hành chính');
 GO
 
 PRINT N'--- Chèn dữ liệu QUAN_TRI_VIEN, NHAN_VIEN_QUAN_LY_TAI_XE,... ---';
-INSERT INTO QUAN_TRI_VIEN(Ma_nhan_vien, Cap_quan_tri) VALUES ('NV0001', N'Admin hệ thống');
-INSERT INTO NHAN_VIEN_QUAN_LY_TAI_XE(Ma_nhan_vien, So_luong_tai_xe_dang_phu_trach) VALUES ('NV0002', 10);
-INSERT INTO NHANVIEN_XU_LI_DON_HANG(Ma_nhan_vien, So_luong_don_hang_da_xu_li) VALUES ('NV0003', 10);
-INSERT INTO NHANVIEN_HO_TRO(Ma_nhan_vien, So_luong_ho_tro_da_xu_li) VALUES ('NV0004', 70), ('NV0006', 15);
-INSERT INTO NHANVIEN_TAI_CHINH(Ma_nhan_vien, So_luong_giao_dich_da_xu_li) VALUES ('NV0005', 100);
+INSERT INTO QUAN_TRI_VIEN(Ma_nhan_vien, Cap_quan_tri) VALUES ('NV001', N'Admin hệ thống');
+INSERT INTO NHAN_VIEN_QUAN_LY_TAI_XE(Ma_nhan_vien, So_luong_tai_xe_dang_phu_trach) VALUES ('NV002', 10);
+INSERT INTO NHANVIEN_XU_LI_DON_HANG(Ma_nhan_vien, So_luong_don_hang_da_xu_li) VALUES ('NV003', 10);
+INSERT INTO NHANVIEN_HO_TRO(Ma_nhan_vien, So_luong_ho_tro_da_xu_li) VALUES ('NV004', 70), ('NV006', 15);
+INSERT INTO NHANVIEN_TAI_CHINH(Ma_nhan_vien, So_luong_giao_dich_da_xu_li) VALUES ('NV005', 100);
 GO
 
 PRINT N'--- Chèn dữ liệu NHAN_VIEN_DUOC_GIAM_SAT ---';
 INSERT INTO NHAN_VIEN_DUOC_GIAM_SAT(Ma_nhan_vien, Ma_quan_tri_vien, Ngay_bat_dau) VALUES
-('NV0002', 'NV0001', '2025-09-01'),
-('NV0003', 'NV0001', '2025-10-01'),
-('NV0004', 'NV0001', '2025-10-01'),
-('NV0005', 'NV0001', '2025-11-01');
+('NV002', 'NV001', '2025-09-01'),
+('NV003', 'NV001', '2025-10-01'),
+('NV004', 'NV001', '2025-10-01'),
+('NV005', 'NV001', '2025-11-01');
 GO
 
 PRINT N'--- Chèn dữ liệu LINH_VUC_CHUYEN_MON_CUA_NHANVIEN_HO_TRO ---';
 INSERT INTO LINH_VUC_CHUYEN_MON_CUA_NHANVIEN_HO_TRO(Ma_nhan_vien, Linh_vuc_ho_tro_chuyen_mon) VALUES
-('NV0004', N'Xử lý khiếu nại và phản hồi khách hàng'),
-('NV0004', N'Tư vấn và chăm sóc khách hàng'),
-('NV0006', N'Hỗ trợ kỹ thuật và hướng dẫn sử dụng'),
-('NV0006', N'Quản lý dữ liệu và phản hồi khách hàng');
+('NV004', N'Xử lý khiếu nại và phản hồi khách hàng'),
+('NV004', N'Tư vấn và chăm sóc khách hàng'),
+('NV006', N'Hỗ trợ kỹ thuật và hướng dẫn sử dụng'),
+('NV006', N'Quản lý dữ liệu và phản hồi khách hàng');
 GO
 
 PRINT N'--- Chèn dữ liệu CHUNG_CHI_BANG_CAP_CUA_NHANVIEN_TAI_CHINH ---';
 INSERT INTO CHUNG_CHI_BANG_CAP_CUA_NHANVIEN_TAI_CHINH(Ma_nhan_vien, Chung_chi_bang_cap) VALUES
-('NV0005', N'Chứng chỉ Kế toán viên'), ('NV0005', N'Cử nhân Tài chính');
+('NV005', N'Chứng chỉ Kế toán viên'), ('NV005', N'Cử nhân Tài chính');
 GO
 
 PRINT N'--- Chèn dữ liệu XE ---';
@@ -803,16 +803,16 @@ GO
 
 PRINT N'--- Chèn dữ liệu TAI_XE ---';
 INSERT INTO TAI_XE (DriverID, Ho_ten, CCCD, Gioi_Tinh, Ngay_Sinh, Ngay_Bat_Dau_Lam_Viec, Trang_Thai, Ma_Nhan_Vien_quan_li, Ngay_Bat_Dau_Quan_Ly, Rating) VALUES
-('DRV001', N'Nguyễn Văn Rê', '079123456781', N'Nam', '1998-03-11', '2023-11-10', N'Sẵn sàng', 'NV0002', '2025-11-10', 5.0),
-('DRV002', N'Trần Thị Phương', '079123456782', N'Nữ', '2002-09-05', '2025-11-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 4.5),
-('DRV003', N'Đỗ Giang Thần', '0790123456', N'Nam', '1988-09-09', '2024-12-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 5.0),
-('DRV004', N'Lê Văn Hậu', '079123456783', N'Nam', '1995-12-20', '2025-11-20', N'Đang giao hàng', 'NV0002', '2025-11-20', 5.0),
-('DRV005', N'Phạm Thị Yến Nhi', '079123456784', N'Nữ', '2004-06-25', '2025-11-25', N'Sẵn sàng', 'NV0002', '2025-11-25', 5.0), 
-('DRV006', N'Ngô Văn Tùng', '079123456785', N'Nam', '1997-07-11', '2025-11-10', N'Sẵn sàng', 'NV0002', '2025-11-10', 5.0),
-('DRV007', N'Đinh Thị Trang', '079123456786', N'Nữ', '1999-08-09', '2025-11-12', N'Sẵn sàng', 'NV0002', '2025-11-12', 5.0),
-('DRV008', N'Hoàng Văn Toàn', '079123456787', N'Nam', '1990-10-10', '2025-11-15', N'Sẵn sàng', 'NV0002', '2025-11-15', 4.7),
-('DRV009', N'Lý Thị Hương', '079123456788', N'Nữ', '1998-02-14', '2025-11-18', N'Sẵn sàng', 'NV0002', '2025-11-18', 5.0),
-('DRV010', N'Phan Văn Hòa', '079123456789', N'Nam', '1985-05-05', '2025-11-20', N'Sẵn sàng', 'NV0002', '2025-11-20', 5.0);
+('DRV001', N'Nguyễn Văn Rê', '079123456781', N'Nam', '1998-03-11', '2023-11-10', N'Sẵn sàng', 'NV002', '2025-11-10', 5.0),
+('DRV002', N'Trần Thị Phương', '079123456782', N'Nữ', '2002-09-05', '2025-11-15', N'Sẵn sàng', 'NV002', '2025-11-15', 4.5),
+('DRV003', N'Đỗ Giang Thần', '0790123456', N'Nam', '1988-09-09', '2024-12-15', N'Sẵn sàng', 'NV002', '2025-11-15', 5.0),
+('DRV004', N'Lê Văn Hậu', '079123456783', N'Nam', '1995-12-20', '2025-11-20', N'Đang giao hàng', 'NV002', '2025-11-20', 5.0),
+('DRV005', N'Phạm Thị Yến Nhi', '079123456784', N'Nữ', '2004-06-25', '2025-11-25', N'Sẵn sàng', 'NV002', '2025-11-25', 5.0), 
+('DRV006', N'Ngô Văn Tùng', '079123456785', N'Nam', '1997-07-11', '2025-11-10', N'Sẵn sàng', 'NV002', '2025-11-10', 5.0),
+('DRV007', N'Đinh Thị Trang', '079123456786', N'Nữ', '1999-08-09', '2025-11-12', N'Sẵn sàng', 'NV002', '2025-11-12', 5.0),
+('DRV008', N'Hoàng Văn Toàn', '079123456787', N'Nam', '1990-10-10', '2025-11-15', N'Sẵn sàng', 'NV002', '2025-11-15', 4.7),
+('DRV009', N'Lý Thị Hương', '079123456788', N'Nữ', '1998-02-14', '2025-11-18', N'Sẵn sàng', 'NV002', '2025-11-18', 5.0),
+('DRV010', N'Phan Văn Hòa', '079123456789', N'Nam', '1985-05-05', '2025-11-20', N'Sẵn sàng', 'NV002', '2025-11-20', 5.0);
 GO
 
 PRINT N'--- Chèn dữ liệu TAI_XE_SDT ---';
@@ -923,25 +923,25 @@ GO
 
 PRINT N'--- Chèn dữ liệu THANH_TOAN ---';
 INSERT INTO THANH_TOAN (Ma_thanh_toan, Ma_khach_hang, phuong_thuc, trang_thai_giao_dich, so_tien_thanh_toan, thoi_gian_thanh_toan) VALUES
-('TT001', 'KH1', N'MoMo', N'Thành công', 85000, '2025-10-25 09:30'),
-('TT002', 'KH2', N'Thẻ tín dụng', N'Thành công', 155000, '2025-10-26 14:00'),
-('TT003', 'KH3', N'Thanh toán chuyển khoản', N'Thành công', 120000, '2025-10-27 11:00'),
-('TT004', 'KH4', N'Tiền mặt', N'Thành công', 200000, '2025-10-28 08:15'),
-('TT005', 'KH5', N'MoMo', N'Thành công', 95000, '2025-10-29 16:20'),
-('TT006', 'KH6', N'ZaloPay', N'Thành công', 130000, '2025-10-29 17:15'),
-('TT007', 'KH2', N'Thẻ tín dụng', N'Thành công', 230000, '2025-10-30 09:50'),
-('TT008', 'KH3', N'Ví điện tử VNPay', N'Thành công', 180000, '2025-10-30 11:00'),
-('TT009', 'KH1', N'MoMo', N'Thành công', 175000, '2025-10-30 14:10'),
-('TT010', 'KH4', N'Thanh toán chuyển khoản', N'Thành công', 240000, '2025-10-31 10:30');
+('TT001', 'KH001', N'MoMo', N'Thành công', 85000, '2025-10-25 09:30'),
+('TT002', 'KH002', N'Thẻ tín dụng', N'Thành công', 155000, '2025-10-26 14:00'),
+('TT003', 'KH003', N'Thanh toán chuyển khoản', N'Thành công', 120000, '2025-10-27 11:00'),
+('TT004', 'KH004', N'Tiền mặt', N'Thành công', 200000, '2025-10-28 08:15'),
+('TT005', 'KH005', N'MoMo', N'Thành công', 95000, '2025-10-29 16:20'),
+('TT006', 'KH006', N'ZaloPay', N'Thành công', 130000, '2025-10-29 17:15'),
+('TT007', 'KH002', N'Thẻ tín dụng', N'Thành công', 230000, '2025-10-30 09:50'),
+('TT008', 'KH003', N'Ví điện tử VNPay', N'Thành công', 180000, '2025-10-30 11:00'),
+('TT009', 'KH001', N'MoMo', N'Thành công', 175000, '2025-10-30 14:10'),
+('TT010', 'KH004', N'Thanh toán chuyển khoản', N'Thành công', 240000, '2025-10-31 10:30');
 GO
 
 PRINT N'--- Chèn dữ liệu GIAO_DICH_DUOC_KIEM_SOAT ---';
 INSERT INTO GIAO_DICH_DUOC_KIEM_SOAT (Ma_thanh_toan, Ma_nhan_vien, Thoi_diem_xac_minh, Tinh_trang_xac_minh) VALUES
-('TT001', 'NV0005', '2025-10-25 10:00', N'Đã xác minh'),
-('TT002', 'NV0005', '2025-10-26 15:00', N'Đã xác minh'),
-('TT003', 'NV0005', '2025-10-27 11:30', N'Đã xác minh'),
-('TT004', 'NV0005', '2025-10-28 09:00', N'Đã xác minh'),
-('TT005', 'NV0005', '2025-10-29 17:00', N'Đã xác minh');
+('TT001', 'NV005', '2025-10-25 10:00', N'Đã xác minh'),
+('TT002', 'NV005', '2025-10-26 15:00', N'Đã xác minh'),
+('TT003', 'NV005', '2025-10-27 11:30', N'Đã xác minh'),
+('TT004', 'NV005', '2025-10-28 09:00', N'Đã xác minh'),
+('TT005', 'NV005', '2025-10-29 17:00', N'Đã xác minh');
 GO
 
 -- ===========================
@@ -953,16 +953,16 @@ INSERT INTO DON_HANG (Ma_don_hang, Trang_thai_don, Thoi_gian_lay_hang_du_kien, T
     phi_van_chuyen_goc, so_tien_duoc_giam, phi_van_chuyen_sau_giam, quang_duong,
     SDT_nguoi_nhan, ten_nguoi_nhan, can_nang, dia_chi_giao_hang, dia_chi_lay_hang, diem_tich_luy, phuong_thuc_giao_hang, Ma_khach_hang)
 VALUES
-('DH001', N'Đang giao hàng', '2025-10-26 08:00', '2025-10-26 11:00', 'KMHE2025', 'SUMMER10', 'VCFREE15', '2025-10-25 09:00', 85000, 50000, 7500, 42500, 12.5, '0901110001', N'Nguyễn Minh', 2.5, N'Quận 3, TP.HCM', N'Quận 1, TP.HCM', 10, N'Giao nhanh', 'KH1'),
-('DH002', N'Giao hàng thành công', '2025-10-27 09:00', '2025-10-27 12:30', 'BF2025', 'BF50', 'AHA5', '2025-10-26 15:00', 155000, 60000, 9000, 51000, 15.2, '0912345678', N'Trần Bá', 3.0, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 15, N'Tiêu chuẩn', 'KH2'),
-('DH003', N'Giao hàng thành công', '2025-10-27 08:30', '2025-10-27 13:30', 'WEEKEND20', 'WKND20', 'LOYAL15', '2025-10-27 07:30', 120000, 70000, 10500, 59500, 18.0, '0987654321', N'Lê Quang', 4.0, N'Quận 5, TP.HCM', N'Quận 1, TP.HCM', 25, N'Giao nhanh', 'KH3'),
-('DH004', N'Giao hàng thất bại', '2025-10-28 10:00', '2025-10-28 14:00', 'TET2026', 'TETLIXI', 'NEWUSER', '2025-10-28 09:00', 200000, 80000, 12000, 68000, 25.0, '0977112233', N'Lê Hoa', 5.5, N'Quận 7, TP.HCM', N'Bình Dương', 0, N'Tiêu chuẩn', 'KH4'),
-('DH005', N'Đang giao hàng', '2025-10-29 07:45', '2025-10-29 12:00', 'KMHE2025', 'SUMMER10', 'AHA5', '2025-10-29 07:00', 95000, 45000, 6750, 38250, 8.7, '0327333277', N'Phạm Hòa', 2.0, N'Phú Nhuận, TP.HCM', N'Quận 3, TP.HCM', 12, N'Giao nhanh', 'KH5'),
-('DH006', N'Giao hàng thành công', '2025-10-29 10:00', '2025-10-29 14:00', NULL, NULL, 'LOYAL10', '2025-10-29 09:00', 130000, 55000, 5500, 49500, 10.5, '0327333222', N'Nguyễn Hải', 4.5, N'Quận 1, TP.HCM', N'Gò Vấp, TP.HCM', 18, N'Tiêu chuẩn', 'KH6'),
-('DH007', N'Đang tìm tài xế', NULL, '2025-10-30 13:00', NULL, NULL, 'FREESHIP', '2025-10-30 09:00', 230000, 65000, 0, 65000, 20.0, '0912345678', N'Trần Đăng', 3.2, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 10, N'Tiêu chuẩn', 'KH2'),
-('DH008', N'Giao hàng thành công', '2025-10-30 11:00', '2025-10-30 16:00', 'WEEKEND20', 'WKND20', NULL, '2025-10-30 10:30', 180000, 75000, 11250, 63750, 22.5, '0987654321', N'Lê Hoàng', 6.0, N'Bình Thạnh, TP.HCM', N'Quận 5, TP.HCM', 15, N'Tiêu chuẩn', 'KH3'),
-('DH009', N'Đã hoàn thành', '2025-10-30 13:00', '2025-10-30 17:30', 'KMHE2025', 'SUMMERFREE', 'VCFREE15', '2025-10-30 12:00', 175000, 52000, 7800, 44200, 14.0, '0901234567', N'Nguyễn Văn B', 2.0, N'Quận 1, TP.HCM', N'Thủ Đức', 20, N'Giao nhanh', 'KH1'),
-('DH010', N'Đang xử lý', '2025-10-31 08:00', '2025-10-31 13:00', 'BF2025', 'BF50', 'LOYAL15', '2025-10-31 07:30', 240000, 90000, 13500, 76500, 30.0, '0977112233', N'Lê Mai', 5.0, N'Quận 7, TP.HCM', N'Bình Dương', 5, N'Tiêu chuẩn', 'KH4');
+('DH001', N'Đang giao hàng', '2025-10-26 08:00', '2025-10-26 11:00', 'KMHE2025', 'SUMMER10', 'VCFREE15', '2025-10-25 09:00', 85000, 50000, 7500, 42500, 12.5, '0901110001', N'Nguyễn Minh', 2.5, N'Quận 3, TP.HCM', N'Quận 1, TP.HCM', 10, N'Giao nhanh', 'KH001'),
+('DH002', N'Giao hàng thành công', '2025-10-27 09:00', '2025-10-27 12:30', 'BF2025', 'BF50', 'AHA5', '2025-10-26 15:00', 155000, 60000, 9000, 51000, 15.2, '0912345678', N'Trần Bá', 3.0, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 15, N'Tiêu chuẩn', 'KH002'),
+('DH003', N'Giao hàng thành công', '2025-10-27 08:30', '2025-10-27 13:30', 'WEEKEND20', 'WKND20', 'LOYAL15', '2025-10-27 07:30', 120000, 70000, 10500, 59500, 18.0, '0987654321', N'Lê Quang', 4.0, N'Quận 5, TP.HCM', N'Quận 1, TP.HCM', 25, N'Giao nhanh', 'KH003'),
+('DH004', N'Giao hàng thất bại', '2025-10-28 10:00', '2025-10-28 14:00', 'TET2026', 'TETLIXI', 'NEWUSER', '2025-10-28 09:00', 200000, 80000, 12000, 68000, 25.0, '0977112233', N'Lê Hoa', 5.5, N'Quận 7, TP.HCM', N'Bình Dương', 0, N'Tiêu chuẩn', 'KH004'),
+('DH005', N'Đang giao hàng', '2025-10-29 07:45', '2025-10-29 12:00', 'KMHE2025', 'SUMMER10', 'AHA5', '2025-10-29 07:00', 95000, 45000, 6750, 38250, 8.7, '0327333277', N'Phạm Hòa', 2.0, N'Phú Nhuận, TP.HCM', N'Quận 3, TP.HCM', 12, N'Giao nhanh', 'KH005'),
+('DH006', N'Giao hàng thành công', '2025-10-29 10:00', '2025-10-29 14:00', NULL, NULL, 'LOYAL10', '2025-10-29 09:00', 130000, 55000, 5500, 49500, 10.5, '0327333222', N'Nguyễn Hải', 4.5, N'Quận 1, TP.HCM', N'Gò Vấp, TP.HCM', 18, N'Tiêu chuẩn', 'KH006'),
+('DH007', N'Đang tìm tài xế', NULL, '2025-10-30 13:00', NULL, NULL, 'FREESHIP', '2025-10-30 09:00', 230000, 65000, 0, 65000, 20.0, '0912345678', N'Trần Đăng', 3.2, N'Thủ Đức, TP.HCM', N'Bình Thạnh, TP.HCM', 10, N'Tiêu chuẩn', 'KH002'),
+('DH008', N'Giao hàng thành công', '2025-10-30 11:00', '2025-10-30 16:00', 'WEEKEND20', 'WKND20', NULL, '2025-10-30 10:30', 180000, 75000, 11250, 63750, 22.5, '0987654321', N'Lê Hoàng', 6.0, N'Bình Thạnh, TP.HCM', N'Quận 5, TP.HCM', 15, N'Tiêu chuẩn', 'KH003'),
+('DH009', N'Đã hoàn thành', '2025-10-30 13:00', '2025-10-30 17:30', 'KMHE2025', 'SUMMERFREE', 'VCFREE15', '2025-10-30 12:00', 175000, 52000, 7800, 44200, 14.0, '0901234567', N'Nguyễn Văn B', 2.0, N'Quận 1, TP.HCM', N'Thủ Đức', 20, N'Giao nhanh', 'KH001'),
+('DH010', N'Đang xử lý', '2025-10-31 08:00', '2025-10-31 13:00', 'BF2025', 'BF50', 'LOYAL15', '2025-10-31 07:30', 240000, 90000, 13500, 76500, 30.0, '0977112233', N'Lê Mai', 5.0, N'Quận 7, TP.HCM', N'Bình Dương', 5, N'Tiêu chuẩn', 'KH004');
 GO
 
 -- HOA_DON ĐÃ BỊ XÓA - Thông tin thanh toán đã được tích hợp vào DON_HANG
@@ -983,7 +983,7 @@ GO
 
 PRINT N'--- Chèn dữ liệu DON_HANG_HUY ---';
 INSERT INTO DON_HANG_HUY (Ma_don_hang, Ma_khach_hang, Thoi_gian_huy, Ly_do_huy) VALUES
-('DH004', 'KH4', '2025-10-28 15:00', N'Khách không nhận hàng, yêu cầu hủy đơn');
+('DH004', 'KH004', '2025-10-28 15:00', N'Khách không nhận hàng, yêu cầu hủy đơn');
 GO
 
 -- ===========================
@@ -1021,31 +1021,31 @@ GO
 
 PRINT N'--- Chèn dữ liệu THONG_TIN_XU_LI_DON_HANG ---';
 INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy) VALUES
-('DH001', '2025-10-25 09:05', N'Đã tiếp nhận', 'NV0003'),
-('DH001', '2025-10-26 08:00', N'Đang giao', 'NV0003'),
-('DH002', '2025-10-26 15:10', N'Đã tiếp nhận', 'NV0003'),
-('DH002', '2025-10-27 12:30', N'Đã giao', 'NV0003'),
-('DH003', '2025-10-27 07:40', N'Đã tiếp nhận', 'NV0003'),
-('DH003', '2025-10-27 13:30', N'Đã giao', 'NV0003'),
-('DH004', '2025-10-28 09:15', N'Đang xử lý', 'NV0003'),
-('DH004', '2025-10-28 15:00', N'Đã hủy', 'NV0003'),
-('DH005', '2025-10-29 07:10', N'Đang giao', 'NV0003'),
-('DH006', '2025-10-29 09:15', N'Đã tiếp nhận', 'NV0003'),
-('DH006', '2025-10-29 14:00', N'Đã giao', 'NV0003');
+('DH001', '2025-10-25 09:05', N'Đã tiếp nhận', 'NV003'),
+('DH001', '2025-10-26 08:00', N'Đang giao', 'NV003'),
+('DH002', '2025-10-26 15:10', N'Đã tiếp nhận', 'NV003'),
+('DH002', '2025-10-27 12:30', N'Đã giao', 'NV003'),
+('DH003', '2025-10-27 07:40', N'Đã tiếp nhận', 'NV003'),
+('DH003', '2025-10-27 13:30', N'Đã giao', 'NV003'),
+('DH004', '2025-10-28 09:15', N'Đang xử lý', 'NV003'),
+('DH004', '2025-10-28 15:00', N'Đã hủy', 'NV003'),
+('DH005', '2025-10-29 07:10', N'Đang giao', 'NV003'),
+('DH006', '2025-10-29 09:15', N'Đã tiếp nhận', 'NV003'),
+('DH006', '2025-10-29 14:00', N'Đã giao', 'NV003');
 GO
 
 PRINT N'--- Chèn dữ liệu DON_HANG_DUOC_TIEP_NHAN ---';
 INSERT INTO DON_HANG_DUOC_TIEP_NHAN (Ma_don_hang, Ma_nhan_vien) VALUES
-('DH001', 'NV0003'), ('DH002', 'NV0003'), ('DH003', 'NV0003'), ('DH004', 'NV0003');
+('DH001', 'NV003'), ('DH002', 'NV003'), ('DH003', 'NV003'), ('DH004', 'NV003');
 GO
 
 PRINT N'--- Chèn dữ liệu YEU_CAU_HO_TRO ---';
 -- SỬA LỖI: Thêm cột Thoi_diem_tao và chèn dữ liệu cũ hơn Thoi_diem_tiep_nhan
 INSERT INTO YEU_CAU_HO_TRO (Ma_yeu_cau, Ma_khach_hang, Thoi_diem_tao, Loai_van_de, Noi_dung, Ma_nhan_vien, Thoi_diem_tiep_nhan, Thoi_diem_phan_hoi, Noi_dung_phan_hoi, Trang_thai_xu_ly) VALUES
-('YC0001', 'KH2', GETDATE()-1, N'Khiếu nại', N'Tài xế giao hàng trễ 30 phút so với dự kiến cho đơn DH000X.', 'NV0004', GETDATE()-0.5, GETDATE()-0.4, N'Xin lỗi quý khách về sự chậm trễ. Hệ thống ghi nhận và sẽ làm việc lại với tài xế.', N'Đã xử lý'),
-('YC0002', 'KH3', GETDATE()-0.3, N'Tư vấn dịch vụ', N'Công ty tôi muốn gửi hàng số lượng lớn hàng tuần, có gói cước ưu đãi nào không?', 'NV0004', GETDATE()-0.2, NULL, NULL, N'Đang xử lý'),
-('YC0003', 'KH1', GETDATE(), N'Hỗ trợ kỹ thuật', N'Tôi không áp dụng được mã giảm giá VCFREE15.', NULL, NULL, NULL, NULL, N'Chờ xử lý'),
-('YC0004', 'KH4', GETDATE()-2.1, N'Khiếu nại', N'Hàng hóa bị móp méo nhẹ khi nhận.', 'NV0004', GETDATE()-2, GETDATE()-1.9, N'Đã tiếp nhận thông tin và xem xét bồi thường.', N'Đã xử lý');
+('YC001', 'KH002', GETDATE()-1, N'Khiếu nại', N'Tài xế giao hàng trễ 30 phút so với dự kiến cho đơn DH000X.', 'NV004', GETDATE()-0.5, GETDATE()-0.4, N'Xin lỗi quý khách về sự chậm trễ. Hệ thống ghi nhận và sẽ làm việc lại với tài xế.', N'Đã xử lý'),
+('YC002', 'KH003', GETDATE()-0.3, N'Tư vấn dịch vụ', N'Công ty tôi muốn gửi hàng số lượng lớn hàng tuần, có gói cước ưu đãi nào không?', 'NV004', GETDATE()-0.2, NULL, NULL, N'Đang xử lý'),
+('YC003', 'KH001', GETDATE(), N'Hỗ trợ kỹ thuật', N'Tôi không áp dụng được mã giảm giá VCFREE15.', NULL, NULL, NULL, NULL, N'Chờ xử lý'),
+('YC004', 'KH004', GETDATE()-2.1, N'Khiếu nại', N'Hàng hóa bị móp méo nhẹ khi nhận.', 'NV004', GETDATE()-2, GETDATE()-1.9, N'Đã tiếp nhận thông tin và xem xét bồi thường.', N'Đã xử lý');
 GO
 
 PRINT N'Đã chèn dữ liệu mẫu cho tất cả 43 bảng.';
@@ -1053,12 +1053,11 @@ GO
 
 PRINT N'--- Chèn dữ liệu DANH_GIA_CUA_KHACH_HANG ---';
 INSERT INTO DANH_GIA_CUA_KHACH_HANG VALUES
-('1', 5.0, 'giao nhanh', '2025-10-26 11:00', 'KH1', 'DH001', 'DRV001'),
-('2', 4.0, 'tai xe coc', '2025-10-27 12:15', 'KH2', 'DH002', 'DRV002'),
-('3', 5.0, NULL, '2025-10-29 11:51', 'KH5', 'DH005', 'DRV006'),
-('4', 4.0, 'hang cua toi bi vo', '2025-10-30 15:35', 'KH3', 'DH008', 'DRV008'),
-('5', 5.0, 'dung gio', '2025-10-30 17:10', 'KH1', 'DH009', 'DRV008');
-
+('DG001', 5.0, 'giao nhanh', '2025-10-26 11:00', 'KH001', 'DH001', 'DRV001'),
+('DG002', 4.0, 'tai xe coc', '2025-10-27 12:15', 'KH002', 'DH002', 'DRV002'),
+('DG003', 5.0, NULL, '2025-10-29 11:51', 'KH005', 'DH005', 'DRV006'),
+('DG004', 4.0, 'hang cua toi bi vo', '2025-10-30 15:35', 'KH003', 'DH008', 'DRV008'),
+('DG005', 5.0, 'dung gio', '2025-10-30 17:10', 'KH001', 'DH009', 'DRV008');
 -- =====================================================================
 -- 5. KIỂM TRA DỮ LIỆU ĐÃ INSERT
 -- =====================================================================
@@ -1451,17 +1450,313 @@ BEGIN
 END;
 GO
 
+-- =====================================================================
+-- BỔ SUNG CÁC SP SINH MÃ TỰ ĐỘNG (AUTO-INCREMENT PREFIX)
+-- =====================================================================
+
+-- 1. SP THÊM NHÂN VIÊN (Mã NVxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_ThemNhanVien
+(
+    @HoTenLot NVARCHAR(50), @Ten NVARCHAR(50),
+    @GioiTinh NVARCHAR(10), @NgaySinh DATE,
+    @DiaChi NVARCHAR(255), @SDT VARCHAR(10),
+    @Email VARCHAR(100), @CCCD VARCHAR(12),
+    @NgayBatDau DATE, @VaiTro NVARCHAR(50)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: NV + 001
+            DECLARE @MaNV VARCHAR(10);
+            SELECT @MaNV = 'NV' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_nhan_vien, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM NHANVIEN;
+
+            INSERT INTO NHANVIEN (Ma_nhan_vien, Ho_va_ten_lot, Ten, Gioi_tinh, Ngay_sinh, Dia_chi, SDT, email, CCCD, Ngay_bat_dau_lam, Vai_tro)
+            VALUES (@MaNV, @HoTenLot, @Ten, @GioiTinh, @NgaySinh, @DiaChi, @SDT, @Email, @CCCD, @NgayBatDau, @VaiTro);
+        COMMIT;
+        SELECT @MaNV AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 2. SP ĐĂNG KÝ KHÁCH HÀNG (Mã KHxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_DangKyKhachHang
+(
+    @Email VARCHAR(100),
+    @HoTenLot NVARCHAR(50) = NULL, @Ten NVARCHAR(50) = NULL, -- Cho KH Cá nhân
+    @TenDoanhNghiep NVARCHAR(150) = NULL, @MaSoThue VARCHAR(15) = NULL, -- Cho KH Doanh nghiệp
+    @LoaiKhachHang NVARCHAR(20) -- 'CANHAN' hoặc 'DOANHNGHIEP'
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: KH + 001
+            DECLARE @MaKH VARCHAR(10);
+            SELECT @MaKH = 'KH' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_khach_hang, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM KHACH_HANG;
+
+            -- Insert bảng cha
+            INSERT INTO KHACH_HANG (Ma_khach_hang, email, Diem_thanh_vien, Ten_hang, Ngay_len_hang)
+            VALUES (@MaKH, @Email, 0, N'Đồng', GETDATE());
+
+            -- Insert bảng con
+            IF @LoaiKhachHang = 'CANHAN'
+            BEGIN
+                INSERT INTO KHACH_HANG_CA_NHAN (Ma_khach_hang, Ho_va_ten_lot, Ten)
+                VALUES (@MaKH, @HoTenLot, @Ten);
+            END
+            ELSE IF @LoaiKhachHang = 'DOANHNGHIEP'
+            BEGIN
+                INSERT INTO KHACH_HANG_DOANH_NGHIEP (Ma_khach_hang, Ten, Ma_so_thue)
+                VALUES (@MaKH, @TenDoanhNghiep, @MaSoThue);
+            END
+        COMMIT;
+        SELECT @MaKH AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 3. SP THÊM TÀI XẾ (Mã DRVxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_ThemTaiXe
+(
+    @HoTen NVARCHAR(100), @CCCD VARCHAR(12),
+    @GioiTinh NVARCHAR(10), @NgaySinh DATE,
+    @NgayBatDauLam DATE, @MaNVQuanLy VARCHAR(10)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: DRV + 001
+            DECLARE @MaTX VARCHAR(10);
+            SELECT @MaTX = 'DRV' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(DriverID, 4, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM TAI_XE;
+
+            INSERT INTO TAI_XE (DriverID, Ho_ten, CCCD, Gioi_Tinh, Ngay_Sinh, Ngay_Bat_Dau_Lam_Viec, Ma_Nhan_Vien_quan_li, Ngay_Bat_Dau_Quan_Ly, Trang_Thai)
+            VALUES (@MaTX, @HoTen, @CCCD, @GioiTinh, @NgaySinh, @NgayBatDauLam, @MaNVQuanLy, GETDATE(), N'Sẵn sàng');
+        COMMIT;
+        SELECT @MaTX AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 4. SP TẠO CHUYẾN GIAO HÀNG (Mã CGHxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_TaoChuyenGiaoHang
+(
+    @DriverID VARCHAR(10)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: CGH + 001
+            DECLARE @MaCGH VARCHAR(10);
+            SELECT @MaCGH = 'CGH' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(DeliveryID, 4, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM CHUYEN_GIAO_HANG;
+
+            INSERT INTO CHUYEN_GIAO_HANG (DeliveryID, DriverID, TrangThaiChuyen, so_luong_don_gop)
+            VALUES (@MaCGH, @DriverID, N'Đang thực hiện', 0);
+        COMMIT;
+        SELECT @MaCGH AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 5. SP TẠO ĐÁNH GIÁ (Mã DGxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_TaoDanhGia
+(
+    @MaKH VARCHAR(10), @MaDon VARCHAR(10),
+    @Rating INT, @Comment NVARCHAR(255), @DriverID VARCHAR(10) = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: DG + 001
+            DECLARE @MaDG VARCHAR(10);
+            SELECT @MaDG = 'DG' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Review_ID, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM DANH_GIA_CUA_KHACH_HANG;
+
+            INSERT INTO DANH_GIA_CUA_KHACH_HANG (Review_ID, Ma_khach_hang, Ma_don_hang, DriverID, Rating, Comment, Thoi_diem_DG)
+            VALUES (@MaDG, @MaKH, @MaDon, @DriverID, @Rating, @Comment, GETDATE());
+        COMMIT;
+        SELECT @MaDG AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 6. SP TẠO YÊU CẦU HỖ TRỢ (Mã YCxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_TaoYeuCauHoTro
+(
+    @MaKH VARCHAR(10), 
+    @LoaiVanDe NVARCHAR(50),
+    @NoiDung NVARCHAR(MAX)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: YC + 001
+            DECLARE @MaYC VARCHAR(10);
+            SELECT @MaYC = 'YC' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_yeu_cau, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM YEU_CAU_HO_TRO;
+
+            INSERT INTO YEU_CAU_HO_TRO (Ma_yeu_cau, Ma_khach_hang, Thoi_diem_tao, Loai_van_de, Noi_dung, Trang_thai_xu_ly)
+            VALUES (@MaYC, @MaKH, GETDATE(), @LoaiVanDe, @NoiDung, N'Chờ xử lý');
+        COMMIT;
+        SELECT @MaYC AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 7. SP TẠO THANH TOÁN (Mã TTxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_TaoThanhToan
+(
+    @MaKH VARCHAR(10),
+    @PhuongThuc NVARCHAR(50),
+    @SoTien MONEY,
+    @TrangThai NVARCHAR(50) = N'Thành công'
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: TT + 001
+            DECLARE @MaTT VARCHAR(10);
+            SELECT @MaTT = 'TT' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_thanh_toan, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM THANH_TOAN;
+
+            INSERT INTO THANH_TOAN (Ma_thanh_toan, Ma_khach_hang, phuong_thuc, trang_thai_giao_dich, so_tien_thanh_toan, thoi_gian_thanh_toan)
+            VALUES (@MaTT, @MaKH, @PhuongThuc, @TrangThai, @SoTien, GETDATE());
+        COMMIT;
+        SELECT @MaTT AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 8. SP THÊM XE (Mã VHCxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_ThemXe
+(
+    @BienSo VARCHAR(20), @ChuSoHuu NVARCHAR(100),
+    @NamSX CHAR(4), @TinhTrang NVARCHAR(50) = N'Sẵn sàng',
+    @LoaiXe VARCHAR(10), -- 'XEMAY' hoặc 'XETAI'
+    -- Thông số riêng
+    @PhanKhoi INT = NULL, @KhoangCho DECIMAL(5,2) = NULL, -- Xe máy
+    @TrongTai INT = NULL, @LoaiThung NVARCHAR(50) = NULL  -- Xe tải
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: VHC + 001 (Cắt từ ký tự thứ 4 vì VHC có 3 chữ cái)
+            DECLARE @MaXe VARCHAR(10);
+            SELECT @MaXe = 'VHC' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(VehicleID, 4, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM XE;
+
+            -- Xử lý cờ Flag
+            DECLARE @XeMayFlag BIT = 0, @XeTaiFlag BIT = 0;
+            IF @LoaiXe = 'XEMAY' SET @XeMayFlag = 1;
+            IF @LoaiXe = 'XETAI' SET @XeTaiFlag = 1;
+
+            INSERT INTO XE (VehicleID, Bien_so_xe, Chu_so_huu, Tinh_trang_xe, Nam_san_xuat, Xe_May_Flag, Phan_khoi, Khoang_cho, Xe_Tai_Flag, Trong_Tai, Loai_thung)
+            VALUES (@MaXe, @BienSo, @ChuSoHuu, @TinhTrang, @NamSX, @XeMayFlag, @PhanKhoi, @KhoangCho, @XeTaiFlag, @TrongTai, @LoaiThung);
+        COMMIT;
+        SELECT @MaXe AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 9. SP TẠO YÊU CẦU HỖ TRỢ (Mã YCxxx - 3 số)
+CREATE OR ALTER PROCEDURE sp_TaoYeuCauHoTro
+(
+    @MaKH VARCHAR(10), 
+    @LoaiVanDe NVARCHAR(50),
+    @NoiDung NVARCHAR(MAX)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRAN;
+            -- Sinh mã: YC + 001 (Cắt từ ký tự thứ 3)
+            DECLARE @MaYC VARCHAR(10);
+            SELECT @MaYC = 'YC' + 
+                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_yeu_cau, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
+            FROM YEU_CAU_HO_TRO;
+
+            INSERT INTO YEU_CAU_HO_TRO (Ma_yeu_cau, Ma_khach_hang, Thoi_diem_tao, Loai_van_de, Noi_dung, Trang_thai_xu_ly)
+            VALUES (@MaYC, @MaKH, GETDATE(), @LoaiVanDe, @NoiDung, N'Chờ xử lý');
+        COMMIT;
+        SELECT @MaYC AS NewID;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK;
+        THROW;
+    END CATCH
+END;
+GO
+
 PRINT N'=====================================================================';
 PRINT N'HOÀN TẤT TẠO FUNCTIONS VÀ STORED PROCEDURES';
 PRINT N'=====================================================================';
 GO
 
 -- =====================================================================
--- 7. CÁC TRIGGER (Tối ưu hóa sau khi xóa HOA_DON)
+-- 7. CÁC TRIGGER
 -- =====================================================================
 PRINT N'';
 PRINT N'=====================================================================';
-PRINT N'7. ĐỊNH NGHĨA TRIGGERS (Tối ưu SET-based)';
+PRINT N'7. ĐỊNH NGHĨA TRIGGERS';
 PRINT N'=====================================================================';
 GO
 
@@ -1527,66 +1822,9 @@ BEGIN
 END
 GO
 
-
-
--- =====================================================================
--- 8. TEST CASES CHO TRIGGERS
--- =====================================================================
-PRINT N'';
 PRINT N'=====================================================================';
-PRINT N'8. TEST CASES CHO TRIGGERS (Cập nhật Trạng thái & Điểm thành viên)';
+PRINT N'HOÀN TẤT TẠO TRIGGERS';
 PRINT N'=====================================================================';
 GO
-
--------------------------------------------------------------------------
--- KHỞI TẠO TEST DỮ LIỆU BAN ĐẦU
--------------------------------------------------------------------------
-PRINT N'--- Dữ liệu KHÁCH HÀNG (KH1) và ĐƠN HÀNG (DH007) trước khi test ---';
--- KH1: 150 điểm, Hạng Đồng. DH007: 10 điểm, Trang_thai_don = Đã tạo
-SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH1';
-SELECT Ma_don_hang, Trang_thai_don, diem_tich_luy FROM DON_HANG WHERE Ma_don_hang = 'DH007';
-
--------------------------------------------------------------------------
--- TEST 1: CHÈN TRẠNG THÁI 'ĐANG XỬ LÝ' (Kiểm tra Trigger Trạng thái)
--------------------------------------------------------------------------
-PRINT N'--- TEST 1: Cập nhật trạng thái cho DH007 (Đang xử lý) ---';
-INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
-VALUES ('DH007', GETDATE() + 1, N'Đang xử lý', 'NV0003');
-GO
-
-PRINT N'Kết quả sau TEST 1: (Trạng thái DH007 phải là "Đang xử lý")';
-SELECT Ma_don_hang, Trang_thai_don FROM DON_HANG WHERE Ma_don_hang = 'DH007';
-
--------------------------------------------------------------------------
--- TEST 2: CHÈN TRẠNG THÁI 'GIAO HÀNG THÀNH CÔNG' (Kiểm tra cả 2 Triggers)
--------------------------------------------------------------------------
-PRINT N'--- TEST 2: Cập nhật trạng thái cho DH007 (Đã hoàn thành) ---';
-INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
-VALUES ('DH007', GETDATE() + 2, N'Đã hoàn thành', 'NV0003');
-GO
-
-PRINT N'Kết quả sau TEST 2:';
-PRINT N'1. Trạng thái DH007: (Phải là "Đã hoàn thành")';
-SELECT Ma_don_hang, Trang_thai_don FROM DON_HANG WHERE Ma_don_hang = 'DH007';
-
-PRINT N'2. Điểm và Hạng KH1: (150 điểm + 10 điểm = 160 điểm. Hạng vẫn là Đồng)';
-SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH1';
-
--------------------------------------------------------------------------
--- TEST 3: ĐƠN HÀNG KHÁC VÀ KHÁCH HÀNG LÊN HẠNG (KH2)
--------------------------------------------------------------------------
-PRINT N'--- Dữ liệu KHÁCH HÀNG (KH2) và ĐƠN HÀNG (DH002) trước khi test ---';
--- KH2: 499 điểm, Hạng Đồng. DH002: 15 điểm.
-SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH2';
-
-PRINT N'--- TEST 3: Đơn DH002 thành công (499 + 15 = 514 điểm -> Lên Hạng Bạc) ---';
-INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
-VALUES ('DH002', GETDATE() + 3, N'Đã hoàn thành', 'NV0003');
-GO
-
-PRINT N'Kết quả sau TEST 3: (KH2 phải có 514 điểm, Hạng Bạc)';
-SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang FROM KHACH_HANG WHERE Ma_khach_hang = 'KH2';
-GO
-
 ------------------------------------------------------------------------
 

@@ -46,6 +46,12 @@ const chuyenGiaoHangRoutes = require('./routes/chuyenGiaoHangRoutes');
 app.use('/api/chuyen-giao-hang', chuyenGiaoHangRoutes);
 
 // ============================================
+// ROUTES - (STORED PROCEDURES)
+// ============================================
+const storedProcedureRoutes = require('./routes/storedProcedureRoutes');
+app.use('/api/sp', storedProcedureRoutes);
+
+// ============================================
 // SERVER START
 // ============================================
 const PORT = process.env.PORT || 3000;
@@ -59,6 +65,7 @@ app.listen(PORT, () => {
   console.log(`📍 Orders: http://localhost:${PORT}/api/don-hang`);
   console.log(`📍 Delivery: http://localhost:${PORT}/api/chuyen-giao-hang`);
   console.log(`📍 Reports: http://localhost:${PORT}/api/bao-cao`);
+  console.log(`📍 Stored Procedures: http://localhost:${PORT}/api/sp`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
 });
 

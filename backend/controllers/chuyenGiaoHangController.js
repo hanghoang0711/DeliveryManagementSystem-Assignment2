@@ -204,6 +204,7 @@ exports.getChuyenGiaoHangById = async (req, res) => {
 exports.createChuyenGiaoHang = async (req, res) => {
   try {
     const { DriverID } = req.body;
+    const { QueryTypes } = require('sequelize');
 
     // Validation
     if (!DriverID) {
@@ -222,30 +223,33 @@ exports.createChuyenGiaoHang = async (req, res) => {
       });
     }
 
-    // Sinh mã chuyến giao hàng tự động
-    const lastChuyen = await ChuyenGiaoHang.findOne({
-      order: [['DeliveryID', 'DESC']],
-      attributes: ['DeliveryID']
-    });
+    // Gọi stored procedure sp_TaoChuyenGiaoHang
+    const result = await db.sequelize.query(
+      `EXEC sp_TaoChuyenGiaoHang @DriverID = :driverID`,
+      {
+        replacements: { driverID: DriverID },
+        type: QueryTypes.SELECT
+      }
+    );
 
-    let newDeliveryID = 'CGH001';
-    if (lastChuyen) {
-      const lastNumber = parseInt(lastChuyen.DeliveryID.replace('CGH', ''));
-      newDeliveryID = 'CGH' + String(lastNumber + 1).padStart(3, '0');
+    if (!result || result.length === 0) {
+      return res.status(500).json({
+        success: false,
+        message: 'Không thể tạo chuyến giao hàng. Vui lòng thử lại.'
+      });
     }
 
-    // Tạo chuyến giao hàng mới
-    const newChuyen = await ChuyenGiaoHang.create({
-      DeliveryID: newDeliveryID,
-      DriverID,
-      so_luong_don_gop: 0, // Ban đầu chưa có đơn nào
-      TrangThaiChuyen: 'Đang thực hiện'
-    });
+    const newDeliveryID = result[0].NewID;
 
     res.status(201).json({
       success: true,
-      message: 'Tạo chuyến giao hàng thành công',
-      data: newChuyen
+      message: 'Tạo chuyến giao hàng thành công (sử dụng sp_TaoChuyenGiaoHang)',
+      data: {
+        DeliveryID: newDeliveryID,
+        DriverID,
+        TrangThaiChuyen: 'Đang thực hiện',
+        so_luong_don_gop: 0
+      }
     });
 
   } catch (error) {

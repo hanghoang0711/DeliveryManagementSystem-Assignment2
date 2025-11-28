@@ -2,42 +2,62 @@ const { TaiXe, TaiXeXeMay, TaiXeXeTai, TaiXeSDT, GhiChuQuanLyTaiXe, NhanVienQuan
 const { Op } = require("sequelize");
 
 
-// Create TaiXe
+// Create TaiXe using sp_ThemTaiXe
 exports.createTaiXe = async (req, res) => {
   try {
-    delete req.body.DriverID;
+    const { Ho_ten, CCCD, Gioi_Tinh, Ngay_Sinh, Ngay_Bat_Dau_Lam_Viec, Ma_Nhan_Vien_quan_li } = req.body;
+    const db = require('../models');
+    const { QueryTypes } = require('sequelize');
 
-    // 2. Sinh DriverID tự động
-    const allDrivers = await TaiXe.findAll({ attributes: ['DriverID'], raw: true });
-    let newDriverID = 'DRV0001';
-    if (allDrivers.length > 0) {
-      const numbers = allDrivers
-        .map(d => parseInt(d.DriverID.replace('DRV', '')))
-        .filter(n => !isNaN(n));
-
-      if (numbers.length > 0) {
-        const maxNumber = Math.max(...numbers);
-        newDriverID = 'DRV' + String(maxNumber + 1).padStart(4, '0');
-      }
+    // Validation
+    if (!Ho_ten || !CCCD || !Gioi_Tinh || !Ngay_Sinh || !Ngay_Bat_Dau_Lam_Viec || !Ma_Nhan_Vien_quan_li) {
+      return res.status(400).json({
+        message: "Thiếu thông tin bắt buộc",
+        fieldErrors: []
+      });
     }
 
-    req.body.DriverID = newDriverID;
+    // Gọi stored procedure sp_ThemTaiXe
+    const result = await db.sequelize.query(
+      `EXEC sp_ThemTaiXe 
+        @HoTen = :hoTen,
+        @CCCD = :cccd,
+        @GioiTinh = :gioiTinh,
+        @NgaySinh = :ngaySinh,
+        @NgayBatDauLam = :ngayBatDauLam,
+        @MaNVQuanLy = :maNVQuanLy`,
+      {
+        replacements: {
+          hoTen: Ho_ten,
+          cccd: CCCD,
+          gioiTinh: Gioi_Tinh,
+          ngaySinh: Ngay_Sinh,
+          ngayBatDauLam: Ngay_Bat_Dau_Lam_Viec,
+          maNVQuanLy: Ma_Nhan_Vien_quan_li
+        },
+        type: QueryTypes.SELECT
+      }
+    );
 
+    if (!result || result.length === 0) {
+      return res.status(500).json({
+        message: "Không thể tạo tài xế. Vui lòng kiểm tra lại dữ liệu."
+      });
+    }
 
-    const newTaiXe = await TaiXe.create(req.body);
+    const newDriverID = result[0].NewID;
 
-    if (req.body.Ma_Nhan_Vien_quan_li) {
+    // Increment manager's driver count
+    if (Ma_Nhan_Vien_quan_li) {
       await NhanVienQuanLyTaiXe.increment(
         { So_luong_tai_xe_dang_phu_trach: 1 },
-        { where: { Ma_nhan_vien: req.body.Ma_Nhan_Vien_quan_li } }
+        { where: { Ma_nhan_vien: Ma_Nhan_Vien_quan_li } }
       );
     }
 
-    const taiXeData = await TaiXe.findByPk(newTaiXe.DriverID);
-
     res.status(201).json({
-      message: "Tài xế tạo thành công",
-      data: taiXeData
+      message: "Tài xế tạo thành công (sử dụng sp_ThemTaiXe)",
+      data: { DriverID: newDriverID, Ho_ten, CCCD, Gioi_Tinh, Trang_Thai: 'Sẵn sàng' }
     });
 
   } catch (error) {

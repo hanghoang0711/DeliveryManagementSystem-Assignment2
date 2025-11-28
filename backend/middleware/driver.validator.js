@@ -40,13 +40,13 @@ const validateTaiXe = [
     .notEmpty().withMessage("Mã nhân viên quản lý không được để trống"),
 
   body("Trang_Thai")
-    .notEmpty().isString(),
+    .optional().isString(),
 
   body("Rating")
     .optional().isDecimal({ decimal_digits: '0,1' }).withMessage("Rating phải là số thập phân (2,1)"),
 
   body("Ngay_Bat_Dau_Quan_Ly")
-    .notEmpty().withMessage("Ngày bắt đầu quản lý không được để trống")
+    .optional()
 ];
 
 // Middleware xử lý kết quả validate
