@@ -11,6 +11,7 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
     Ma_Nhan_Vien_quan_li: '',
     Ngay_Bat_Dau_Quan_Ly: new Date(),
     Trang_Thai: 'Đang hoạt động',
+    Gioi_Tinh: 'Khác'
   });
 
   const [errors, setErrors] = useState({});
@@ -26,6 +27,7 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
         Ngay_Bat_Dau_Lam_Viec: driver.Ngay_Bat_Dau_Lam_Viec,
         Ma_Nhan_Vien_quan_li: driver.Ma_Nhan_Vien_quan_li,
         Trang_Thai: driver.Trang_Thai,
+        Gioi_Tinh: driver.Gioi_Tinh
       });
     }
   }, [driver]);
@@ -171,6 +173,7 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
               type="date"
               id="Ngay_Sinh"
               name="Ngay_Sinh"
+              value={formData.Ngay_Sinh}
               onChange={handleChange}
               className={errors.Ngay_Sinh ? 'input-error' : ''}
             />
@@ -211,6 +214,23 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
               <option value="Đang hoạt động">Đang hoạt động</option>
               <option value="Không hoạt động">Không hoạt động</option>
               <option value="Tạm nghỉ">Tạm nghỉ</option>
+            </select>
+          </div>
+
+          {/* Sex */}
+          <div className="form-group">
+            <label htmlFor="Gioi_Tinh">
+              Giới tính <span className="required">*</span>
+            </label>
+            <select
+              id="Gioi_Tinh"
+              name="Gioi_Tinh"
+              value={formData.Gioi_Tinh}
+              onChange={handleChange}
+            >
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
             </select>
           </div>
 
