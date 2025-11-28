@@ -70,10 +70,10 @@ const TripTable = ({ trips, onViewDetails, onAddOrder, onUpdateStatus, onDelete 
                 </td>
 
                 <td>
-                  <button onClick={() => onViewDetails(trip)}>👁️</button>
+                  <button onClick={() => onViewDetails(trip)}> 👁️ </button>
 
                   {trip.TrangThaiChuyen === 'Đang thực hiện' && (
-                    <button onClick={() => onAddOrder(trip)}>➕</button>
+                    <button onClick={() => onAddOrder(trip)}> ➕ </button>
                   )}
 
                   {nextStatuses.length > 0 && (
@@ -89,7 +89,6 @@ const TripTable = ({ trips, onViewDetails, onAddOrder, onUpdateStatus, onDelete 
                     </select>
                   )}
 
-                  <button onClick={() => onDelete(trip)}>🗑️</button>
                 </td>
               </tr>
             );

@@ -3,8 +3,7 @@ import './TripForm.css';
 
 const TripForm = ({ onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
-    ma_tai_xe: '',
-    ngay_bat_dau: ''
+    DriverID: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -28,14 +27,8 @@ const TripForm = ({ onSubmit, onClose }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.ma_tai_xe.trim()) {
-      newErrors.ma_tai_xe = 'Mã tài xế không được để trống';
-    } else if (!/^TX\d{3}$/.test(formData.ma_tai_xe)) {
-      newErrors.ma_tai_xe = 'Mã tài xế phải có định dạng TXxxx (ví dụ: TX001)';
-    }
-
-    if (!formData.ngay_bat_dau) {
-      newErrors.ngay_bat_dau = 'Ngày bắt đầu không được để trống';
+    if (!formData.DriverID.trim()) {
+      newErrors.DriverID = 'Mã tài xế không được để trống';
     }
 
     setErrors(newErrors);
@@ -69,38 +62,20 @@ const TripForm = ({ onSubmit, onClose }) => {
         <form onSubmit={handleSubmit} className="trip-form">
           {/* Driver ID */}
           <div className="form-group">
-            <label htmlFor="ma_tai_xe">
+            <label htmlFor="DriverID">
               Mã tài xế <span className="required">*</span>
             </label>
             <input
               type="text"
-              id="ma_tai_xe"
-              name="ma_tai_xe"
-              value={formData.ma_tai_xe}
+              id="DriverID"
+              name="DriverID"
+              value={formData.DriverID}
               onChange={handleChange}
-              placeholder="TX001"
-              className={errors.ma_tai_xe ? 'input-error' : ''}
+              placeholder="DRV001"
+              className={errors.DriverID ? 'input-error' : ''}
             />
-            {errors.ma_tai_xe && (
-              <span className="error-message">{errors.ma_tai_xe}</span>
-            )}
-          </div>
-
-          {/* Start Date */}
-          <div className="form-group">
-            <label htmlFor="ngay_bat_dau">
-              Ngày bắt đầu <span className="required">*</span>
-            </label>
-            <input
-              type="datetime-local"
-              id="ngay_bat_dau"
-              name="ngay_bat_dau"
-              value={formData.ngay_bat_dau}
-              onChange={handleChange}
-              className={errors.ngay_bat_dau ? 'input-error' : ''}
-            />
-            {errors.ngay_bat_dau && (
-              <span className="error-message">{errors.ngay_bat_dau}</span>
+            {errors.DriverID && (
+              <span className="error-message">{errors.DriverID}</span>
             )}
           </div>
 
