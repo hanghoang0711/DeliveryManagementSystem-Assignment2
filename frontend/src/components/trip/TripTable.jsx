@@ -18,11 +18,11 @@ const TripTable = ({ trips, onViewDetails, onAddOrder, onUpdateStatus, onDelete 
             <th>Mã chuyến</th>
             <th>Tài xế</th>
             <th>Trạng thái</th>
-            <th>Ngày bắt đầu</th>
-            <th>Ngày kết thúc</th>
-            <th>Thời gian (giờ)</th>
+            {/* <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th> */}
+            {/* <th>Thời gian (giờ)</th> */}
             <th>Tổng quãng đường</th>
-            <th>Số đơn hàng</th>
+            <th>Số đơn hàng gộp</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -49,15 +49,24 @@ const TripTable = ({ trips, onViewDetails, onAddOrder, onUpdateStatus, onDelete 
                   </span>
                 </td>
 
-                <td>{trip.Ngay_bat_dau ? formatDateTime(trip.Ngay_bat_dau) : 'N/A'}</td>
-                <td>{trip.Ngay_ket_thuc ? formatDateTime(trip.Ngay_ket_thuc) : '—'}</td>
+                {/* <td>{trip.Ngay_bat_dau ? formatDateTime(trip.Ngay_bat_dau) : 'N/A'}</td>
+                <td>{trip.Ngay_ket_thuc ? formatDateTime(trip.Ngay_ket_thuc) : '—'}</td> */}
 
-                <td>{duration !== null ? `${duration}h` : '—'}</td>
+                {/* <td>{duration !== null ? `${duration}h` : '—'}</td> */}
 
-                <td>{formatDistance(trip.tong_quang_duong || 0)}</td>
+                {/* <td>{formatDistance(trip.tong_quang_duong || 0)}</td>
 
                 <td className="order-count">
                   <strong>{trip.so_don_hang || 0}</strong> đơn
+                </td> */}
+                <td>
+                  {trip.donHangs && trip.donHangs.length > 0
+                    ? `${trip.donHangs.reduce((sum, dh) => sum + (parseFloat(dh.quang_duong) || 0), 0).toFixed(2)} km`
+                    : '0 km'}
+                </td>
+
+                <td className="order-count">
+                  <strong>{trip.donHangs?.length || trip.so_luong_don_gop || 0}</strong> đơn
                 </td>
 
                 <td>

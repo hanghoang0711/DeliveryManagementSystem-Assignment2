@@ -1,0 +1,215 @@
+/* Toàn trang */
+.dashboard-container {
+  padding: 48px 56px;
+  min-height: 100vh; /* Đảm bảo nền tràn hết màn hình */
+  
+  /* Nền soft blue dịu thay kem ấm */
+  background-color: #e3f2fd;
+  /* Subtle gradients cho depth nhẹ nhàng */
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(103, 116, 139, 0.05) 0, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.03) 0, transparent 50%);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  color: #334155; /* Text xám dịu hơn */
+  font-family: 'Inter', sans-serif; /* Unify font modern */
+}
+
+/* Header */
+.dashboard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Center vertically */
+  margin-bottom: 56px; /* Tăng spacing cho cân bằng */
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1); /* Subtle divider */
+}
+
+.dashboard-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dashboard-left h1 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 800;
+  color: #1e293b; /* Navy dịu cho headings */
+  font-family: 'Inter', sans-serif; /* Modern consistent */
+}
+
+.dashboard-left p {
+  margin: 10px 0 0;
+  font-size: 20px;
+  color: #64748b; /* Xám dịu */
+}
+
+.dashboard-left p strong {
+  font-weight: 800;
+  font-style: italic;
+  color: #334155; /* Tên người dùng nổi bật dịu */
+}
+
+/* Logo + logout */
+.dashboard-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: -8px;
+}
+
+/* Logo kiểu SHIPIZ */
+.dashboard-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Chấm tròn cam gradient dịu */
+.dashboard-brand-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fb923c, #f97316); /* Cam gradient dịu */
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
+}
+
+.dashboard-brand-text {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #1e293b; /* Chữ logo navy dịu */
+  font-family: 'Inter', sans-serif;
+}
+
+/* Nút đăng xuất */
+.btn-logout {
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #fb923c, #f97316); /* Gradient cam dịu */
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.2); /* Bóng dịu */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Mượt hơn */
+}
+
+.btn-logout:hover {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  transform: none;
+  box-shadow: 0 6px 16px rgba(251, 146, 60, 0.3);
+}
+
+/* Card layout – 2 cột giống mockup */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px; /* Tăng gap cho breathing room */
+  max-width: 1000px; /* Chặt hơn để center */
+  margin: 0 auto; /* Center grid */
+}
+
+/* Card styling */
+.dashboard-card {
+  padding: 30px 34px;
+  border-radius: 20px;
+  background: #ffffff; /* Nền card trắng */
+  border: 1px solid rgba(148, 163, 184, 0.1); /* Border nhẹ cho separation */
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08); /* Blue-tinted shadow dịu */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Mượt hơn */
+}
+
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+  background: rgba(255, 255, 255, 0.95); /* Subtle fade */
+}
+
+.dashboard-card h3 {
+  font-size: 26px;
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  color: #1e293b; /* Chữ tiêu đề card navy */
+}
+
+.dashboard-card h3 span[role="img"] {
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.dashboard-card p {
+  margin: 0;
+  color: #64748b; /* Chữ mô tả card xám dịu */
+  font-size: 17px;
+  font-weight: 500;
+}
+
+/* Màu các card – Pastel gradient dịu */
+/* Giữ sắc thái nhưng với độ sáng cao hơn, thêm linear-gradient */
+.card-green {
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5); /* Xanh lá dịu */
+}
+
+.card-blue {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe); /* Xanh dương dịu */
+}
+
+.card-cyan {
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe); /* Xanh lam dịu */
+}
+
+.card-yellow {
+  background: linear-gradient(135deg, #fef3c7, #fde68a); /* Vàng dịu */
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .dashboard-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  
+  .dashboard-right {
+    justify-content: flex-end; /* Right-align logout trên mobile */
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 32px 24px;
+  }
+
+  .dashboard-brand-text {
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  .dashboard-card {
+    padding: 24px 28px;
+    border-radius: 18px;
+  }
+
+  .dashboard-card h3 {
+    font-size: 24px; /* Tăng size cho mobile readability */
+  }
+
+  .btn-logout {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}

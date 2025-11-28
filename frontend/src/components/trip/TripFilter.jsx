@@ -24,7 +24,7 @@ const TripFilter = ({ filters, onFilterChange }) => {
     const defaultFilters = {
       status: '',
       ma_tai_xe: '',
-      sortBy: 'ngay_bat_dau',
+      sortBy: 'DeliveryID',
       sortOrder: 'DESC'
     };
     setLocalFilters(defaultFilters);

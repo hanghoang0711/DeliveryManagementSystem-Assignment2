@@ -27,7 +27,7 @@ const DeliveryTripsPage = () => {
   const [filters, setFilters] = useState({
     status: '',
     ma_tai_xe: '',
-    sortBy: 'ngay_bat_dau',
+    sortBy: 'DeliveryID',
     sortOrder: 'DESC'
   });
 
@@ -50,11 +50,16 @@ const DeliveryTripsPage = () => {
       setLoading(true);
       setError(null);
 
-      const params = {
-        page: pagination.page,
-        limit: pagination.limit,
-        ...filters
-      };
+        const params = {
+          page: pagination.page,
+          limit: pagination.limit,
+          trang_thai: filters.status || '',
+          driver_id: filters.ma_tai_xe || '',
+          sortKey: filters.sortBy === 'ngay_bat_dau' ? 'DeliveryID' : filters.sortBy || 'DeliveryID',
+          sortOrder: filters.sortOrder || 'DESC'
+        };
+
+
 
       const data = await deliveryTripAPI.getAll(params);
       console.log("🎯 Dữ liệu API trả về:", data);
