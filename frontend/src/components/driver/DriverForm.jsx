@@ -4,11 +4,13 @@ import './DriverForm.css';
 const DriverForm = ({ driver, onSubmit, onClose }) => {
   // Form state
   const [formData, setFormData] = useState({
-    DriverID: '',
     Ho_ten: '',
     CCCD: '',
-    Rating: 4.0,
-    Trang_thai_hoat_dong: 'Đang hoạt động'
+    Ngay_Sinh: new Date(),
+    Ngay_Bat_Dau_Lam_Viec: new Date(),
+    Ma_Nhan_Vien_quan_li: '',
+    Ngay_Bat_Dau_Quan_Ly: new Date(),
+    Trang_Thai: 'Đang hoạt động',
   });
 
   const [errors, setErrors] = useState({});
@@ -18,11 +20,12 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
   useEffect(() => {
     if (driver) {
       setFormData({
-        DriverID: driver.DriverID || '',
         Ho_ten: driver.Ho_ten || '',
         CCCD: driver.CCCD || '',
-        Rating: driver.Rating || 4.0,
-        Trang_thai_hoat_dong: driver.Trang_thai_hoat_dong || 'Đang hoạt động'
+        Ngay_Sinh: new Date(driver.Ngay_Sinh),
+        Ngay_Bat_Dau_Lam_Viec: driver.Ngay_Bat_Dau_Lam_Viec,
+        Ma_Nhan_Vien_quan_li: driver.Ma_Nhan_Vien_quan_li,
+        Trang_Thai: driver.Trang_Thai,
       });
     }
   }, [driver]);
@@ -52,12 +55,6 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.DriverID.trim()) {
-      newErrors.DriverID = 'Mã tài xế không được để trống';
-    } else if (!/^DRV\d{3}$/.test(formData.DriverID)) {
-      newErrors.DriverID = 'Mã tài xế phải có định dạng DRVxxx (ví dụ: DRV001)';
-    }
-
     if (!formData.Ho_ten.trim()) {
       newErrors.Ho_ten = 'Họ tên không được để trống';
     } else if (formData.Ho_ten.trim().length < 3) {
@@ -70,8 +67,18 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
       newErrors.CCCD = 'CCCD phải có 12 chữ số';
     }
 
-    if (formData.Rating < 0 || formData.Rating > 5) {
-      newErrors.Rating = 'Rating phải từ 0 đến 5';
+    if (!formData.Ho_ten.trim()) {
+      newErrors.Ho_ten = 'Họ tên không được để trống';
+    }
+
+    console.log(formData.Ngay_Sinh)
+
+    if ((new Date()).getFullYear() - (new Date(formData.Ngay_Sinh)).getFullYear() < 18) {
+      newErrors.Ngay_Sinh = 'Tài xế phải đủ 18 tuổi trở lên.';
+    }
+
+    if (!formData.Ma_Nhan_Vien_quan_li.trim()) {
+      newErrors.Ma_Nhan_Vien_quan_li = 'Mã nhân viên quản lí không được để trống';
     }
 
     setErrors(newErrors);
@@ -115,25 +122,6 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="driver-form">
-          {/* Driver ID */}
-          <div className="form-group">
-            <label htmlFor="DriverID">
-              Mã tài xế <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              id="DriverID"
-              name="DriverID"
-              value={formData.DriverID}
-              onChange={handleChange}
-              placeholder="DRV001"
-              disabled={isEditMode} // Không cho edit ID
-              className={errors.DriverID ? 'input-error' : ''}
-            />
-            {errors.DriverID && (
-              <span className="error-message">{errors.DriverID}</span>
-            )}
-          </div>
 
           {/* Full Name */}
           <div className="form-group">
@@ -174,37 +162,50 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
             )}
           </div>
 
-          {/* Rating */}
+          {/* Ngay sinh */}
           <div className="form-group">
-            <label htmlFor="Rating">
-              Rating (0-5) <span className="required">*</span>
+            <label htmlFor="Ngay_sinh">
+              Ngày sinh <span className="required">*</span>
             </label>
             <input
-              type="number"
-              id="Rating"
-              name="Rating"
-              value={formData.Rating}
+              type="date"
+              id="Ngay_Sinh"
+              name="Ngay_Sinh"
               onChange={handleChange}
-              min="0"
-              max="5"
-              step="0.1"
-              className={errors.Rating ? 'input-error' : ''}
+              className={errors.Ngay_Sinh ? 'input-error' : ''}
             />
-            {errors.Rating && (
-              <span className="error-message">{errors.Rating}</span>
+            {errors.Ngay_Sinh && (
+              <span className="error-message">{errors.Ngay_Sinh}</span>
             )}
-            <small className="help-text">Điểm đánh giá từ 0.0 đến 5.0</small>
+          </div>
+
+          {/* Ma_Nhan_Vien_quan_li */}
+          <div className="form-group">
+            <label htmlFor="Ma_Nhan_Vien_quan_li">
+              Mã nhân viên quản lí <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="Ma_Nhan_Vien_quan_li"
+              name="Ma_Nhan_Vien_quan_li"
+              value={formData.Ma_Nhan_Vien_quan_li}
+              onChange={handleChange}
+              className={errors.Ma_Nhan_Vien_quan_li ? 'input-error' : ''}
+            />
+            {errors.Ma_Nhan_Vien_quan_li && (
+              <span className="error-message">{errors.Ma_Nhan_Vien_quan_li}</span>
+            )}
           </div>
 
           {/* Status */}
           <div className="form-group">
-            <label htmlFor="Trang_thai_hoat_dong">
+            <label htmlFor="Trang_Thai">
               Trạng thái <span className="required">*</span>
             </label>
             <select
-              id="Trang_thai_hoat_dong"
-              name="Trang_thai_hoat_dong"
-              value={formData.Trang_thai_hoat_dong}
+              id="Trang_Thai"
+              name="Trang_Thai"
+              value={formData.Trang_Thai}
               onChange={handleChange}
             >
               <option value="Đang hoạt động">Đang hoạt động</option>
