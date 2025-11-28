@@ -4,17 +4,20 @@ import '../../components/order/OderForm.css';
 
 const OrderForm = ({ order, onSubmit, onClose }) => {
   // Form state
+  let now = new Date();
+  now.setDate(now.getDate() + 3);
+
   const [formData, setFormData] = useState({
     Ma_khach_hang: '',
     dia_chi_lay_hang: '',
     dia_chi_giao_hang: '',
-    SDT_nguoi_gui: '',
-    ten_nguoi_gui: '',
     SDT_nguoi_nhan: '',
     ten_nguoi_nhan: '',
     gia_tri_hang_hoa_phi_van_chuyen: 0,
-    ghi_chu: '',
-    Trang_thai_don: 'Đang xử lý' // Default status for new orders
+    can_nang: 0,
+    phuong_thuc_giao_hang: '',
+    Trang_thai_don: 'Đang xử lý',
+    Thoi_gian_giao_hang_du_kien: now
   });
 
   const [errors, setErrors] = useState({});
@@ -25,17 +28,19 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
   // Load order data khi edit mode
   useEffect(() => {
     if (order) {
+      console.log(order);
+
       setFormData({
         Ma_khach_hang: order.Ma_khach_hang || '',
         dia_chi_lay_hang: order.dia_chi_lay_hang || '',
         dia_chi_giao_hang: order.dia_chi_giao_hang || '',
-        SDT_nguoi_gui: order.SDT_nguoi_gui || '',
-        ten_nguoi_gui: order.ten_nguoi_gui || '',
         SDT_nguoi_nhan: order.SDT_nguoi_nhan || '',
         ten_nguoi_nhan: order.ten_nguoi_nhan || '',
         gia_tri_hang_hoa_phi_van_chuyen: order.gia_tri_hang_hoa_phi_van_chuyen || 0,
-        ghi_chu: order.ghi_chu || '',
-        Trang_thai_don: order.Trang_thai_don || 'Đang xử lý'
+        can_nang: order.can_nang || '',
+        phuong_thuc_giao_hang: order.phuong_thuc_giao_hang || '',
+        Trang_thai_don: order.Trang_thai_don || 'Đang xử lý',
+        Thoi_gian_giao_hang_du_kien: order.Thoi_gian_giao_hang_du_kien || '',
       });
     }
   }, [order]);
@@ -65,10 +70,10 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
   const validate = () => {
     const newErrors = {};
 
+    console.log(formData);
+
     if (!formData.Ma_khach_hang.trim()) {
       newErrors.Ma_khach_hang = 'Mã khách hàng không được để trống';
-    } else if (!/^KH\d{3}$/.test(formData.Ma_khach_hang)) {
-      newErrors.Ma_khach_hang = 'Mã khách hàng phải có định dạng KHxxx (ví dụ: KH001)';
     }
 
     if (!formData.dia_chi_lay_hang.trim()) {
@@ -77,17 +82,7 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
 
     if (!formData.dia_chi_giao_hang.trim()) {
       newErrors.dia_chi_giao_hang = 'Địa chỉ giao hàng không được để trống';
-    }
-
-    if (!formData.SDT_nguoi_gui.trim()) {
-      newErrors.SDT_nguoi_gui = 'SĐT người gửi không được để trống';
-    } else if (!/^0\d{9}$/.test(formData.SDT_nguoi_gui)) {
-      newErrors.SDT_nguoi_gui = 'SĐT phải có 10 chữ số và bắt đầu bằng 0';
-    }
-
-    if (!formData.ten_nguoi_gui.trim()) {
-      newErrors.ten_nguoi_gui = 'Tên người gửi không được để trống';
-    }
+    } 
 
     if (!formData.SDT_nguoi_nhan.trim()) {
       newErrors.SDT_nguoi_nhan = 'SĐT người nhận không được để trống';
@@ -101,6 +96,14 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
 
     if (formData.gia_tri_hang_hoa_phi_van_chuyen <= 0) {
       newErrors.gia_tri_hang_hoa_phi_van_chuyen = 'Giá trị hàng hóa phải lớn hơn 0';
+    }
+
+    if (formData.can_nang <= 0) {
+      newErrors.can_nang = 'Cân nặng hàng hóa phải lớn hơn 0';
+    }
+
+    if (!formData.phuong_thuc_giao_hang.trim()) {
+      newErrors.phuong_thuc_giao_hang = 'Cần cho biết phương thức giao hàng';
     }
 
     setErrors(newErrors);
@@ -166,8 +169,6 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
           <div className="form-grid">
             {/* Column 1: Customer & Addresses */}
             <div className="form-section">
-              <h3>📍 Thông tin đơn hàng</h3>
-
               {/* Customer ID */}
               <div className="form-group">
                 <label htmlFor="Ma_khach_hang">
@@ -229,51 +230,8 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
               </div>
             </div>
 
-            {/* Column 2: Sender & Receiver Info */}
-            <div className="form-section">
-              <h3>👥 Người gửi & nhận</h3>
-
-              {/* Sender Phone */}
-              <div className="form-group">
-                <label htmlFor="SDT_nguoi_gui">
-                  SĐT người gửi <span className="required">*</span>
-                </label>
-                <input
-                  type="tel"
-                  id="SDT_nguoi_gui"
-                  name="SDT_nguoi_gui"
-                  value={formData.SDT_nguoi_gui}
-                  onChange={handleChange}
-                  placeholder="0901234567"
-                  maxLength="10"
-                  disabled={isEditMode}
-                  className={errors.SDT_nguoi_gui ? 'input-error' : ''}
-                />
-                {errors.SDT_nguoi_gui && (
-                  <span className="error-message">{errors.SDT_nguoi_gui}</span>
-                )}
-              </div>
-
-              {/* Sender Name */}
-              <div className="form-group">
-                <label htmlFor="ten_nguoi_gui">
-                  Tên người gửi <span className="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="ten_nguoi_gui"
-                  name="ten_nguoi_gui"
-                  value={formData.ten_nguoi_gui}
-                  onChange={handleChange}
-                  placeholder="Nguyễn Văn A"
-                  disabled={isEditMode}
-                  className={errors.ten_nguoi_gui ? 'input-error' : ''}
-                />
-                {errors.ten_nguoi_gui && (
-                  <span className="error-message">{errors.ten_nguoi_gui}</span>
-                )}
-              </div>
-
+                
+            <div className='form-section'>
               {/* Receiver Phone */}
               <div className="form-group">
                 <label htmlFor="SDT_nguoi_nhan">
@@ -313,69 +271,95 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
                 )}
               </div>
             </div>
+
           </div>
 
-          {/* Additional Info Row */}
-          <div className="form-row">
-            {/* Package Value */}
-            <div className="form-group">
-              <label htmlFor="gia_tri_hang_hoa_phi_van_chuyen">
-                Giá trị hàng hóa (VNĐ) <span className="required">*</span>
-              </label>
-              <input
-                type="number"
-                id="gia_tri_hang_hoa_phi_van_chuyen"
-                name="gia_tri_hang_hoa_phi_van_chuyen"
-                value={formData.gia_tri_hang_hoa_phi_van_chuyen}
-                onChange={handleChange}
-                min="0"
-                step="1000"
-                disabled={isEditMode}
-                className={errors.gia_tri_hang_hoa_phi_van_chuyen ? 'input-error' : ''}
-              />
-              {errors.gia_tri_hang_hoa_phi_van_chuyen && (
-                <span className="error-message">{errors.gia_tri_hang_hoa_phi_van_chuyen}</span>
-              )}
-              <small className="help-text">
-                Backend sẽ tự động tính phí vận chuyển dựa trên quãng đường
-              </small>
-            </div>
 
-            {/* Status (Edit mode only) */}
-            {isEditMode && (
-              <div className="form-group">
-                <label htmlFor="Trang_thai_don">
-                  Trạng thái <span className="required">*</span>
-                </label>
-                <select
-                  id="Trang_thai_don"
-                  name="Trang_thai_don"
-                  value={formData.Trang_thai_don}
-                  onChange={handleChange}
-                >
-                  {getAvailableStatuses().map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
-                <small className="help-text">
-                  Chỉ có thể chuyển sang trạng thái hợp lệ tiếp theo
-                </small>
-              </div>
+          {/* Package Value */}
+          <div className="form-group">
+            <label htmlFor="gia_tri_hang_hoa_phi_van_chuyen">
+              Giá trị hàng hóa (VNĐ) <span className="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="gia_tri_hang_hoa_phi_van_chuyen"
+              name="gia_tri_hang_hoa_phi_van_chuyen"
+              value={formData.gia_tri_hang_hoa_phi_van_chuyen}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              disabled={isEditMode}
+              className={errors.gia_tri_hang_hoa_phi_van_chuyen ? 'input-error' : ''}
+            />
+            {errors.gia_tri_hang_hoa_phi_van_chuyen && (
+              <span className="error-message">{errors.gia_tri_hang_hoa_phi_van_chuyen}</span>
+            )}
+            <small className="help-text">
+              Backend sẽ tự động tính phí vận chuyển dựa trên quãng đường
+            </small>
+          </div>
+
+          {/* Package Weight */}
+          <div className="form-group">
+            <label htmlFor="can_nang">
+              Cân nặng hàng hoá (Kg) <span className="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="can_nang"
+              name="can_nang"
+              value={formData.can_nang}
+              onChange={handleChange}
+              min="0"
+              step="1"
+              disabled={isEditMode}
+              className={errors.can_nang ? 'input-error' : ''}
+            />
+            {errors.can_nang && (
+              <span className="error-message">{errors.can_nang}</span>
             )}
           </div>
 
-          {/* Notes */}
+          {/* Delivery method */}
           <div className="form-group">
-            <label htmlFor="ghi_chu">Ghi chú</label>
-            <textarea
-              id="ghi_chu"
-              name="ghi_chu"
-              value={formData.ghi_chu}
+            <label htmlFor="phuong_thuc_giao_hang">
+              Phương thức giao hàng <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="phuong_thuc_giao_hang"
+              name="phuong_thuc_giao_hang"
+              value={formData.phuong_thuc_giao_hang}
               onChange={handleChange}
-              placeholder="Giao hàng trong giờ hành chính, cẩn thận hàng dễ vỡ..."
-              rows="3"
+              disabled={isEditMode}
+              className={errors.phuong_thuc_giao_hang ? 'input-error' : ''}
             />
+            {errors.phuong_thuc_giao_hang && (
+              <span className="error-message">{errors.phuong_thuc_giao_hang}</span>
+            )}
           </div>
+
+          {/* Status (Edit mode only) */}
+          {isEditMode && (
+            <div className="form-group">
+              <label htmlFor="Trang_thai_don">
+                Trạng thái <span className="required">*</span>
+              </label>
+              <select
+                id="Trang_thai_don"
+                name="Trang_thai_don"
+                value={formData.Trang_thai_don}
+                onChange={handleChange}
+              >
+                {getAvailableStatuses().map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+              <small className="help-text">
+                Chỉ có thể chuyển sang trạng thái hợp lệ tiếp theo
+              </small>
+            </div>
+          )}
 
           {/* Info Box for New Order */}
           {!isEditMode && (

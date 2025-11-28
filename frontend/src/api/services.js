@@ -176,7 +176,7 @@ export const orderAPI = {
    */
   update: async (id, orderData) => {
     try {
-      const response = await axios.put(`'api/don-hang/${id}`, orderData);
+      const response = await axios.put(`api/don-hang/${id}`, orderData);
       return response.data;
     } catch (error) {
       throw error;

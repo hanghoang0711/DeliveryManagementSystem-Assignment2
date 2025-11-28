@@ -125,7 +125,7 @@ const DeliveryTripsPage = () => {
    */
   const handleViewDetails = async (trip) => {
     try {
-      const data = await deliveryTripAPI.getById(trip.Ma_chuyen_giao_hang);
+      const data = await deliveryTripAPI.getById(trip.DeliveryID);
       setSelectedTrip(data.trip);
       setShowDetailsModal(true);
     } catch (err) {
@@ -146,7 +146,7 @@ const DeliveryTripsPage = () => {
    */
   const handleAddOrderSubmit = async (orderData) => {
     try {
-      await deliveryTripAPI.addOrder(selectedTrip.Ma_chuyen_giao_hang, orderData);
+      await deliveryTripAPI.addOrder(selectedTrip.DeliveryID, orderData);
       alert('✅ Thêm đơn hàng vào chuyến thành công!');
       setShowAddOrderModal(false);
       fetchTrips();
@@ -169,7 +169,7 @@ const DeliveryTripsPage = () => {
         updateData.ngay_ket_thuc = new Date().toISOString();
       }
 
-      await deliveryTripAPI.update(trip.Ma_chuyen_giao_hang, updateData);
+      await deliveryTripAPI.update(trip.DeliveryID, updateData);
       alert('✅ Cập nhật trạng thái thành công!');
       fetchTrips();
     } catch (err) {
@@ -187,7 +187,7 @@ const DeliveryTripsPage = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      await deliveryTripAPI.delete(tripToDelete.Ma_chuyen_giao_hang);
+      await deliveryTripAPI.delete(tripToDelete.DeliveryID);
       alert('✅ Xóa chuyến giao hàng thành công!');
       setShowDeleteDialog(false);
       setTripToDelete(null);
@@ -274,7 +274,7 @@ const DeliveryTripsPage = () => {
         <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
           <div className="modal-content trip-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>📋 Chi tiết chuyến: {selectedTrip.Ma_chuyen_giao_hang}</h2>
+              <h2>📋 Chi tiết chuyến: {selectedTrip.DeliveryID}</h2>
               <button className="btn-close" onClick={() => setShowDetailsModal(false)}>✖️</button>
             </div>
             <div className="modal-body">
@@ -297,7 +297,7 @@ const DeliveryTripsPage = () => {
       {showDeleteDialog && tripToDelete && (
         <ConfirmDialog
           title="Xác nhận xóa"
-          message={`Bạn có chắc muốn xóa chuyến "${tripToDelete.Ma_chuyen_giao_hang}"?`}
+          message={`Bạn có chắc muốn xóa chuyến "${tripToDelete.DeliveryID}"?`}
           onConfirm={handleDeleteConfirm}
           onCancel={() => {
             setShowDeleteDialog(false);
