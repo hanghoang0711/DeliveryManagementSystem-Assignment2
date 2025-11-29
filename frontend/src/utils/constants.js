@@ -37,7 +37,7 @@ export const STATUS_COLORS = {
  * Status Workflow - Các trạng thái hợp lệ tiếp theo
  */
 export const STATUS_WORKFLOW = {
-  'Đang xử lý': ['Đang tìm tài xế'],
+  'Đang xử lý': ['Đang tìm tài xế', 'Đã huỷ'],
   'Đang tìm tài xế': ['Đã tìm được tài xế', 'Đang xử lý'],
   'Đã tìm được tài xế': ['Đang lấy hàng'],
   'Đang lấy hàng': ['Lấy hàng thành công', 'Lấy hàng thất bại'],

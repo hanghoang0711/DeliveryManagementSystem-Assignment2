@@ -3,9 +3,9 @@ import './AddOrderToTripForm.css';
 
 const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
-    ma_don_hang: '',
-    thu_tu_lay_hang: 1,
-    thu_tu_giao_hang: 1
+    Ma_don_hang: '',
+    Thu_tu_lay_hang: 1,
+    Thu_tu_giao_hang: 1
   });
 
   const [errors, setErrors] = useState({});
@@ -29,18 +29,16 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.ma_don_hang.trim()) {
-      newErrors.ma_don_hang = 'Mã đơn hàng không được để trống';
-    } else if (!/^DH\d{4}$/.test(formData.ma_don_hang)) {
-      newErrors.ma_don_hang = 'Mã đơn hàng phải có định dạng DHxxxx (ví dụ: DH0001)';
+    if (!formData.Ma_don_hang.trim()) {
+      newErrors.Ma_don_hang = 'Mã đơn hàng không được để trống';
     }
 
-    if (formData.thu_tu_lay_hang < 1) {
-      newErrors.thu_tu_lay_hang = 'Thứ tự lấy hàng phải >= 1';
+    if (formData.Thu_tu_lay_hang < 1) {
+      newErrors.Thu_tu_lay_hang = 'Thứ tự lấy hàng phải >= 1';
     }
 
-    if (formData.thu_tu_giao_hang < 1) {
-      newErrors.thu_tu_giao_hang = 'Thứ tự giao hàng phải >= 1';
+    if (formData.Thu_tu_giao_hang < 1) {
+      newErrors.Thu_tu_giao_hang = 'Thứ tự giao hàng phải >= 1';
     }
 
     setErrors(newErrors);
@@ -56,9 +54,9 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
 
     try {
       const submitData = {
-        ma_don_hang: formData.ma_don_hang,
-        thu_tu_lay_hang: parseInt(formData.thu_tu_lay_hang),
-        thu_tu_giao_hang: parseInt(formData.thu_tu_giao_hang)
+        Ma_don_hang: formData.Ma_don_hang,
+        Thu_tu_lay_hang: parseInt(formData.Thu_tu_lay_hang),
+        Thu_tu_giao_hang: parseInt(formData.Thu_tu_giao_hang)
       };
 
       await onSubmit(submitData);
@@ -87,39 +85,39 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
 
           {/* Order ID */}
           <div className="form-group">
-            <label htmlFor="ma_don_hang">
+            <label htmlFor="Ma_don_hang">
               Mã đơn hàng <span className="required">*</span>
             </label>
             <input
               type="text"
-              id="ma_don_hang"
-              name="ma_don_hang"
-              value={formData.ma_don_hang}
+              id="Ma_don_hang"
+              name="Ma_don_hang"
+              value={formData.Ma_don_hang}
               onChange={handleChange}
               placeholder="DH0001"
-              className={errors.ma_don_hang ? 'input-error' : ''}
+              className={errors.Ma_don_hang ? 'input-error' : ''}
             />
-            {errors.ma_don_hang && (
-              <span className="error-message">{errors.ma_don_hang}</span>
+            {errors.Ma_don_hang && (
+              <span className="error-message">{errors.Ma_don_hang}</span>
             )}
           </div>
 
           {/* Pickup Order */}
           <div className="form-group">
-            <label htmlFor="thu_tu_lay_hang">
+            <label htmlFor="Thu_tu_lay_hang">
               Thứ tự lấy hàng <span className="required">*</span>
             </label>
             <input
               type="number"
-              id="thu_tu_lay_hang"
-              name="thu_tu_lay_hang"
-              value={formData.thu_tu_lay_hang}
+              id="Thu_tu_lay_hang"
+              name="Thu_tu_lay_hang"
+              value={formData.Thu_tu_lay_hang}
               onChange={handleChange}
               min="1"
-              className={errors.thu_tu_lay_hang ? 'input-error' : ''}
+              className={errors.Thu_tu_lay_hang ? 'input-error' : ''}
             />
-            {errors.thu_tu_lay_hang && (
-              <span className="error-message">{errors.thu_tu_lay_hang}</span>
+            {errors.Thu_tu_lay_hang && (
+              <span className="error-message">{errors.Thu_tu_lay_hang}</span>
             )}
             <small className="help-text">
               Thứ tự tài xế sẽ lấy hàng (1, 2, 3,...)
@@ -128,20 +126,20 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
 
           {/* Delivery Order */}
           <div className="form-group">
-            <label htmlFor="thu_tu_giao_hang">
+            <label htmlFor="Thu_tu_giao_hang">
               Thứ tự giao hàng <span className="required">*</span>
             </label>
             <input
               type="number"
-              id="thu_tu_giao_hang"
-              name="thu_tu_giao_hang"
-              value={formData.thu_tu_giao_hang}
+              id="Thu_tu_giao_hang"
+              name="Thu_tu_giao_hang"
+              value={formData.Thu_tu_giao_hang}
               onChange={handleChange}
               min="1"
-              className={errors.thu_tu_giao_hang ? 'input-error' : ''}
+              className={errors.Thu_tu_giao_hang ? 'input-error' : ''}
             />
-            {errors.thu_tu_giao_hang && (
-              <span className="error-message">{errors.thu_tu_giao_hang}</span>
+            {errors.Thu_tu_giao_hang && (
+              <span className="error-message">{errors.Thu_tu_giao_hang}</span>
             )}
             <small className="help-text">
               Thứ tự tài xế sẽ giao hàng (1, 2, 3,...)

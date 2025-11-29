@@ -50,7 +50,7 @@ const deliveryTripAPI = {
    */
   addOrder: async (tripId, orderData) => {
     try {
-      const response = await api.post(`/api/chuyen-giao-hang/${tripId}/orders`, orderData);
+      const response = await api.post(`/api/chuyen-giao-hang/${tripId}/add-don-hang`, orderData);
       return response.data;
     } catch (error) {
       console.error('Add order to trip error:', error);

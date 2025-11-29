@@ -139,6 +139,7 @@ const DeliveryTripsPage = () => {
   const handleAddOrder = (trip) => {
     setSelectedTrip(trip);
     setShowAddOrderModal(true);
+    console.log("Showing add order")
   };
 
   /**
@@ -269,6 +270,15 @@ const DeliveryTripsPage = () => {
         />
       )}
 
+      {/* Add Order to Trip Modal */}
+      {showAddOrderModal && selectedTrip && (
+        <AddOrderToTripForm
+          trip={selectedTrip}
+          onSubmit={handleAddOrderSubmit}
+          onClose={() => setShowAddOrderModal(false)}
+        />
+      )}
+
       {/* Trip Details Modal */}
       {showDetailsModal && selectedTrip && (
         <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
@@ -282,15 +292,6 @@ const DeliveryTripsPage = () => {
             </div>
           </div>
         </div>
-      )}
-
-      {/* Add Order to Trip Modal */}
-      {showAddOrderModal && selectedTrip && (
-        <AddOrderToTripForm
-          trip={selectedTrip}
-          onSubmit={handleAddOrderSubmit}
-          onClose={() => setShowAddOrderModal(false)}
-        />
       )}
 
       {/* Delete Confirmation Dialog */}
