@@ -314,7 +314,9 @@ CREATE TABLE DON_HANG (
         N'Giao hàng thành công',
         N'Giao hàng thất bại',
         N'Đã hoàn về kho',
-        N'Đã hoàn thành'
+        N'Đã hoàn thành',
+        N'Đã hủy'
+
     ))
 );
 GO
@@ -414,7 +416,7 @@ CREATE TABLE TAI_XE (
     Ma_Nhan_Vien_quan_li VARCHAR(10) NOT NULL,
     Ngay_Bat_Dau_Quan_Ly DATE NOT NULL, -- Thêm ngày bắt đầu quản lý
     Rating DECIMAL(2,1) DEFAULT 5.0, -- Thêm Rating
-    CONSTRAINT FK_TX_NVQLTX FOREIGN KEY (Ma_Nhan_Vien_quan_li) REFERENCES NHAN_VIEN_QUAN_LY_TAI_XE(Ma_nhan_vien),
+    CONSTRAINT FK_TX_NVQLTX FOREIGN KEY (Ma_Nhan_Vien_quan_li) REFERENCES NHAN_VIEN_QUAN_LY_TAI_XE(Ma_nhan_vien) ,
     CONSTRAINT CK_TX_Tuoi CHECK (DATEDIFF(YEAR, Ngay_Sinh, GETDATE()) >= 18),
     CONSTRAINT CK_TX_NgayLamViec CHECK (Ngay_Bat_Dau_Lam_Viec > Ngay_Sinh),
     CONSTRAINT CK_TX_NgayQuanLy CHECK (Ngay_Bat_Dau_Quan_Ly >= Ngay_Bat_Dau_Lam_Viec)
@@ -1450,6 +1452,40 @@ BEGIN
 END;
 GO
 
+-- test sp_TaoDonHang
+BEGIN TRAN;
+
+EXEC sp_TaoDonHang
+    @MaKH = 'KH001',
+    @SDTNhan = '0909999999',
+    @TenNguoiNhan = N'Nguyễn Văn A',
+    @DiaChiLay = N'123 ABC, Quận 1',
+    @DiaChiGiao = N'55 XYZ, Quận 5',
+    @CanNang = 2.5,
+    @GiaTri = 150000,
+    @PhiVanChuyen = 50000,
+    @PhuongThucGiao = N'Tiêu chuẩn',
+    @ThoiGianGiaoDuKien = '2025-12-31';
+
+SELECT * FROM DON_HANG ORDER BY Ma_don_hang DESC;
+
+
+
+ROLLBACK;
+GO
+
+-- test sp_HuyDonHang
+
+
+EXEC sp_HuyDonHang 'DH010', N'Khách yêu cầu hủy đơn';
+
+SELECT * FROM DON_HANG WHERE Ma_don_hang = 'DH010';
+SELECT * FROM DON_HANG_HUY WHERE Ma_don_hang = 'DH010';
+
+
+GO
+
+
 -- =====================================================================
 -- BỔ SUNG CÁC SP SINH MÃ TỰ ĐỘNG (AUTO-INCREMENT PREFIX)
 -- =====================================================================
@@ -1752,6 +1788,108 @@ PRINT N'=====================================================================';
 GO
 
 -- =====================================================================
+-- TEST SUITE: TẤT CẢ SP TẠO DỮ LIỆU MẪU
+-- =====================================================================
+
+PRINT N'===== TEST SP THÊM NHÂN VIÊN =====';
+BEGIN TRAN;
+
+EXEC sp_ThemNhanVien
+    @HoTenLot = N'Nguyễn Văn',
+    @Ten = N'A',
+    @GioiTinh = N'Nam',
+    @NgaySinh = '1990-01-01',
+    @DiaChi = N'123 Đường ABC, Quận 1',
+    @SDT = '0909123456',
+    @Email = 'nv_test@gmail.com',
+    @CCCD = '123456789099', -- giá trị chưa tồn tại,
+    @NgayBatDau = '2025-01-01',
+    @VaiTro = N'Quản lý';
+SELECT * FROM NHANVIEN ORDER BY Ma_nhan_vien DESC;
+ROLLBACK;
+
+PRINT N'===== TEST SP ĐĂNG KÝ KHÁCH HÀNG =====';
+BEGIN TRAN;
+EXEC sp_DangKyKhachHang
+    @Email = 'kh_canhan@gmail.com',
+    @HoTenLot = N'Nguyễn Văn',
+    @Ten = N'B',
+    @LoaiKhachHang = 'CANHAN';
+SELECT * FROM KHACH_HANG_CA_NHAN ORDER BY Ma_khach_hang DESC;
+ROLLBACK;
+
+PRINT N'===== TEST SP THÊM TÀI XẾ =====';
+BEGIN TRAN;
+EXEC sp_ThemTaiXe
+    @HoTen = N'Nguyễn Văn C',
+    @CCCD = '098765432109',
+    @GioiTinh = N'Nam',
+    @NgaySinh = '1992-05-10',
+    @NgayBatDauLam = '2025-01-01',
+    @MaNVQuanLy = 'NV002';
+SELECT * FROM TAI_XE ORDER BY DriverID DESC;
+ROLLBACK;
+
+PRINT N'===== TEST SP TẠO CHUYẾN GIAO HÀNG =====';
+BEGIN TRAN;
+EXEC sp_TaoChuyenGiaoHang @DriverID = 'DRV001';
+SELECT * FROM CHUYEN_GIAO_HANG ORDER BY DeliveryID DESC;
+ROLLBACK;
+
+PRINT N'===== TEST SP TẠO ĐÁNH GIÁ =====';
+BEGIN TRAN;
+EXEC sp_TaoDanhGia
+    @MaKH = 'KH001',
+    @MaDon = 'DH001',
+    @Rating = 5,
+    @Comment = N'Giao hàng nhanh, phục vụ tốt',
+    @DriverID = 'DRV001';
+SELECT * FROM DANH_GIA_CUA_KHACH_HANG ORDER BY Review_ID DESC;
+ROLLBACK;
+
+PRINT N'===== TEST SP TẠO YÊU CẦU HỖ TRỢ =====';
+BEGIN TRAN;
+EXEC sp_TaoYeuCauHoTro
+    @MaKH = 'KH001',
+    @LoaiVanDe = N'Phản hồi giao hàng',
+    @NoiDung = N'Giao trễ 1 ngày';
+SELECT * FROM YEU_CAU_HO_TRO ORDER BY Ma_yeu_cau DESC;
+ROLLBACK;
+
+PRINT N'===== TEST SP TẠO THANH TOÁN =====';
+BEGIN TRAN;
+EXEC sp_TaoThanhToan
+    @MaKH = 'KH001',
+    @PhuongThuc = N'Chuyển khoản',
+    @SoTien = 100000;
+SELECT * FROM THANH_TOAN ORDER BY Ma_thanh_toan DESC;
+ROLLBACK;
+
+PRINT N'===== TEST SP THÊM XE =====';
+BEGIN TRAN;
+-- Xe máy
+EXEC sp_ThemXe
+    @BienSo = '59A-12345',
+    @ChuSoHuu = N'Nguyễn Văn D',
+    @NamSX = '2020',
+    @LoaiXe = 'XEMAY',
+    @PhanKhoi = 150,
+    @KhoangCho = 0.1;
+-- Xe tải
+EXEC sp_ThemXe
+    @BienSo = '51C-67890',
+    @ChuSoHuu = N'Công ty XYZ',
+    @NamSX = '2018',
+    @LoaiXe = 'XETAI',
+    @TrongTai = 1000,
+    @LoaiThung = N'Bạt';
+SELECT * FROM XE ORDER BY VehicleID DESC;
+ROLLBACK;
+
+PRINT N'===== HOÀN TẤT TẤT CẢ TEST CASE =====';
+
+
+-- =====================================================================
 -- 7. CÁC TRIGGER
 -- =====================================================================
 PRINT N'';
@@ -1826,5 +1964,79 @@ PRINT N'=====================================================================';
 PRINT N'HOÀN TẤT TẠO TRIGGERS';
 PRINT N'=====================================================================';
 GO
-------------------------------------------------------------------------
+-- =====================================================================
+-- 8. TEST CASES CHO TRIGGERS
+-- =====================================================================
 
+
+BEGIN TRAN;
+PRINT N'';
+PRINT N'=====================================================================';
+PRINT N'8. TEST CASES CHO TRIGGERS (Cập nhật Trạng thái & Điểm thành viên)';
+PRINT N'=====================================================================';
+
+-------------------------------------------------------------------------
+-- KHỞI TẠO TEST DỮ LIỆU BAN ĐẦU
+-------------------------------------------------------------------------
+PRINT N'--- Dữ liệu KHÁCH HÀNG (KH1) và ĐƠN HÀNG (DH007) trước khi test ---';
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang 
+FROM KHACH_HANG 
+WHERE Ma_khach_hang = 'KH001';
+
+SELECT Ma_don_hang, Trang_thai_don, diem_tich_luy 
+FROM DON_HANG 
+WHERE Ma_don_hang = 'DH007';
+
+-------------------------------------------------------------------------
+-- TEST 1: CHÈN TRẠNG THÁI 'ĐANG XỬ LÝ' (Kiểm tra Trigger Trạng thái)
+-------------------------------------------------------------------------
+PRINT N'--- TEST 1: Cập nhật trạng thái cho DH007 (Đang xử lý) ---';
+INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
+VALUES ('DH007', GETDATE() + 1, N'Đang xử lý', 'NV003');
+
+PRINT N'Kết quả sau TEST 1: (Trạng thái DH007 phải là "Đang xử lý")';
+SELECT Ma_don_hang, Trang_thai_don 
+FROM DON_HANG 
+WHERE Ma_don_hang = 'DH007';
+
+-------------------------------------------------------------------------
+-- TEST 2: CHÈN TRẠNG THÁI 'GIAO HÀNG THÀNH CÔNG' (Kiểm tra cả 2 Triggers)
+-------------------------------------------------------------------------
+PRINT N'--- TEST 2: Cập nhật trạng thái cho DH007 (Đã hoàn thành) ---';
+INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
+VALUES ('DH007', GETDATE() + 2, N'Đã hoàn thành', 'NV003');
+
+PRINT N'Kết quả sau TEST 2:';
+PRINT N'1. Trạng thái DH007: (Phải là "Đã hoàn thành")';
+SELECT Ma_don_hang, Trang_thai_don 
+FROM DON_HANG 
+WHERE Ma_don_hang = 'DH007';
+
+PRINT N'2. Điểm và Hạng KH1: (150 điểm + 10 điểm = 160 điểm. Hạng vẫn là Đồng)';
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang 
+FROM KHACH_HANG 
+WHERE Ma_khach_hang = 'KH001';
+
+-------------------------------------------------------------------------
+-- TEST 3: ĐƠN HÀNG KHÁC VÀ KHÁCH HÀNG LÊN HẠNG (KH2)
+-------------------------------------------------------------------------
+PRINT N'--- Dữ liệu KHÁCH HÀNG (KH2) và ĐƠN HÀNG (DH002) trước khi test ---';
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang 
+FROM KHACH_HANG 
+WHERE Ma_khach_hang = 'KH002';
+
+PRINT N'--- TEST 3: Đơn DH002 thành công (499 + 15 = 514 điểm -> Lên Hạng Bạc) ---';
+INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
+VALUES ('DH002', GETDATE() + 3, N'Đã hoàn thành', 'NV003');
+
+PRINT N'Kết quả sau TEST 3: (KH2 phải có 514 điểm, Hạng Bạc)';
+SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang 
+FROM KHACH_HANG 
+WHERE Ma_khach_hang = 'KH002';
+
+-------------------------------------------------------------------------
+-- Rollback để dữ liệu trở về trạng thái ban đầu
+-------------------------------------------------------------------------
+ROLLBACK TRANSACTION;
+
+PRINT N'--- Rollback completed, dữ liệu trở về trạng thái ban đầu ---';

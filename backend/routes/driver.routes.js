@@ -1,8 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const taixeController = require("../controllers/driver.controller");
-const { validateTaiXe, handleValidation, validateDriverIDParam } = require("../middleware/driver.validator");
+const { validateTaiXe, handleValidation, validateDriverIDParam, validateTaiXeUpdate } = require("../middleware/driver.validator");
 const { verifyToken } = require("../middleware/authJwt");
+
+// Test import
+console.log("IMPORT CHECK:", {
+  validateTaiXe,
+  handleValidation,
+  validateDriverIDParam,
+  validateTaiXeUpdate
+});
 
 /**
  * @swagger
@@ -87,7 +95,7 @@ router.get("/:id", verifyToken, validateDriverIDParam, handleValidation,taixeCon
  *       404:
  *         description: Driver not found
  */
-router.put("/:id", verifyToken, validateDriverIDParam, handleValidation, taixeController.updateTaiXe);
+router.put("/:id", verifyToken, validateTaiXeUpdate, handleValidation, taixeController.updateTaiXe);
 
 /**
  * @swagger
