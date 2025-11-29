@@ -696,7 +696,7 @@ GO
 PRINT N'--- Chèn dữ liệu KHACH_HANG ---';
 INSERT INTO KHACH_HANG (Ma_khach_hang, email, Diem_thanh_vien, Ten_hang, Ngay_len_hang, Ngay_het_han) VALUES
 ('KH001', 'nguyenvanhien@email.com', 150, N'Đồng', '2025-01-15', '2026-01-14'),
-('KH002', 'tranvanbanh@email.com', 600, N'Bạc', '2025-03-20', '2026-03-19'),
+('KH002', 'tranvanbanh@email.com', 495, N'Đồng', '2025-03-20', '2026-03-19'),
 ('KH003', 'cty_tnhh_sendo@email.com', 2500, N'Vàng', '2024-11-01', '2025-10-31'),
 ('KH004', 'lethidung@email.com', 5500, N'Kim Cương', '2025-05-10', '2026-05-09'),
 ('KH005', 'phamthanhdat@email.com', 850, N'Bạc', '2024-12-20', '2025-12-19'),
@@ -2002,15 +2002,15 @@ WHERE Ma_don_hang = 'DH007';
 -------------------------------------------------------------------------
 -- TEST 2: CHÈN TRẠNG THÁI 'GIAO HÀNG THÀNH CÔNG' (Kiểm tra cả 2 Triggers)
 -------------------------------------------------------------------------
-PRINT N'--- TEST 2: Cập nhật trạng thái cho DH007 (Đã hoàn thành) ---';
+PRINT N'--- TEST 2: Cập nhật trạng thái cho DH001 (Đã hoàn thành) ---';
 INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
-VALUES ('DH007', GETDATE() + 2, N'Đã hoàn thành', 'NV003');
+VALUES ('DH001', GETDATE() + 2, N'Đã hoàn thành', 'NV003');
 
 PRINT N'Kết quả sau TEST 2:';
-PRINT N'1. Trạng thái DH007: (Phải là "Đã hoàn thành")';
+PRINT N'1. Trạng thái DH001: (Phải là "Đã hoàn thành")';
 SELECT Ma_don_hang, Trang_thai_don 
 FROM DON_HANG 
-WHERE Ma_don_hang = 'DH007';
+WHERE Ma_don_hang = 'DH001';
 
 PRINT N'2. Điểm và Hạng KH1: (150 điểm + 10 điểm = 160 điểm. Hạng vẫn là Đồng)';
 SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang 
@@ -2025,11 +2025,11 @@ SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang
 FROM KHACH_HANG 
 WHERE Ma_khach_hang = 'KH002';
 
-PRINT N'--- TEST 3: Đơn DH002 thành công (499 + 15 = 514 điểm -> Lên Hạng Bạc) ---';
+PRINT N'--- TEST 3: Đơn DH002 thành công (495 + 15 = 510 điểm -> Lên Hạng Bạc) ---';
 INSERT INTO THONG_TIN_XU_LI_DON_HANG (Ma_don_hang, Thoi_gian, Tinh_trang, MaNVXuLy)
 VALUES ('DH002', GETDATE() + 3, N'Đã hoàn thành', 'NV003');
 
-PRINT N'Kết quả sau TEST 3: (KH2 phải có 514 điểm, Hạng Bạc)';
+PRINT N'Kết quả sau TEST 3: (KH2 phải có 510 điểm, Hạng Bạc)';
 SELECT Ma_khach_hang, Diem_thanh_vien, Ten_hang, Ngay_len_hang 
 FROM KHACH_HANG 
 WHERE Ma_khach_hang = 'KH002';
