@@ -1,86 +1,106 @@
 import './DriverTable.css';
+import { Edit, Trash2, Star, CheckCircle, XCircle, AlertCircle, User } from 'react-feather';
 
 const DriverTable = ({ drivers, onEdit, onDelete }) => {
+  
   /**
    * Format rating với sao
    */
   const formatRating = (rating) => {
-    const stars = '⭐'.repeat(Math.floor(rating));
-    return `${stars} ${rating.toFixed(1)}`;
+    const num = parseFloat(rating) || 0;
+    return (
+        <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+            <Star size={14} fill="#fbbf24" color="#fbbf24" />
+            <span style={{fontWeight: '600', color: '#334155'}}>{num.toFixed(1)}</span>
+        </div>
+    );
   };
 
   /**
-   * Get badge class theo trạng thái
+   * Get badge class & icon theo trạng thái
    */
-  const getStatusBadgeClass = (status) => {
+  const getStatusBadge = (status) => {
+    let className = 'badge ';
+    let Icon = AlertCircle;
+
     switch (status) {
       case 'Đang hoạt động':
-        return 'badge-success';
+        className += 'badge-success';
+        Icon = CheckCircle;
+        break;
       case 'Không hoạt động':
-        return 'badge-danger';
+        className += 'badge-danger';
+        Icon = XCircle;
+        break;
       case 'Tạm nghỉ':
-        return 'badge-warning';
+        className += 'badge-warning';
+        Icon = Clock; // Import Clock nếu cần, hoặc dùng AlertCircle tạm
+        break;
       default:
-        return 'badge-secondary';
+        className += 'badge-secondary';
     }
+    
+    return (
+        <span className={className}>
+            <Icon size={12} /> {status}
+        </span>
+    );
   };
 
   return (
     <div className="table-container">
-      <table className="driver-table">
-        <thead>
-          <tr>
-            <th>Mã TXế</th>
-            <th>Họ tên</th>
-            <th>CCCD</th>
-            <th>Rating</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          {drivers.map((driver) => (
-            <tr key={driver.DriverID}>
-              <td>
-                <span className="driver-id">{driver.DriverID}</span>
-              </td>
-              <td>
-                <strong>{driver.Ho_ten}</strong>
-              </td>
-              <td>{driver.CCCD}</td>
-              <td>{formatRating(driver.Rating || 0)}</td>
-              <td>
-                <span className={`badge ${getStatusBadgeClass(driver.Trang_thai_hoat_dong)}`}>
-                  {driver.Trang_thai_hoat_dong}
-                </span>
-              </td>
-              <td>
-                <div className="action-buttons">
-                  <button
-                    className="btn-edit"
-                    onClick={() => onEdit(driver)}
-                    title="Sửa"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    className="btn-delete"
-                    onClick={() => onDelete(driver)}
-                    title="Xóa"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Empty State */}
-      {drivers.length === 0 && (
+      {drivers.length > 0 ? (
+          <table className="driver-table">
+            <thead>
+              <tr>
+                <th>Mã TXế</th>
+                <th>Họ tên</th>
+                <th>CCCD</th>
+                <th>Rating</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              {drivers.map((driver) => (
+                <tr key={driver.DriverID}>
+                  <td>
+                    <span className="driver-id">{driver.DriverID}</span>
+                  </td>
+                  <td>
+                    <div style={{fontWeight: '600', color: '#1e293b'}}>{driver.Ho_ten}</div>
+                  </td>
+                  <td style={{fontFamily: 'monospace', color: '#475569'}}>{driver.CCCD}</td>
+                  <td>{formatRating(driver.Rating)}</td>
+                  <td>
+                    {getStatusBadge(driver.Trang_thai_hoat_dong)}
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <button
+                        className="btn-action"
+                        onClick={() => onEdit(driver)}
+                        title="Sửa thông tin"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        className="btn-action delete"
+                        onClick={() => onDelete(driver)}
+                        title="Xóa tài xế"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+      ) : (
         <div className="empty-state">
-          <p>Chưa có tài xế nào</p>
+            <User size={48} color="#cbd5e1" strokeWidth={1} />
+            <p>Chưa có tài xế nào trong hệ thống</p>
         </div>
       )}
     </div>

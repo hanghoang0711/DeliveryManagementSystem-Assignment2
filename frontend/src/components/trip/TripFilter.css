@@ -1,22 +1,113 @@
 .trip-filter-container {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px; /* Bo góc mềm hơn */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+    overflow-x: auto; /* Cho phép cuộn ngang nếu màn hình quá bé */
 }
 
 .filter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 15px;
+    display: flex; /* Dùng Flexbox thay vì Grid */
+    align-items: flex-end; /* Căn đáy để input và nút thẳng hàng */
+    gap: 16px; /* Khoảng cách giữa các ô */
+    min-width: 800px; /* Đảm bảo bảng không bị co quá nhỏ làm vỡ layout */
 }
 
-/* Reuse styles from OrderFilter.css */
-.filter-group,
-.filter-actions,
-.btn-apply,
+/* Các nhóm Filter (Input/Select) */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Chia đều không gian còn lại */
+    min-width: 150px; /* Chiều rộng tối thiểu mỗi ô */
+}
+
+.filter-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b; /* Navy Dark */
+    margin-bottom: 6px;
+    white-space: nowrap; /* Không xuống dòng text label */
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 0 12px; /* Padding ngang */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1e293b;
+    background-color: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    height: 40px; /* Chiều cao cố định chuẩn */
+    box-sizing: border-box;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #3B5998; /* Navy Focus */
+    box-shadow: 0 0 0 3px rgba(59, 89, 152, 0.1);
+}
+
+.filter-group input::placeholder {
+    color: #94a3b8;
+}
+
+/* Nhóm Nút Hành động (Actions) */
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex: 0 0 auto; /* Không co giãn, giữ kích thước nút */
+}
+
+.btn-apply {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px;
+    background-color: #3B5998; /* Navy Blue */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 40px; /* Bằng chiều cao input */
+    white-space: nowrap;
+}
+
+.btn-apply:hover {
+    background-color: #2d4373;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(59, 89, 152, 0.2);
+}
+
 .btn-reset {
-  /* Same as OrderFilter.css */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 16px;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 40px; /* Bằng chiều cao input */
+    white-space: nowrap;
+}
+
+.btn-reset:hover {
+    background-color: #f8fafc;
+    border-color: #3B5998;
+    color: #3B5998;
 }

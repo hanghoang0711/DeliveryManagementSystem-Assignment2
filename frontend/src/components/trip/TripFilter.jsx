@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { TRIP_STATUSES, TRIP_SORT_FIELDS } from '../../utils/tripConstants';
 import './TripFilter.css';
 
+// Import Feather Icons
+import { Search, RefreshCw } from 'react-feather';
+
 const TripFilter = ({ filters, onFilterChange }) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
@@ -34,6 +37,7 @@ const TripFilter = ({ filters, onFilterChange }) => {
   return (
     <div className="trip-filter-container">
       <div className="filter-grid">
+        
         {/* Status Filter */}
         <div className="filter-group">
           <label>Trạng thái:</label>
@@ -44,7 +48,7 @@ const TripFilter = ({ filters, onFilterChange }) => {
             <option value="">Tất cả</option>
             {TRIP_STATUSES.map(status => (
               <option key={status.value} value={status.value}>
-                {status.icon} {status.label}
+                {status.label}
               </option>
             ))}
           </select>
@@ -57,7 +61,7 @@ const TripFilter = ({ filters, onFilterChange }) => {
             type="text"
             value={localFilters.ma_tai_xe}
             onChange={(e) => handleChange('ma_tai_xe', e.target.value)}
-            placeholder="TX001"
+            placeholder="Ví dụ: DRV001"
           />
         </div>
 
@@ -87,16 +91,19 @@ const TripFilter = ({ filters, onFilterChange }) => {
             <option value="DESC">Giảm dần ↓</option>
           </select>
         </div>
-      </div>
 
-      {/* Actions */}
-      <div className="filter-actions">
-        <button className="btn-apply" onClick={handleApply}>
-          🔍 Áp dụng
-        </button>
-        <button className="btn-reset" onClick={handleReset}>
-          🔄 Reset
-        </button>
+        {/* Actions (Nằm cùng hàng) */}
+        <div className="filter-actions">
+          <button className="btn-apply" onClick={handleApply}>
+            <Search size={16} /> 
+            Áp dụng
+          </button>
+          <button className="btn-reset" onClick={handleReset}>
+            <RefreshCw size={16} /> 
+            Reset
+          </button>
+        </div>
+
       </div>
     </div>
   );

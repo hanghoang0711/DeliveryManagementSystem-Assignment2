@@ -1275,7 +1275,6 @@ GO
 -- ---------------------------------------------------------------------
 PRINT N'--- Tạo stored procedure sp_TaoDonHang ---';
 GO
--- Xóa procedure nếu đã tồn tại (FIX LỖI MSG 208 Ở ĐÂY)
 IF OBJECT_ID('sp_TaoDonHang', 'P') IS NOT NULL 
     DROP PROCEDURE sp_TaoDonHang;
 GO
@@ -1309,17 +1308,13 @@ BEGIN
             OR @CanNang <= 0
             OR @PhiVanChuyen <= 0
         BEGIN
-            RAISERROR(N'Dữ liệu đầu vào không hợp lệ.', 16, 1);
-            ROLLBACK;
-            RETURN;
+            ;THROW 50001, N'Dữ liệu đầu vào không hợp lệ.', 1;
         END;
 
         -- Kiểm tra khách hàng tồn tại
         IF NOT EXISTS (SELECT 1 FROM KHACH_HANG WHERE Ma_khach_hang = @MaKH)
         BEGIN
-            RAISERROR(N'Khách hàng không tồn tại.', 16, 1);
-            ROLLBACK;
-            RETURN;
+            ;THROW 50002, N'Khách hàng không tồn tại.', 1;
         END;
 
         -- Sinh mã đơn
@@ -1341,12 +1336,12 @@ BEGIN
             gia_tri_hang_hoa_phi_van_chuyen,
             phuong_thuc_giao_hang,
             Thoi_gian_giao_hang_du_kien,
-            Trang_thai_don,              --FIX: Thêm trường này
+            Trang_thai_don,
             phi_van_chuyen_goc,
             phi_van_chuyen_sau_giam,
             so_tien_duoc_giam,
             quang_duong,
-            thoi_gian_dat_don,           --FIX: Thêm trường này
+            thoi_gian_dat_don,
             diem_tich_luy
         )
         VALUES
@@ -1361,14 +1356,13 @@ BEGIN
             @GiaTri,
             @PhuongThucGiao,
             @ThoiGianGiaoDuKien,
-            --GIÁ TRỊ MẶC ĐỊNH CHO CÁC TRƯỜNG MỚI
-            N'Đang xử lý',               -- Trang_thai_don (phải khớp CHECK constraint)
-            @PhiVanChuyen,               -- phi_van_chuyen_goc
-            @PhiVanChuyen,               -- phi_van_chuyen_sau_giam (chưa giảm)
-            0,                           -- so_tien_duoc_giam (chưa có giảm giá)
-            5.0,                         -- quang_duong (giả định 5km)
-            GETDATE(),                   -- hoi_gian_dat_don (thời gian hiện tại)
-            0                            -- diem_tich_luy (mặc định 0)
+            N'Đang xử lý',
+            @PhiVanChuyen,
+            @PhiVanChuyen,
+            0,
+            5.0,
+            GETDATE(),
+            0
         );
 
         COMMIT;
@@ -1376,9 +1370,7 @@ BEGIN
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK;
-
-        DECLARE @Err NVARCHAR(4000) = ERROR_MESSAGE();
-        RAISERROR(@Err, 16, 1);
+        ;THROW;
     END CATCH
 END;
 GO
@@ -1388,7 +1380,6 @@ GO
 -- ---------------------------------------------------------------------
 PRINT N'--- Tạo stored procedure sp_HuyDonHang ---';
 GO
--- Xóa procedure nếu đã tồn tại (FIX LỖI MSG 208 Ở ĐÂY)
 IF OBJECT_ID('sp_HuyDonHang', 'P') IS NOT NULL 
     DROP PROCEDURE sp_HuyDonHang;
 GO
@@ -1408,9 +1399,7 @@ BEGIN
         -- Kiểm tra đơn hàng tồn tại
         IF NOT EXISTS (SELECT 1 FROM DON_HANG WHERE Ma_don_hang = @MaDon)
         BEGIN
-            RAISERROR(N'Đơn hàng không tồn tại.', 16, 1);
-            ROLLBACK;
-            RETURN;
+            ;THROW 50003, N'Đơn hàng không tồn tại.', 1;
         END;
 
         -- Lấy trạng thái và mã khách hàng
@@ -1425,9 +1414,7 @@ BEGIN
         -- Chỉ cho phép hủy khi đang xử lý
         IF @TrangThai <> N'Đang xử lý'
         BEGIN
-            RAISERROR(N'Chỉ có thể hủy đơn hàng đang xử lý.', 16, 1);
-            ROLLBACK;
-            RETURN;
+            ;THROW 50004, N'Chỉ có thể hủy đơn hàng đang xử lý.', 1;
         END;
 
         -- Cập nhật trạng thái đơn hàng
@@ -1446,11 +1433,11 @@ BEGIN
     BEGIN CATCH
         IF @@TRANCOUNT > 0
             ROLLBACK;
-
-        THROW;
+        ;THROW;
     END CATCH
 END;
 GO
+
 
 -- test sp_TaoDonHang
 BEGIN TRAN;

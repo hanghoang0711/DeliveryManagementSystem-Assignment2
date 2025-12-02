@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import './TripForm.css';
 
+// Import Feather Icons
+import { X, Truck, Info, Plus } from 'react-feather';
+
 const TripForm = ({ onSubmit, onClose }) => {
+  // Logic cũ của bạn (giữ nguyên state tên là DriverID)
   const [formData, setFormData] = useState({
     DriverID: '',
   });
@@ -54,9 +58,16 @@ const TripForm = ({ onSubmit, onClose }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content trip-form-modal" onClick={(e) => e.stopPropagation()}>
+        
+        {/* Header với Icon */}
         <div className="modal-header">
-          <h2>🚚 Tạo chuyến giao hàng mới</h2>
-          <button className="btn-close" onClick={onClose}>✖️</button>
+          <h2>
+             <Truck size={22} color="#3B5998" /> 
+             Tạo chuyến giao hàng mới
+          </h2>
+          <button className="btn-close" onClick={onClose}>
+             <X size={24} />
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="trip-form">
@@ -71,7 +82,7 @@ const TripForm = ({ onSubmit, onClose }) => {
               name="DriverID"
               value={formData.DriverID}
               onChange={handleChange}
-              placeholder="DRV001"
+              placeholder="Ví dụ: DRV001"
               className={errors.DriverID ? 'input-error' : ''}
             />
             {errors.DriverID && (
@@ -79,9 +90,9 @@ const TripForm = ({ onSubmit, onClose }) => {
             )}
           </div>
 
-          {/* Info Box */}
+          {/* Info Box với Icon */}
           <div className="info-box">
-            <strong>ℹ️ Lưu ý:</strong>
+            <strong><Info size={16} /> Lưu ý:</strong>
             <ul>
               <li>Mã chuyến sẽ được tạo tự động (CGxxxx)</li>
               <li>Trạng thái mặc định: "Đang thực hiện"</li>
@@ -90,7 +101,7 @@ const TripForm = ({ onSubmit, onClose }) => {
             </ul>
           </div>
 
-          {/* Actions */}
+          {/* Actions với Icon */}
           <div className="form-actions">
             <button
               type="button"
@@ -105,6 +116,7 @@ const TripForm = ({ onSubmit, onClose }) => {
               className="btn-submit"
               disabled={submitting}
             >
+              <Plus size={18} />
               {submitting ? 'Đang tạo...' : 'Tạo chuyến'}
             </button>
           </div>

@@ -1,143 +1,168 @@
+/* --- BIẾN MÀU SẮC (Đồng nhất với Dashboard) --- */
+:root {
+    --primary-color: #3B5998; /* Navy Blue đậm */
+    --primary-light: #e6e9fa; 
+    --primary-hover: #2d4373; 
+    --text-dark: #1e293b;     
+    --text-gray: #475569;     
+    --border-color: #e2e8f0;
+    --bg-main: #f7f9fc;
+}
+
 .login-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Nền Gradient nhẹ nhàng sang trọng, cùng tông với Dashboard */
+    background: linear-gradient(135deg, #f8fafc 0%, #e6e9fa 100%);
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
 }
 
 .login-container {
-  width: 100%;
-  max-width: 400px;
+    width: 100%;
+    max-width: 420px;
 }
 
 .login-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  padding: 40px;
+    background: white;
+    border-radius: 24px; /* Bo góc lớn giống Banner Dashboard */
+    box-shadow: 0 15px 40px rgba(59, 89, 152, 0.1); /* Shadow màu Navy nhạt */
+    padding: 40px;
+    border: 1px solid var(--border-color);
 }
 
 .login-header {
-  text-align: center;
-  margin-bottom: 30px;
+    text-align: center;
+    margin-bottom: 35px;
 }
 
+/* Logo ALALA to và đậm */
 .login-header h1 {
-  margin: 0 0 10px 0;
-  color: #333;
-  font-size: 28px;
+    margin: 0 0 10px 0;
+    color: var(--primary-color);
+    font-size: 42px; /* Kích thước lớn */
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 .login-header p {
-  margin: 0;
-  color: #666;
-  font-size: 14px;
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .form-group label {
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 14px;
 }
 
 .form-group input {
-  padding: 12px 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.3s;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.2s;
+    color: var(--text-dark);
+    background-color: #f8fafc;
 }
 
 .form-group input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.form-group input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(59, 89, 152, 0.1);
 }
 
 .error-message {
-  padding: 12px;
-  background-color: #ffebee;
-  color: #c62828;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
+    padding: 12px;
+    background-color: #fef2f2;
+    color: #ef4444;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid #fee2e2;
+    font-weight: 500;
 }
 
 .btn-login {
-  padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50px; /* Bo tròn kiểu viên thuốc giống banner button */
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(59, 89, 152, 0.3);
+    margin-top: 10px;
 }
 
 .btn-login:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 89, 152, 0.4);
 }
 
 .btn-login:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-demo {
-  padding: 12px;
-  background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+    padding: 12px;
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px dashed var(--primary-color);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .btn-demo:hover:not(:disabled) {
-  background-color: #667eea;
-  color: white;
-}
-
-.btn-demo:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+    background-color: var(--primary-light);
+    border-style: solid;
 }
 
 .login-footer {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
-  text-align: center;
-  color: #666;
-  font-size: 13px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-gray);
+    font-size: 13px;
 }
 
 .login-footer p {
-  margin: 5px 0;
+    margin: 6px 0;
 }
 
 .login-footer strong {
-  color: #333;
+    color: var(--text-dark);
+    background-color: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
 }
