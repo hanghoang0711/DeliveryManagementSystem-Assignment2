@@ -1,5 +1,6 @@
 import { ORDER_STATUSES, ORDER_SORT_FIELDS } from '../../utils/constants';
 import './OrderFilter.css';
+import { RefreshCw, Filter, User, Tag, BarChart2 } from 'react-feather';
 
 const OrderFilter = ({ filters, onFilterChange, loading }) => {
   const handleChange = (field, value) => {
@@ -18,9 +19,12 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
   return (
     <div className="order-filter">
       <div className="filter-row">
+        
         {/* Status Filter */}
         <div className="filter-group">
-          <label>🏷️ Trạng thái:</label>
+          <label>
+              <Tag size={14} color="#3B5998" /> Trạng thái:
+          </label>
           <select
             value={filters.trang_thai_don}
             onChange={(e) => handleChange('trang_thai_don', e.target.value)}
@@ -35,7 +39,9 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
 
         {/* Customer Filter */}
         <div className="filter-group">
-          <label>👤 Khách hàng:</label>
+          <label>
+              <User size={14} color="#3B5998" /> Khách hàng:
+          </label>
           <input
             type="text"
             placeholder="Mã khách hàng (KH001)"
@@ -47,7 +53,9 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
 
         {/* Sort Field */}
         <div className="filter-group">
-          <label>📊 Sắp xếp theo:</label>
+          <label>
+              <BarChart2 size={14} color="#3B5998" /> Sắp xếp theo:
+          </label>
           <select
             value={filters.sortKey}
             onChange={(e) => handleChange('sortKey', e.target.value)}
@@ -63,7 +71,9 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
 
         {/* Sort Order */}
         <div className="filter-group">
-          <label>🔄 Thứ tự:</label>
+          <label>
+              <Filter size={14} color="#3B5998" /> Thứ tự:
+          </label>
           <select
             value={filters.sortOrder}
             onChange={(e) => handleChange('sortOrder', e.target.value)}
@@ -75,15 +85,16 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
         </div>
 
         {/* Reset Button */}
-        <div className="filter-group">
+        <div className="filter-actions">
           <button
             className="btn-reset"
             onClick={handleReset}
             disabled={loading}
           >
-            🔄 Reset
+            <RefreshCw size={14} /> Reset
           </button>
         </div>
+
       </div>
     </div>
   );

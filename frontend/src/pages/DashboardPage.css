@@ -1,215 +1,246 @@
-/* Toàn trang */
+/* --- BIẾN MÀU SẮC (Navy/Indigo Theme) --- */
+:root {
+    --primary-color: #3B5998; /* Navy Blue đậm */
+    --primary-light: #e6e9fa; 
+    --primary-hover: #2d4373; 
+    --text-dark: #1e293b;     /* Màu chữ đậm */
+    --text-gray: #475569;     /* Màu chữ phụ */
+    --border-color: #e2e8f0;
+    --bg-main: #f7f9fc;
+}
+
+/* --- BỐ CỤC CHÍNH (FIX SIDEBAR) --- */
 .dashboard-container {
-  padding: 48px 56px;
-  min-height: 100vh; /* Đảm bảo nền tràn hết màn hình */
-  
-  /* Nền soft blue dịu thay kem ấm */
-  background-color: #e3f2fd;
-  /* Subtle gradients cho depth nhẹ nhàng */
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(103, 116, 139, 0.05) 0, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.03) 0, transparent 50%);
-  background-repeat: no-repeat;
-  background-size: cover;
-
-  color: #334155; /* Text xám dịu hơn */
-  font-family: 'Inter', sans-serif; /* Unify font modern */
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
 }
 
-/* Header */
+/* Sidebar Navigation */
+.dashboard-sidebar {
+    width: 280px; 
+    min-width: 280px;
+    flex-shrink: 0;
+    background-color: #ffffff; 
+    border-right: 1px solid var(--border-color);
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Main Content Area */
+.dashboard-main-content {
+    flex-grow: 1;
+    padding: 40px 60px; 
+    background-color: var(--bg-main);
+    width: calc(100% - 280px);
+}
+
+/* --- HEADER / TOP BAR (ĐÃ CHỈNH SỬA) --- */
+
 .dashboard-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center; /* Center vertically */
-  margin-bottom: 56px; /* Tăng spacing cho cân bằng */
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1); /* Subtle divider */
+    display: flex;
+    justify-content: space-between;
+    /* Căn lề trên để phù hợp với chữ to */
+    align-items: flex-start; 
+    margin-bottom: 40px; 
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
 }
 
+/* Phần bên trái Header */
 .dashboard-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.dashboard-left h1 {
-  margin: 0;
-  font-size: 40px;
-  font-weight: 800;
-  color: #1e293b; /* Navy dịu cho headings */
-  font-family: 'Inter', sans-serif; /* Modern consistent */
-}
+/* ĐÃ XÓA STYLE CHO THẺ H1 VÌ NÓ BỊ LOẠI BỎ TRONG JSX */
 
+/* STYLE MỚI CHO CHỮ "XIN CHÀO" (Thẻ P) */
 .dashboard-left p {
-  margin: 10px 0 0;
-  font-size: 20px;
-  color: #64748b; /* Xám dịu */
+    margin: 0; /* Loại bỏ margin mặc định */
+    font-size: 25px; /* Kích thước chữ to (tương đương H1 cũ) */
+    font-weight: 30; /* Chữ rất đậm */
+    color: var(--text-dark); /* Màu đậm */
+    line-height: 1.2;
 }
 
+/* Tăng kích thước phần tên người dùng để nổi bật hơn nữa */
 .dashboard-left p strong {
-  font-weight: 800;
-  font-style: italic;
-  color: #334155; /* Tên người dùng nổi bật dịu */
+    font-weight: 60;
+   /* Dùng màu Navy cho tên để tạo điểm nhấn */
 }
 
-/* Logo + logout */
+/* Logo & Logout */
 .dashboard-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: -8px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    /* Căn giữa theo chiều dọc với dòng chữ to bên trái */
+    align-self: center; 
 }
 
-/* Logo kiểu SHIPIZ */
+.sidebar-header {
+    padding: 0 24px 24px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
 .dashboard-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    font-size: 32px; 
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--primary-color); 
 }
 
-/* Chấm tròn cam gradient dịu */
-.dashboard-brand-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #fb923c, #f97316); /* Cam gradient dịu */
-  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
-}
-
-.dashboard-brand-text {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  color: #1e293b; /* Chữ logo navy dịu */
-  font-family: 'Inter', sans-serif;
-}
-
-/* Nút đăng xuất */
 .btn-logout {
-  padding: 8px 18px;
-  background: linear-gradient(135deg, #fb923c, #f97316); /* Gradient cam dịu */
-  border: none;
-  border-radius: 999px;
-  color: #fff;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.2); /* Bóng dịu */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Mượt hơn */
+    padding: 8px 24px; /* Tăng padding nút một chút cho cân đối */
+    background: white;
+    border: 2px solid #cbd5e1; /* Border đậm hơn chút */
+    border-radius: 8px;
+    color: var(--text-gray);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+    transition: all 0.2s;
 }
 
 .btn-logout:hover {
-  background: linear-gradient(135deg, #f97316, #ea580c);
-  transform: none;
-  box-shadow: 0 6px 16px rgba(251, 146, 60, 0.3);
+    background: #f1f5f9; 
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
-/* Card layout – 2 cột giống mockup */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px; /* Tăng gap cho breathing room */
-  max-width: 1000px; /* Chặt hơn để center */
-  margin: 0 auto; /* Center grid */
-}
-
-/* Card styling */
-.dashboard-card {
-  padding: 30px 34px;
-  border-radius: 20px;
-  background: #ffffff; /* Nền card trắng */
-  border: 1px solid rgba(148, 163, 184, 0.1); /* Border nhẹ cho separation */
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08); /* Blue-tinted shadow dịu */
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Mượt hơn */
-}
-
-.dashboard-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
-  background: rgba(255, 255, 255, 0.95); /* Subtle fade */
-}
-
-.dashboard-card h3 {
-  font-size: 26px;
-  margin: 0 0 8px;
-  font-weight: 700;
-  font-family: 'Inter', sans-serif;
-  display: flex;
-  align-items: center;
-  color: #1e293b; /* Chữ tiêu đề card navy */
-}
-
-.dashboard-card h3 span[role="img"] {
-  font-size: 28px;
-  margin-right: 12px;
-}
-
-.dashboard-card p {
-  margin: 0;
-  color: #64748b; /* Chữ mô tả card xám dịu */
-  font-size: 17px;
-  font-weight: 500;
-}
-
-/* Màu các card – Pastel gradient dịu */
-/* Giữ sắc thái nhưng với độ sáng cao hơn, thêm linear-gradient */
-.card-green {
-  background: linear-gradient(135deg, #f0fdf4, #ecfdf5); /* Xanh lá dịu */
-}
-
-.card-blue {
-  background: linear-gradient(135deg, #eff6ff, #dbeafe); /* Xanh dương dịu */
-}
-
-.card-cyan {
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe); /* Xanh lam dịu */
-}
-
-.card-yellow {
-  background: linear-gradient(135deg, #fef3c7, #fde68a); /* Vàng dịu */
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  
-  .dashboard-top {
+/* --- SIDEBAR MENU --- */
+/* (Giữ nguyên phần này) */
+.menu-list {
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 24px;
-    margin-bottom: 40px;
-  }
-  
-  .dashboard-right {
-    justify-content: flex-end; /* Right-align logout trên mobile */
-  }
+    gap: 8px;
+    padding: 0 16px;
+    list-style: none;
+    margin: 0;
 }
 
-@media (max-width: 600px) {
-  .dashboard-container {
-    padding: 32px 24px;
-  }
+.menu-item {
+    cursor: pointer;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-gray);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s;
+}
 
-  .dashboard-brand-text {
-    font-size: 20px;
-    letter-spacing: 2px;
-  }
+.menu-item:hover {
+    background-color: #f8fafc;
+    color: var(--primary-color);
+}
 
-  .dashboard-card {
-    padding: 24px 28px;
-    border-radius: 18px;
-  }
+.menu-item.active {
+    background-color: var(--primary-light); 
+    color: var(--primary-color); 
+    font-weight: 700;
+}
 
-  .dashboard-card h3 {
-    font-size: 24px; /* Tăng size cho mobile readability */
-  }
+.menu-item svg {
+    width: 22px;
+    height: 22px;
+}
 
-  .btn-logout {
-    padding: 8px 14px;
-    font-size: 14px;
-  }
+/* --- MAIN BANNER (Giữ nguyên) --- */
+/* (Copy lại phần banner từ code trước) */
+.delivery-banner {
+    width: 100%;
+    height: 420px;
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff; 
+}
+.banner-image {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center right;
+    z-index: 1;
+}
+.delivery-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 2;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.85) 45%, rgba(255, 255, 255, 0.1) 100%);
+}
+.banner-text {
+    position: relative;
+    z-index: 3;
+    padding-left: 60px;
+    max-width: 550px;
+}
+.banner-text h2 {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--primary-color);
+    margin: 0 0 12px 0;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+.banner-text p {
+    font-size: 18px;
+    color: var(--text-gray);
+    line-height: 1.6;
+    margin-bottom: 32px;
+    font-weight: 500;
+}
+.banner-action-button {
+    padding: 14px 32px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 89, 152, 0.4);
+    transition: transform 0.2s, background-color 0.2s;
+}
+.banner-action-button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 89, 152, 0.6); 
+}
+
+/* --- RESPONSIVE (Giữ nguyên) --- */
+@media (max-width: 992px) {
+    .dashboard-container { flex-direction: column; }
+    .dashboard-sidebar { width: 100%; min-width: 100%; height: auto; position: relative; padding: 10px 0; z-index: 200; }
+    .sidebar-header { display: none; }
+    .menu-list { flex-direction: row; overflow-x: auto; padding: 0 10px; }
+    .menu-item { white-space: nowrap; padding: 10px; font-size: 14px; }
+    .dashboard-main-content { width: 100%; padding: 20px; }
+    
+    /* Căn giữa header trên mobile */
+    .dashboard-top { flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+    .dashboard-left p { font-size: 24px; } /* Giảm size chữ trên mobile */
+
+    .delivery-banner { height: 380px; align-items: flex-end; justify-content: center; }
+    .delivery-banner::before { background: linear-gradient(0deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0.1) 100%); }
+    .banner-text { padding: 30px; max-width: 100%; text-align: center; }
+    .banner-text h2 { font-size: 32px; }
 }

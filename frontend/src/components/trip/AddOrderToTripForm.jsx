@@ -1,5 +1,9 @@
 import { useState } from 'react';
+// Import CSS mới
 import './AddOrderToTripForm.css';
+
+// Import Feather Icons
+import { X, Plus, Package, Truck, Info, User } from 'react-feather';
 
 const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
@@ -47,18 +51,14 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validate()) return;
-
     setSubmitting(true);
-
     try {
       const submitData = {
         Ma_don_hang: formData.Ma_don_hang,
         Thu_tu_lay_hang: parseInt(formData.Thu_tu_lay_hang),
         Thu_tu_giao_hang: parseInt(formData.Thu_tu_giao_hang)
       };
-
       await onSubmit(submitData);
     } catch (error) {
       console.error('Submit error:', error);
@@ -70,108 +70,79 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content add-order-form-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>➕ Thêm đơn hàng vào chuyến</h2>
-          <button className="btn-close" onClick={onClose}>✖️</button>
+        
+        {/* HEADER */}
+        <div className="modal-header" style={{display:'flex', justifyContent:'space-between', padding:'16px 24px', borderBottom:'1px solid #e2e8f0'}}>
+          <h2 style={{margin:0, fontSize:'18px', display:'flex', alignItems:'center', gap:'10px', color:'#1e293b'}}>
+             <Package size={20} color="#3B5998" /> 
+             Thêm đơn hàng vào chuyến
+          </h2>
+          <button className="btn-close" onClick={onClose} style={{background:'none', border:'none', cursor:'pointer'}}>
+             <X size={20} color="#64748b" />
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="add-order-form">
-          {/* Trip Info */}
+          
+          {/* Trip Info Box */}
           <div className="trip-info-box">
-            <p><strong>Chuyến:</strong> {trip.Ma_chuyen_giao_hang}</p>
-            <p><strong>Tài xế:</strong> {trip.ma_tai_xe}</p>
-            <p><strong>Số đơn hiện tại:</strong> {trip.orderCount || 0} đơn</p>
+            <p><Truck size={14} color="#3B5998"/> <strong>Chuyến:</strong> {trip.Ma_chuyen_giao_hang || trip.DeliveryID}</p>
+            <p><User size={14} color="#3B5998"/> <strong>Tài xế:</strong> {trip.ma_tai_xe}</p>
+            <p><Info size={14} color="#3B5998"/> <strong>Số đơn hiện tại:</strong> {trip.orderCount || 0} đơn</p>
           </div>
 
           {/* Order ID */}
           <div className="form-group">
-            <label htmlFor="Ma_don_hang">
-              Mã đơn hàng <span className="required">*</span>
-            </label>
+            <label htmlFor="Ma_don_hang">Mã đơn hàng <span className="required">*</span></label>
             <input
               type="text"
               id="Ma_don_hang"
               name="Ma_don_hang"
               value={formData.Ma_don_hang}
               onChange={handleChange}
-              placeholder="DH0001"
+              placeholder="Ví dụ: DH001"
               className={errors.Ma_don_hang ? 'input-error' : ''}
             />
-            {errors.Ma_don_hang && (
-              <span className="error-message">{errors.Ma_don_hang}</span>
-            )}
+            {errors.Ma_don_hang && <span className="error-message">{errors.Ma_don_hang}</span>}
           </div>
 
-          {/* Pickup Order */}
-          <div className="form-group">
-            <label htmlFor="Thu_tu_lay_hang">
-              Thứ tự lấy hàng <span className="required">*</span>
-            </label>
-            <input
-              type="number"
-              id="Thu_tu_lay_hang"
-              name="Thu_tu_lay_hang"
-              value={formData.Thu_tu_lay_hang}
-              onChange={handleChange}
-              min="1"
-              className={errors.Thu_tu_lay_hang ? 'input-error' : ''}
-            />
-            {errors.Thu_tu_lay_hang && (
-              <span className="error-message">{errors.Thu_tu_lay_hang}</span>
-            )}
-            <small className="help-text">
-              Thứ tự tài xế sẽ lấy hàng (1, 2, 3,...)
-            </small>
+          {/* 2 Cột cho Thứ tự */}
+          <div style={{display: 'flex', gap: '15px'}}>
+              <div className="form-group" style={{flex:1}}>
+                <label htmlFor="Thu_tu_lay_hang">Thứ tự lấy <span className="required">*</span></label>
+                <input
+                  type="number"
+                  id="Thu_tu_lay_hang"
+                  name="Thu_tu_lay_hang"
+                  value={formData.Thu_tu_lay_hang}
+                  onChange={handleChange}
+                  min="1"
+                  className={errors.Thu_tu_lay_hang ? 'input-error' : ''}
+                />
+              </div>
+              <div className="form-group" style={{flex:1}}>
+                <label htmlFor="Thu_tu_giao_hang">Thứ tự giao <span className="required">*</span></label>
+                <input
+                  type="number"
+                  id="Thu_tu_giao_hang"
+                  name="Thu_tu_giao_hang"
+                  value={formData.Thu_tu_giao_hang}
+                  onChange={handleChange}
+                  min="1"
+                  className={errors.Thu_tu_giao_hang ? 'input-error' : ''}
+                />
+              </div>
           </div>
-
-          {/* Delivery Order */}
-          <div className="form-group">
-            <label htmlFor="Thu_tu_giao_hang">
-              Thứ tự giao hàng <span className="required">*</span>
-            </label>
-            <input
-              type="number"
-              id="Thu_tu_giao_hang"
-              name="Thu_tu_giao_hang"
-              value={formData.Thu_tu_giao_hang}
-              onChange={handleChange}
-              min="1"
-              className={errors.Thu_tu_giao_hang ? 'input-error' : ''}
-            />
-            {errors.Thu_tu_giao_hang && (
-              <span className="error-message">{errors.Thu_tu_giao_hang}</span>
-            )}
-            <small className="help-text">
-              Thứ tự tài xế sẽ giao hàng (1, 2, 3,...)
-            </small>
-          </div>
-
-          {/* Info */}
-          <div className="info-box">
-            <strong>ℹ️ Lưu ý:</strong>
-            <ul>
-              <li>Đơn hàng phải có trạng thái "Đã tìm được tài xế"</li>
-              <li>Backend sẽ tự động cập nhật tổng quãng đường của chuyến</li>
-              <li>Thứ tự có thể trùng nhau (tùy thuộc lộ trình)</li>
-            </ul>
-          </div>
+          
+          <small className="help-text" style={{marginTop:'-10px', marginBottom:'20px', display:'block'}}>
+              Thứ tự 1, 2, 3... xác định lộ trình đi của tài xế.
+          </small>
 
           {/* Actions */}
           <div className="form-actions">
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={onClose}
-              disabled={submitting}
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              className="btn-submit"
-              disabled={submitting}
-            >
-              {submitting ? 'Đang thêm...' : 'Thêm đơn hàng'}
+            <button type="button" className="btn-cancel" onClick={onClose} disabled={submitting}>Hủy</button>
+            <button type="submit" className="btn-submit" disabled={submitting}>
+              <Plus size={18} /> {submitting ? 'Đang thêm...' : 'Thêm đơn hàng'}
             </button>
           </div>
         </form>

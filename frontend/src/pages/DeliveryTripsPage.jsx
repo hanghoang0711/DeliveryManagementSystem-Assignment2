@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import deliveryTripAPI from '../services/deliveryTripAPI';
 import TripFilter from '../components/trip/TripFilter';
 import TripTable from '../components/trip/TripTable';
@@ -7,307 +8,193 @@ import TripForm from '../components/trip/TripForm';
 import AddOrderToTripForm from '../components/trip/AddOrderToTripForm';
 import Pagination from '../components/common/Pagination';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import Sidebar from '../components/layout/Sidebar';
 import './DeliveryTripsPage.css';
 
+// Import Feather Icons
+import { Truck, Plus, LogOut, FileText, X, Inbox } from 'react-feather';
+
 const DeliveryTripsPage = () => {
-  // State
-  const [trips, setTrips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    // ... (Giữ nguyên logic state & effect) ...
+    const { logout, user } = useAuth();
+    const navigate = useNavigate();
+    const [trips, setTrips] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 0 });
+    const [filters, setFilters] = useState({ status: '', ma_tai_xe: '', sortBy: 'DeliveryID', sortOrder: 'DESC' });
+    
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [showAddOrderModal, setShowAddOrderModal] = useState(false);
+    const [selectedTrip, setSelectedTrip] = useState(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [tripToDelete, setTripToDelete] = useState(null);
+    const [searchParams, setSearchParams] = useSearchParams();
 
-  // Pagination
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0
-  });
+    const handleLogout = async () => { await logout(); navigate('/login'); };
 
-  // Filters
-  const [filters, setFilters] = useState({
-    status: '',
-    ma_tai_xe: '',
-    sortBy: 'DeliveryID',
-    sortOrder: 'DESC'
-  });
+    const fetchTrips = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const params = {
+                page: pagination.page,
+                limit: pagination.limit,
+                trang_thai: filters.status || '',
+                driver_id: filters.ma_tai_xe || '',
+                sortKey: filters.sortBy === 'ngay_bat_dau' ? 'DeliveryID' : filters.sortBy || 'DeliveryID',
+                sortOrder: filters.sortOrder || 'DESC'
+            };
+            const data = await deliveryTripAPI.getAll(params);
+            setTrips(Array.isArray(data.data) ? data.data : []);
+            setPagination(prev => ({ ...prev, total: data.pagination.total, totalPages: data.pagination.totalPages }));
+        } catch (err) {
+            setError(err.response?.data?.message || 'Không thể tải danh sách chuyến giao hàng');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  // Modals
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [showAddOrderModal, setShowAddOrderModal] = useState(false);
-  const [selectedTrip, setSelectedTrip] = useState(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [tripToDelete, setTripToDelete] = useState(null);
+    useEffect(() => {
+        const page = parseInt(searchParams.get('page')) || 1;
+        setPagination(prev => ({ ...prev, page }));
+    }, [searchParams]);
 
-  // URL params
-  const [searchParams, setSearchParams] = useSearchParams();
+    useEffect(() => { fetchTrips(); }, [pagination.page, filters]);
 
-  /**
-   * Fetch delivery trips
-   */
-  const fetchTrips = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+        setPagination(prev => ({ ...prev, page: 1 }));
+        setSearchParams({ page: '1' });
+    };
+    const handlePageChange = (page) => { setPagination(prev => ({ ...prev, page })); setSearchParams({ page: page.toString() }); };
+    const handleCreateTrip = async (tripData) => { try { await deliveryTripAPI.create(tripData); alert('✅ Tạo chuyến giao hàng thành công!'); setShowCreateModal(false); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể tạo chuyến')); } };
+    const handleViewDetails = async (trip) => { try { const data = await deliveryTripAPI.getById(trip.DeliveryID); setSelectedTrip(data.trip); setShowDetailsModal(true); } catch (err) { alert('❌ Không thể tải chi tiết: ' + err.response?.data?.message); } };
+    const handleAddOrder = (trip) => { setSelectedTrip(trip); setShowAddOrderModal(true); };
+    const handleAddOrderSubmit = async (orderData) => { try { await deliveryTripAPI.addOrder(selectedTrip.DeliveryID, orderData); alert('✅ Thêm đơn hàng thành công!'); setShowAddOrderModal(false); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể thêm đơn hàng')); } };
+    const handleUpdateStatus = async (trip, newStatus) => { try { const updateData = { trang_thai: newStatus, ngay_ket_thuc: newStatus === 'Hoàn thành' ? new Date().toISOString() : undefined }; await deliveryTripAPI.update(trip.DeliveryID, updateData); alert('✅ Cập nhật thành công!'); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể cập nhật')); } };
+    const handleDeleteClick = (trip) => { setTripToDelete(trip); setShowDeleteDialog(true); };
+    const handleDeleteConfirm = async () => { try { await deliveryTripAPI.delete(tripToDelete.DeliveryID); alert('✅ Xóa thành công!'); setShowDeleteDialog(false); setTripToDelete(null); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể xóa')); } };
 
-        const params = {
-          page: pagination.page,
-          limit: pagination.limit,
-          trang_thai: filters.status || '',
-          driver_id: filters.ma_tai_xe || '',
-          sortKey: filters.sortBy === 'ngay_bat_dau' ? 'DeliveryID' : filters.sortBy || 'DeliveryID',
-          sortOrder: filters.sortOrder || 'DESC'
-        };
+    return (
+        <div className="dashboard-container">
+            <Sidebar />
 
+            <div className="dashboard-main-content">
+                <div className="chuyen-giao-hang-page">
+                    
+                    {/* HEADER */}
+                    <div className="page-header">
+                        <div>
+                            <h1 style={{ fontFamily: 'Inter, sans-serif' }}>
+                                <Truck size={28} />
+                                Quản lý Chuyến giao hàng
+                            </h1>
+                            <p>Theo dõi tiến trình vận chuyển của <strong>{user?.username}</strong></p>
+                        </div>
+                        
+                        <div className="header-actions">
+                            {/* Nút Tạo chuyến: Sửa className thành btn-primary để nhận CSS màu Navy */}
+                            <button 
+                                className="banner-action-button" 
+                                onClick={() => setShowCreateModal(true)}
+                            >
+                                <Plus size={18} /> Tạo chuyến mới
+                            </button>
 
+                            <button className="btn-secondary" onClick={handleLogout}>
+                                <LogOut size={16} /> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
 
-      const data = await deliveryTripAPI.getAll(params);
-      console.log("🎯 Dữ liệu API trả về:", data);
+                    {/* FILTER */}
+                    <TripFilter filters={filters} onFilterChange={handleFilterChange} />
 
+                    {/* LOADING & ERROR */}
+                    {loading && (
+                        <div className="loading-container">
+                            <div className="spinner"></div>
+                            <p>Đang tải...</p>
+                        </div>
+                    )}
 
-      setTrips(Array.isArray(data.data) ? data.data : []);
+                    {error && (
+                        <div className="error-container">
+                            <p>❌ {error}</p>
+                            <button onClick={fetchTrips}>Thử lại</button>
+                        </div>
+                    )}
 
-      setPagination(prev => ({
-        ...prev,
-        total: data.pagination.total,
-        totalPages: data.pagination.totalPages
-      }));
-    } catch (err) {
-      setError(err.response?.data?.message || 'Không thể tải danh sách chuyến giao hàng');
-    } finally {
-      setLoading(false);
-    }
-  };
+                    {/* TABLE & NO RESULTS */}
+                    {!loading && !error && (
+                        <>
+                            {trips.length > 0 ? (
+                                <>
+                                    <TripTable
+                                        trips={trips}
+                                        onViewDetails={handleViewDetails}
+                                        onAddOrder={handleAddOrder}
+                                        onUpdateStatus={handleUpdateStatus}
+                                        onDelete={handleDeleteClick}
+                                    />
 
-  // Fetch on mount và khi params thay đổi
-  useEffect(() => {
-    const page = parseInt(searchParams.get('page')) || 1;
-    setPagination(prev => ({ ...prev, page }));
-  }, [searchParams]);
+                                    <div style={{marginTop: '20px'}}>
+                                        <Pagination
+                                            currentPage={pagination.page}
+                                            totalPages={pagination.totalPages}
+                                            total={pagination.total}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="no-results">
+                                    <Inbox size={64} color="#cbd5e1" strokeWidth={1} style={{marginBottom: '16px'}} />
+                                    <p>Không tìm thấy chuyến giao hàng nào</p>
+                                    
+                                    {/* Nút Tạo đầu tiên: Sửa className thành btn-primary */}
+                                    <button 
+                                        className="banner-action-button" 
+                                        onClick={() => setShowCreateModal(true)}
+                                        style={{ margin: '0 auto' }}
+                                    >
+                                        <Plus size={18} /> Tạo chuyến đầu tiên
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
 
-  useEffect(() => {
-    fetchTrips();
-  }, [pagination.page, filters]);
-
-  /**
-   * Handle filter change
-   */
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    setPagination(prev => ({ ...prev, page: 1 }));
-    setSearchParams({ page: '1' });
-  };
-
-  /**
-   * Handle page change
-   */
-  const handlePageChange = (page) => {
-    setPagination(prev => ({ ...prev, page }));
-    setSearchParams({ page: page.toString() });
-  };
-
-  /**
-   * Handle create trip
-   */
-  const handleCreateTrip = async (tripData) => {
-    try {
-      await deliveryTripAPI.create(tripData);
-      alert('✅ Tạo chuyến giao hàng thành công!');
-      setShowCreateModal(false);
-      fetchTrips();
-    } catch (err) {
-      alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể tạo chuyến'));
-    }
-  };
-
-  /**
-   * Handle view trip details
-   */
-  const handleViewDetails = async (trip) => {
-    try {
-      const data = await deliveryTripAPI.getById(trip.DeliveryID);
-      setSelectedTrip(data.trip);
-      setShowDetailsModal(true);
-    } catch (err) {
-      alert('❌ Không thể tải chi tiết chuyến: ' + err.response?.data?.message);
-    }
-  };
-
-  /**
-   * Handle add order to trip
-   */
-  const handleAddOrder = (trip) => {
-    setSelectedTrip(trip);
-    setShowAddOrderModal(true);
-    console.log("Showing add order")
-  };
-
-  /**
-   * Handle add order submit
-   */
-  const handleAddOrderSubmit = async (orderData) => {
-    try {
-      await deliveryTripAPI.addOrder(selectedTrip.DeliveryID, orderData);
-      alert('✅ Thêm đơn hàng vào chuyến thành công!');
-      setShowAddOrderModal(false);
-      fetchTrips();
-    } catch (err) {
-      alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể thêm đơn hàng'));
-    }
-  };
-
-  /**
-   * Handle update trip status
-   */
-  const handleUpdateStatus = async (trip, newStatus) => {
-    try {
-      const updateData = {
-        trang_thai: newStatus
-      };
-
-      // If completing the trip, add end date
-      if (newStatus === 'Hoàn thành') {
-        updateData.ngay_ket_thuc = new Date().toISOString();
-      }
-
-      await deliveryTripAPI.update(trip.DeliveryID, updateData);
-      alert('✅ Cập nhật trạng thái thành công!');
-      fetchTrips();
-    } catch (err) {
-      alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể cập nhật'));
-    }
-  };
-
-  /**
-   * Handle delete trip
-   */
-  const handleDeleteClick = (trip) => {
-    setTripToDelete(trip);
-    setShowDeleteDialog(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    try {
-      await deliveryTripAPI.delete(tripToDelete.DeliveryID);
-      alert('✅ Xóa chuyến giao hàng thành công!');
-      setShowDeleteDialog(false);
-      setTripToDelete(null);
-      fetchTrips();
-    } catch (err) {
-      alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể xóa chuyến'));
-    }
-  };
-
-  return (
-    <div className="chuyen-giao-hang-page">
-      {/* Page Header */}
-      <div className="page-header">
-        <div>
-          <h1>🚚 Quản lý Chuyến giao hàng</h1>
-          <p>Tạo chuyến, thêm đơn hàng, theo dõi tiến trình giao hàng</p>
-        </div>
-        <button className="btn-primary" onClick={() => setShowCreateModal(true)}>
-          ➕ Tạo chuyến mới
-        </button>
-      </div>
-
-      {/* Filter */}
-      <TripFilter filters={filters} onFilterChange={handleFilterChange} />
-
-      {/* Loading State */}
-      {loading && (
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Đang tải...</p>
-        </div>
-      )}
-
-      {/* Error State */}
-      {error && (
-        <div className="error-container">
-          <p>❌ {error}</p>
-          <button onClick={fetchTrips}>Thử lại</button>
-        </div>
-      )}
-
-      {/* Trips Table */}
-      {!loading && !error && (
-        <>
-          {trips.length > 0 ? (
-            <>
-              <TripTable
-                trips={trips}
-                onViewDetails={handleViewDetails}
-                onAddOrder={handleAddOrder}
-                onUpdateStatus={handleUpdateStatus}
-                onDelete={handleDeleteClick}
-              />
-
-              {/* Pagination */}
-              <Pagination
-                currentPage={pagination.page}
-                totalPages={pagination.totalPages}
-                total={pagination.total}
-                onPageChange={handlePageChange}
-              />
-            </>
-          ) : (
-            <div className="no-results">
-              <p>📭 Không tìm thấy chuyến giao hàng nào</p>
-              <button onClick={() => setShowCreateModal(true)}>
-                Tạo chuyến đầu tiên
-              </button>
+                    {/* MODALS */}
+                    {showCreateModal && <TripForm onSubmit={handleCreateTrip} onClose={() => setShowCreateModal(false)} />}
+                    {showAddOrderModal && selectedTrip && <AddOrderToTripForm trip={selectedTrip} onSubmit={handleAddOrderSubmit} onClose={() => setShowAddOrderModal(false)} />}
+                    {showDeleteDialog && tripToDelete && <ConfirmDialog title="Xác nhận xóa" message={`Bạn có chắc muốn xóa chuyến "${tripToDelete.DeliveryID}"?`} onConfirm={handleDeleteConfirm} onCancel={() => { setShowDeleteDialog(false); setTripToDelete(null); }} />}
+                    
+                    {/* DETAILS MODAL */}
+                    {showDetailsModal && selectedTrip && (
+                        <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
+                            <div className="modal-content trip-details-modal" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h2>
+                                        <FileText size={24} color="#3B5998"/> 
+                                        Chi tiết: {selectedTrip.DeliveryID}
+                                    </h2>
+                                    <button className="btn-close" onClick={() => setShowDetailsModal(false)}>
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <pre>{JSON.stringify(selectedTrip, null, 2)}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
-          )}
-        </>
-      )}
-
-      {/* Create Trip Modal */}
-      {showCreateModal && (
-        <TripForm
-          onSubmit={handleCreateTrip}
-          onClose={() => setShowCreateModal(false)}
-        />
-      )}
-
-      {/* Add Order to Trip Modal */}
-      {showAddOrderModal && selectedTrip && (
-        <AddOrderToTripForm
-          trip={selectedTrip}
-          onSubmit={handleAddOrderSubmit}
-          onClose={() => setShowAddOrderModal(false)}
-        />
-      )}
-
-      {/* Trip Details Modal */}
-      {showDetailsModal && selectedTrip && (
-        <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
-          <div className="modal-content trip-details-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>📋 Chi tiết chuyến: {selectedTrip.DeliveryID}</h2>
-              <button className="btn-close" onClick={() => setShowDetailsModal(false)}>✖️</button>
-            </div>
-            <div className="modal-body">
-              <pre>{JSON.stringify(selectedTrip, null, 2)}</pre>
-            </div>
-          </div>
         </div>
-      )}
-
-      {/* Delete Confirmation Dialog */}
-      {showDeleteDialog && tripToDelete && (
-        <ConfirmDialog
-          title="Xác nhận xóa"
-          message={`Bạn có chắc muốn xóa chuyến "${tripToDelete.DeliveryID}"?`}
-          onConfirm={handleDeleteConfirm}
-          onCancel={() => {
-            setShowDeleteDialog(false);
-            setTripToDelete(null);
-          }}
-        />
-      )}
-    </div>
-  );
+    );
 };
 
 export default DeliveryTripsPage;

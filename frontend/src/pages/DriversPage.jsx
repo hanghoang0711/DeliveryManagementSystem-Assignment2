@@ -1,35 +1,38 @@
-// src/pages/DriversPage.jsx
 import { useState, useEffect } from 'react';
 import { driverAPI } from '../api/services.js';
+// Import Components
 import DriverTable from '../components/driver/DriverTable.jsx';
 import DriverForm from '../components/driver/DriverForm.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
+import Sidebar from '../components/layout/Sidebar'; 
+import { useAuth } from '../context/AuthContext';   
+import { useNavigate } from 'react-router-dom';     
+
 import './DriversPage.css';
 
+// 1. Import Feather Icons (Thêm Search vào đây)
+import { User, Plus, LogOut, X, Search } from 'react-feather';
+
 const DriversPage = () => {
-  // State management
-  const [drivers, setDrivers] = useState([]);      // luôn cố gắng giữ là array
+  const { logout, user } = useAuth(); 
+  const navigate = useNavigate();
+
+  const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Modal states
   const [showForm, setShowForm] = useState(false);
   const [editingDriver, setEditingDriver] = useState(null);
   const [deletingDriver, setDeletingDriver] = useState(null);
 
-  /**
-   * Fetch drivers từ API
-   */
+  const handleLogout = async () => { await logout(); navigate('/login'); };
+
   const fetchDrivers = async () => {
     try {
       setLoading(true);
       setError(null);
-
       const data = await driverAPI.getAll();
-      console.log('🚗 Drivers from API:', data);
-
-      // Đảm bảo luôn là array
       setDrivers(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching drivers:', err);
@@ -40,71 +43,36 @@ const DriversPage = () => {
     }
   };
 
-  // Load drivers khi component mount
-  useEffect(() => {
-    fetchDrivers();
-  }, []);
+  useEffect(() => { fetchDrivers(); }, []);
 
-  /**
-   * Xử lý tạo tài xế mới
-   */
-  const handleCreate = () => {
-    setEditingDriver(null);
-    setShowForm(true);
-  };
+  const handleCreate = () => { setEditingDriver(null); setShowForm(true); };
+  const handleEdit = (driver) => { setEditingDriver(driver); setShowForm(true); };
 
-  /**
-   * Xử lý edit tài xế
-   */
-  const handleEdit = (driver) => {
-    setEditingDriver(driver);
-    setShowForm(true);
-  };
-
-  /**
-   * Xử lý submit form (create hoặc update)
-   */
   const handleFormSubmit = async (driverData) => {
     try {
       if (editingDriver) {
-        // Update existing driver
         await driverAPI.update(editingDriver.DriverID, driverData);
         alert('✅ Cập nhật tài xế thành công!');
       } else {
-        // Create new driver
         await driverAPI.create(driverData);
         alert('✅ Tạo tài xế mới thành công!');
       }
-
-      // Refresh list
       await fetchDrivers();
-
-      // Close form
       setShowForm(false);
       setEditingDriver(null);
     } catch (err) {
       console.error('Error submitting form:', err);
       alert('❌ Lỗi: ' + (err?.response?.data?.message || 'Không thể lưu thông tin'));
-      // Không throw nữa để tránh crash
     }
   };
 
-  /**
-   * Xử lý xóa tài xế
-   */
-  const handleDeleteClick = (driver) => {
-    setDeletingDriver(driver);
-  };
+  const handleDeleteClick = (driver) => { setDeletingDriver(driver); };
 
   const handleDeleteConfirm = async () => {
     try {
       await driverAPI.delete(deletingDriver.DriverID);
       alert('✅ Xóa tài xế thành công!');
-
-      // Refresh list
       await fetchDrivers();
-
-      // Close dialog
       setDeletingDriver(null);
     } catch (err) {
       console.error('Error deleting driver:', err);
@@ -112,10 +80,6 @@ const DriversPage = () => {
     }
   };
 
-  /**
-   * Filter drivers theo search term
-   * Luôn kiểm tra drivers có phải array không để tránh lỗi .filter
-   */
   const filteredDrivers = Array.isArray(drivers)
     ? drivers.filter((driver) => {
         const searchLower = searchTerm.toLowerCase();
@@ -128,89 +92,101 @@ const DriversPage = () => {
     : [];
 
   return (
-    <div className="drivers-page">
-      {/* Header */}
-      <div className="page-header">
-        <div>
-          <h1>🚗 Quản Lý Tài Xế</h1>
-          <p>Danh sách {Array.isArray(drivers) ? drivers.length : 0} tài xế trong hệ thống</p>
+    <div className="dashboard-container">
+      <Sidebar />
+
+      <div className="dashboard-main-content">
+        <div className="drivers-page">
+          
+          {/* HEADER */}
+          <div className="page-header">
+            <div>
+              <h1>
+                  <User size={28} style={{marginRight: '10px', color: '#3B5998'}} />
+                  Quản Lý Tài Xế
+              </h1>
+              <p>Danh sách {Array.isArray(drivers) ? drivers.length : 0} tài xế trong hệ thống</p>
+            </div>
+            
+            <div className="header-actions">
+                <button className="btn-primary" onClick={handleCreate}>
+                    <Plus size={18} /> Thêm tài xế mới
+                </button>
+                
+                <button className="btn-secondary" onClick={handleLogout}>
+                    <LogOut size={16} /> Đăng xuất
+                </button>
+            </div>
+          </div>
+
+          {/* SEARCH BAR (ĐÃ SỬA) */}
+          <div className="search-bar">
+            {/* Icon Search Feather nằm bên trái */}
+            <Search className="search-icon" size={18} />
+            
+            <input
+              type="text"
+              placeholder="Tìm kiếm theo mã, tên, hoặc CCCD..." /* Xóa emoji ở đây */
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            
+            {searchTerm && (
+              <button className="btn-clear" onClick={() => setSearchTerm('')}>
+                <X size={18} />
+              </button>
+            )}
+          </div>
+
+          {/* LOADING / ERROR */}
+          {loading && (
+            <div className="loading-container">
+              <div className="spinner"></div><p>Đang tải dữ liệu...</p>
+            </div>
+          )}
+
+          {!loading && error && (
+            <div className="error-container">
+              <p>❌ {error}</p><button className="btn-primary" onClick={fetchDrivers}>Thử lại</button>
+            </div>
+          )}
+
+          {/* TABLE */}
+          {!loading && !error && (
+            <DriverTable
+              drivers={filteredDrivers}
+              onEdit={handleEdit}
+              onDelete={handleDeleteClick}
+            />
+          )}
+
+          {/* NO RESULTS */}
+          {!loading && !error && filteredDrivers.length === 0 && (
+            <div className="no-results">
+              <Search size={48} color="#cbd5e1" strokeWidth={1} style={{marginBottom: '16px'}}/>
+              <p>Không tìm thấy tài xế nào</p>
+            </div>
+          )}
+
+          {/* MODALS */}
+          {showForm && (
+            <DriverForm
+              driver={editingDriver}
+              onSubmit={handleFormSubmit}
+              onClose={() => { setShowForm(false); setEditingDriver(null); }}
+            />
+          )}
+
+          {deletingDriver && (
+            <ConfirmDialog
+              title="Xác nhận xóa"
+              message={`Bạn có chắc muốn xóa tài xế "${deletingDriver.Ho_ten}" (${deletingDriver.DriverID})?`}
+              onConfirm={handleDeleteConfirm}
+              onCancel={() => setDeletingDriver(null)}
+            />
+          )}
         </div>
-        <button className="btn-primary" onClick={handleCreate}>
-          ➕ Thêm tài xế mới
-        </button>
       </div>
-
-      {/* Search Bar */}
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="🔍 Tìm kiếm theo mã, tên, hoặc CCCD..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        {searchTerm && (
-          <button
-            className="btn-clear"
-            onClick={() => setSearchTerm('')}
-          >
-            ✖️
-          </button>
-        )}
-      </div>
-
-      {/* Loading State */}
-      {loading && (
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Đang tải dữ liệu...</p>
-        </div>
-      )}
-
-      {/* Error State */}
-      {!loading && error && (
-        <div className="error-container">
-          <p>❌ {error}</p>
-          <button onClick={fetchDrivers}>Thử lại</button>
-        </div>
-      )}
-
-      {/* Driver Table */}
-      {!loading && !error && (
-        <DriverTable
-          drivers={filteredDrivers}
-          onEdit={handleEdit}
-          onDelete={handleDeleteClick}
-        />
-      )}
-
-      {/* No Results */}
-      {!loading && !error && filteredDrivers.length === 0 && (
-        <div className="no-results">
-          <p>Không tìm thấy tài xế nào</p>
-        </div>
-      )}
-
-      {/* Driver Form Modal */}
-      {showForm && (
-        <DriverForm
-          driver={editingDriver}
-          onSubmit={handleFormSubmit}
-          onClose={() => {
-            setShowForm(false);
-            setEditingDriver(null);
-          }}
-        />
-      )}
-
-      {/* Delete Confirmation Dialog */}
-      {deletingDriver && (
-        <ConfirmDialog
-          title="Xác nhận xóa"
-          message={`Bạn có chắc muốn xóa tài xế "${deletingDriver.Ho_ten}" (${deletingDriver.DriverID})?`}
-          onConfirm={handleDeleteConfirm}
-          onCancel={() => setDeletingDriver(null)}
-        />
-      )}
     </div>
   );
 };

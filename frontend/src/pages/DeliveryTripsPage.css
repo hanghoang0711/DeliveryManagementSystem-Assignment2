@@ -1,33 +1,103 @@
+:root {
+    --primary-color: #3B5998;
+    --primary-hover: #2d4373;
+    --text-dark: #1e293b;
+    --text-gray: #64748b;
+    --border-color: #e2e8f0;
+    --bg-main: #f8fafc;
+    --white: #ffffff;
+    --danger: #ef4444;
+}
+
+/* Layout */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--white);
+}
+
+.dashboard-main-content {
+    flex-grow: 1;
+    background-color: var(--bg-main);
+    height: 100vh;
+    overflow-y: auto;
+}
+
 .chuyen-giao-hang-page {
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+    padding: 30px 50px;
 }
 
-.trip-details-modal {
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
+/* Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+    padding: 20px 32px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
 }
 
-.trip-details-modal .modal-body {
-  padding: 20px;
+.page-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-dark);
+    font-size: 24px;
+    font-weight: 700;
 }
 
-.trip-details-modal pre {
-  background-color: #f5f5f5;
-  padding: 15px;
-  border-radius: 6px;
-  overflow-x: auto;
-  font-size: 12px;
-  line-height: 1.5;
+.header-actions {
+    display: flex;
+    gap: 12px;
 }
 
-/* Reuse common page styles */
-.chuyen-giao-hang-page .page-header,
-.chuyen-giao-hang-page .btn-primary,
-.chuyen-giao-hang-page .loading-container,
-.chuyen-giao-hang-page .error-container,
-.chuyen-giao-hang-page .no-results {
-  /* Same as DriversPage.css & OrdersPage.css */
+/* Buttons */
+.btn-primary {
+    padding: 12px 26px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary{
+    background: white;
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--text-gray);
+}
+.banner-action-button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 89, 152, 0.4);
+    transition: transform 0.2s, background-color 0.2s;
+}
+/* No results */
+.no-results {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text-gray);
+}
+
+.no-results svg{
+    color:#bfc5d3;
 }
