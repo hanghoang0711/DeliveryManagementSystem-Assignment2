@@ -64,6 +64,8 @@ const deliveryTripAPI = {
    * @param {Object} updateData - { trang_thai, ngay_ket_thuc }
    */
   update: async (id, updateData) => {
+    console.log(updateData);
+
     try {
       const response = await api.put(`/api/chuyen-giao-hang/${id}`, updateData);
       return response.data;

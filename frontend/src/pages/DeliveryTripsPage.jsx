@@ -53,7 +53,7 @@ const DeliveryTripsPage = () => {
         const params = {
           page: pagination.page,
           limit: pagination.limit,
-          trang_thai: filters.status || '',
+          TrangThaiChuyen: filters.status || '',
           driver_id: filters.ma_tai_xe || '',
           sortKey: filters.sortBy === 'ngay_bat_dau' ? 'DeliveryID' : filters.sortBy || 'DeliveryID',
           sortOrder: filters.sortOrder || 'DESC'
@@ -162,7 +162,7 @@ const DeliveryTripsPage = () => {
   const handleUpdateStatus = async (trip, newStatus) => {
     try {
       const updateData = {
-        trang_thai: newStatus
+        TrangThaiChuyen: newStatus
       };
 
       // If completing the trip, add end date
