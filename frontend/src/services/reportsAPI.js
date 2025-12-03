@@ -5,7 +5,7 @@ const reportsAPI = {
    * Get top drivers by rating
    * @param {Object} params - { limit }
    */
-  getTopDrivers: async (params = { limit: 10 }) => {
+  getTopDrivers: async (params = { topN: 10 }) => {
     try {
       const response = await api.get('/api/bao-cao/top-tai-xe', { params });
       return response.data;
@@ -19,7 +19,7 @@ const reportsAPI = {
    * Get top customers by revenue
    * @param {Object} params - { limit }
    */
-  getTopCustomers: async (params = { limit: 10 }) => {
+  getTopCustomers: async (params = { topN: 10 }) => {
     try {
       const response = await api.get('/api/bao-cao/top-khach-hang', { params });
       return response.data;

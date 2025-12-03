@@ -24,8 +24,8 @@ const ReportsPage = () => {
       setError(null);
 
       const [driversData, customersData] = await Promise.all([
-        reportsAPI.getTopDrivers({ limit: driverLimit }),
-        reportsAPI.getTopCustomers({ limit: customerLimit })
+        reportsAPI.getTopDrivers({ topN: driverLimit }),
+        reportsAPI.getTopCustomers({ topN: customerLimit })
       ]);
 
       console.log(customersData.data);
