@@ -268,4 +268,111 @@ router.post('/:id/add-don-hang', chuyenGiaoHangController.addDonHangToChuyenGiao
  */
 router.put('/:id', chuyenGiaoHangController.updateChuyenGiaoHang);
 
+/**
+ * @swagger
+ * /api/chuyen-giao-hang/{id}:
+ *   delete:
+ *     summary: Xóa chuyến giao hàng
+ *     tags: [ChuyenGiaoHang]
+ *     description: |
+ *       Xóa chuyến giao hàng theo ID. 
+ *       
+ *       **Điều kiện xóa:**
+ *       - Chỉ cho phép xóa chuyến có trạng thái "Đã hủy" HOẶC
+ *       - Chuyến chưa có đơn hàng nào (so_luong_don_gop = 0)
+ *       
+ *       **Quy trình xóa:**
+ *       1. Kiểm tra chuyến giao hàng tồn tại
+ *       2. Kiểm tra điều kiện xóa (trạng thái và số đơn hàng)
+ *       3. Cập nhật trạng thái các đơn hàng về "Đang tìm tài xế"
+ *       4. Xóa quan hệ trong bảng DON_HANG_DUOC_GIAO
+ *       5. Xóa chuyến giao hàng
+ *       
+ *       **Lưu ý:** Thao tác này sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Mã chuyến giao hàng cần xóa
+ *         example: CGH001
+ *     responses:
+ *       200:
+ *         description: Xóa chuyến giao hàng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Xóa chuyến giao hàng thành công
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     DeliveryID:
+ *                       type: string
+ *                       example: CGH001
+ *                     so_don_hang_da_cap_nhat:
+ *                       type: integer
+ *                       example: 2
+ *                       description: Số đơn hàng đã được cập nhật trạng thái
+ *       400:
+ *         description: Không thể xóa chuyến đang hoạt động
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Không thể xóa chuyến giao hàng đang hoạt động. Vui lòng hủy chuyến trước khi xóa hoặc đảm bảo chuyến chưa có đơn hàng.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     TrangThaiChuyen:
+ *                       type: string
+ *                       example: Đang thực hiện
+ *                     so_luong_don_gop:
+ *                       type: integer
+ *                       example: 3
+ *       404:
+ *         description: Không tìm thấy chuyến giao hàng
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Chuyến giao hàng không tồn tại
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server khi xóa chuyến giao hàng
+ *                 error:
+ *                   type: string
+ *                   example: Database connection error
+ */
+router.delete('/:id', chuyenGiaoHangController.deleteChuyenGiaoHang);
+
 module.exports = router;

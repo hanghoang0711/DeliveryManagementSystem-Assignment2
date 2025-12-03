@@ -1478,7 +1478,9 @@ GO
 -- =====================================================================
 
 -- 1. SP THÊM NHÂN VIÊN (Mã NVxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_ThemNhanVien
+IF OBJECT_ID('sp_ThemNhanVien', 'P') IS NOT NULL DROP PROCEDURE sp_ThemNhanVien;
+GO
+CREATE PROCEDURE sp_ThemNhanVien
 (
     @HoTenLot NVARCHAR(50), @Ten NVARCHAR(50),
     @GioiTinh NVARCHAR(10), @NgaySinh DATE,
@@ -1510,7 +1512,9 @@ END;
 GO
 
 -- 2. SP ĐĂNG KÝ KHÁCH HÀNG (Mã KHxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_DangKyKhachHang
+IF OBJECT_ID('sp_DangKyKhachHang', 'P') IS NOT NULL DROP PROCEDURE sp_DangKyKhachHang;
+GO
+CREATE PROCEDURE sp_DangKyKhachHang
 (
     @Email VARCHAR(100),
     @HoTenLot NVARCHAR(50) = NULL, @Ten NVARCHAR(50) = NULL, -- Cho KH Cá nhân
@@ -1554,7 +1558,9 @@ END;
 GO
 
 -- 3. SP THÊM TÀI XẾ (Mã DRVxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_ThemTaiXe
+IF OBJECT_ID('sp_ThemTaiXe', 'P') IS NOT NULL DROP PROCEDURE sp_ThemTaiXe;
+GO
+CREATE PROCEDURE sp_ThemTaiXe
 (
     @HoTen NVARCHAR(100), @CCCD VARCHAR(12),
     @GioiTinh NVARCHAR(10), @NgaySinh DATE,
@@ -1584,7 +1590,9 @@ END;
 GO
 
 -- 4. SP TẠO CHUYẾN GIAO HÀNG (Mã CGHxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_TaoChuyenGiaoHang
+IF OBJECT_ID('sp_TaoChuyenGiaoHang', 'P') IS NOT NULL DROP PROCEDURE sp_TaoChuyenGiaoHang;
+GO
+CREATE PROCEDURE sp_TaoChuyenGiaoHang
 (
     @DriverID VARCHAR(10)
 )
@@ -1612,7 +1620,9 @@ END;
 GO
 
 -- 5. SP TẠO ĐÁNH GIÁ (Mã DGxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_TaoDanhGia
+IF OBJECT_ID('sp_TaoDanhGia', 'P') IS NOT NULL DROP PROCEDURE sp_TaoDanhGia;
+GO
+CREATE PROCEDURE sp_TaoDanhGia
 (
     @MaKH VARCHAR(10), @MaDon VARCHAR(10),
     @Rating INT, @Comment NVARCHAR(255), @DriverID VARCHAR(10) = NULL
@@ -1641,7 +1651,9 @@ END;
 GO
 
 -- 6. SP TẠO YÊU CẦU HỖ TRỢ (Mã YCxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_TaoYeuCauHoTro
+IF OBJECT_ID('sp_TaoYeuCauHoTro', 'P') IS NOT NULL DROP PROCEDURE sp_TaoYeuCauHoTro;
+GO
+CREATE PROCEDURE sp_TaoYeuCauHoTro
 (
     @MaKH VARCHAR(10), 
     @LoaiVanDe NVARCHAR(50),
@@ -1671,7 +1683,9 @@ END;
 GO
 
 -- 7. SP TẠO THANH TOÁN (Mã TTxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_TaoThanhToan
+IF OBJECT_ID('sp_TaoThanhToan', 'P') IS NOT NULL DROP PROCEDURE sp_TaoThanhToan;
+GO
+CREATE PROCEDURE sp_TaoThanhToan
 (
     @MaKH VARCHAR(10),
     @PhuongThuc NVARCHAR(50),
@@ -1702,7 +1716,9 @@ END;
 GO
 
 -- 8. SP THÊM XE (Mã VHCxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_ThemXe
+IF OBJECT_ID('sp_ThemXe', 'P') IS NOT NULL DROP PROCEDURE sp_ThemXe;
+GO
+CREATE PROCEDURE sp_ThemXe
 (
     @BienSo VARCHAR(20), @ChuSoHuu NVARCHAR(100),
     @NamSX CHAR(4), @TinhTrang NVARCHAR(50) = N'Sẵn sàng',
@@ -1716,7 +1732,7 @@ BEGIN
     SET NOCOUNT ON;
     BEGIN TRY
         BEGIN TRAN;
-            -- Sinh mã: VHC + 001 (Cắt từ ký tự thứ 4 vì VHC có 3 chữ cái)
+            -- Sinh mã: VHC + 001
             DECLARE @MaXe VARCHAR(10);
             SELECT @MaXe = 'VHC' + 
                 RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(VehicleID, 4, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
@@ -1731,36 +1747,6 @@ BEGIN
             VALUES (@MaXe, @BienSo, @ChuSoHuu, @TinhTrang, @NamSX, @XeMayFlag, @PhanKhoi, @KhoangCho, @XeTaiFlag, @TrongTai, @LoaiThung);
         COMMIT;
         SELECT @MaXe AS NewID;
-    END TRY
-    BEGIN CATCH
-        ROLLBACK;
-        THROW;
-    END CATCH
-END;
-GO
-
--- 9. SP TẠO YÊU CẦU HỖ TRỢ (Mã YCxxx - 3 số)
-CREATE OR ALTER PROCEDURE sp_TaoYeuCauHoTro
-(
-    @MaKH VARCHAR(10), 
-    @LoaiVanDe NVARCHAR(50),
-    @NoiDung NVARCHAR(MAX)
-)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    BEGIN TRY
-        BEGIN TRAN;
-            -- Sinh mã: YC + 001 (Cắt từ ký tự thứ 3)
-            DECLARE @MaYC VARCHAR(10);
-            SELECT @MaYC = 'YC' + 
-                RIGHT('000' + CAST(ISNULL(MAX(CAST(SUBSTRING(Ma_yeu_cau, 3, 10) AS INT)), 0) + 1 AS VARCHAR), 3)
-            FROM YEU_CAU_HO_TRO;
-
-            INSERT INTO YEU_CAU_HO_TRO (Ma_yeu_cau, Ma_khach_hang, Thoi_diem_tao, Loai_van_de, Noi_dung, Trang_thai_xu_ly)
-            VALUES (@MaYC, @MaKH, GETDATE(), @LoaiVanDe, @NoiDung, N'Chờ xử lý');
-        COMMIT;
-        SELECT @MaYC AS NewID;
     END TRY
     BEGIN CATCH
         ROLLBACK;

@@ -509,6 +509,131 @@ exports.calculateTotalDistance = async (req, res) => {
   }
 };
 
+/**
+ * ============================================
+ * 7. DELETE CHUYEN_GIAO_HANG
+ * ============================================
+ * Endpoint: DELETE /api/chuyen-giao-hang/:id
+ * 
+ * Logic xóa:
+ * - Kiểm tra chuyến giao hàng tồn tại
+ * - Kiểm tra trạng thái (chỉ cho phép xóa chuyến "Đã hủy" hoặc chưa có đơn hàng)
+ * - Xóa quan hệ DON_HANG_DUOC_GIAO trước (bảng trung gian)
+ * - Cập nhật trạng thái đơn hàng về "Đang tìm tài xế"
+ * - Xóa chuyến giao hàng
+ */
+exports.deleteChuyenGiaoHang = async (req, res) => {
+  const transaction = await db.sequelize.transaction();
+
+  try {
+    const { id } = req.params;
+
+    // 1. Kiểm tra chuyến giao hàng tồn tại
+    const chuyenGiao = await ChuyenGiaoHang.findOne({
+      where: { DeliveryID: id },
+      include: [{
+        model: DonHang,
+        as: 'donHangs',
+        attributes: ['Ma_don_hang', 'Trang_thai_don']
+      }],
+      transaction
+    });
+
+    if (!chuyenGiao) {
+      await transaction.rollback();
+      return res.status(404).json({
+        success: false,
+        message: 'Chuyến giao hàng không tồn tại'
+      });
+    }
+
+    // 2. Kiểm tra điều kiện xóa
+    // Chỉ cho phép xóa nếu:
+    // - Trạng thái là "Đã hủy" HOẶC
+    // - Chuyến chưa có đơn hàng nào (so_luong_don_gop = 0)
+    const canDelete = chuyenGiao.TrangThaiChuyen === 'Đã hủy' || chuyenGiao.so_luong_don_gop === 0;
+
+    if (!canDelete) {
+      await transaction.rollback();
+      return res.status(400).json({
+        success: false,
+        message: 'Không thể xóa chuyến giao hàng đang hoạt động. Vui lòng hủy chuyến trước khi xóa hoặc đảm bảo chuyến chưa có đơn hàng.',
+        data: {
+          TrangThaiChuyen: chuyenGiao.TrangThaiChuyen,
+          so_luong_don_gop: chuyenGiao.so_luong_don_gop
+        }
+      });
+    }
+
+    // 3. Nếu có đơn hàng trong chuyến, cập nhật trạng thái đơn hàng
+    if (chuyenGiao.donHangs && chuyenGiao.donHangs.length > 0) {
+      const maDonHangs = chuyenGiao.donHangs.map(dh => dh.Ma_don_hang);
+      
+      // Cập nhật trạng thái đơn hàng về "Đang tìm tài xế"
+      await DonHang.update(
+        { Trang_thai_don: 'Đang tìm tài xế' },
+        { 
+          where: { Ma_don_hang: maDonHangs },
+          transaction 
+        }
+      );
+
+      console.log(`✅ Đã cập nhật ${maDonHangs.length} đơn hàng về trạng thái "Đang tìm tài xế"`);
+    }
+
+    // 4. Xóa quan hệ trong bảng trung gian DON_HANG_DUOC_GIAO
+    await DonHangDuocGiao.destroy({
+      where: { DeliveryID: id },
+      transaction
+    });
+
+    console.log(`✅ Đã xóa quan hệ DON_HANG_DUOC_GIAO cho chuyến ${id}`);
+
+    // 5. Xóa KHOANG_CACH_VAN_CHUYEN (foreign key constraint)
+    await db.sequelize.query(
+      'DELETE FROM KHOANG_CACH_VAN_CHUYEN WHERE DeliveryID = :deliveryId',
+      {
+        replacements: { deliveryId: id },
+        transaction,
+        type: db.Sequelize.QueryTypes.DELETE
+      }
+    );
+
+    console.log(`✅ Đã xóa KHOANG_CACH_VAN_CHUYEN cho chuyến ${id}`);
+
+    // 6. Xóa chuyến giao hàng
+    await chuyenGiao.destroy({ transaction });
+
+    await transaction.commit();
+
+    res.status(200).json({
+      success: true,
+      message: 'Xóa chuyến giao hàng thành công',
+      data: {
+        DeliveryID: id,
+        so_don_hang_da_cap_nhat: chuyenGiao.donHangs ? chuyenGiao.donHangs.length : 0
+      }
+    });
+
+  } catch (error) {
+    // Safely rollback transaction
+    try {
+      if (transaction) {
+        await transaction.rollback();
+      }
+    } catch (rollbackError) {
+      console.error('⚠️ Lỗi khi rollback transaction:', rollbackError.message);
+    }
+
+    console.error('❌ Lỗi khi xóa chuyến giao hàng:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server khi xóa chuyến giao hàng',
+      error: error.message
+    });
+  }
+};
+
 
 /**
  * CHUYEN_GIAO_HANG CONTROLLER (ERD v2)
