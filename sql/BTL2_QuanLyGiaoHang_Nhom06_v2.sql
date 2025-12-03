@@ -807,7 +807,7 @@ PRINT N'--- Chèn dữ liệu TAI_XE ---';
 INSERT INTO TAI_XE (DriverID, Ho_ten, CCCD, Gioi_Tinh, Ngay_Sinh, Ngay_Bat_Dau_Lam_Viec, Trang_Thai, Ma_Nhan_Vien_quan_li, Ngay_Bat_Dau_Quan_Ly, Rating) VALUES
 ('DRV001', N'Nguyễn Văn Rê', '079123456781', N'Nam', '1998-03-11', '2023-11-10', N'Sẵn sàng', 'NV002', '2025-11-10', 5.0),
 ('DRV002', N'Trần Thị Phương', '079123456782', N'Nữ', '2002-09-05', '2025-11-15', N'Sẵn sàng', 'NV002', '2025-11-15', 4.5),
-('DRV003', N'Đỗ Giang Thần', '0790123456', N'Nam', '1988-09-09', '2024-12-15', N'Sẵn sàng', 'NV002', '2025-11-15', 5.0),
+('DRV003', N'Đỗ Giang Thần', '079012345623', N'Nam', '1988-09-09', '2024-12-15', N'Sẵn sàng', 'NV002', '2025-11-15', 5.0),
 ('DRV004', N'Lê Văn Hậu', '079123456783', N'Nam', '1995-12-20', '2025-11-20', N'Đang giao hàng', 'NV002', '2025-11-20', 5.0),
 ('DRV005', N'Phạm Thị Yến Nhi', '079123456784', N'Nữ', '2004-06-25', '2025-11-25', N'Sẵn sàng', 'NV002', '2025-11-25', 5.0), 
 ('DRV006', N'Ngô Văn Tùng', '079123456785', N'Nam', '1997-07-11', '2025-11-10', N'Sẵn sàng', 'NV002', '2025-11-10', 5.0),
