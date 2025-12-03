@@ -6,7 +6,7 @@ import reportsAPI from '../services/reportsAPI';
 // Components
 import TopDriversCard from '../components/reports/TopDriversCard';
 import TopCustomersCard from '../components/reports/TopCustomersCard';
-import Sidebar from '../components/layout/Sidebar';
+import Sidebar from '../components/layout/SideBar';
 
 // CSS
 import './ReportsPage.css';
@@ -42,8 +42,8 @@ const ReportsPage = () => {
             setError(null);
 
             const [driversData, customersData] = await Promise.all([
-                reportsAPI.getTopDrivers({ limit: driverLimit }),
-                reportsAPI.getTopCustomers({ limit: customerLimit })
+                reportsAPI.getTopDrivers({ topN: driverLimit }),
+                reportsAPI.getTopCustomers({ topN: customerLimit })
             ]);
 
             // Kiểm tra cấu trúc dữ liệu trả về (data.data hoặc data.drivers/customers)

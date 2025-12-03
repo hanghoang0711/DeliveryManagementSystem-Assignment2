@@ -8,7 +8,7 @@ import TripForm from '../components/trip/TripForm';
 import AddOrderToTripForm from '../components/trip/AddOrderToTripForm';
 import Pagination from '../components/common/Pagination';
 import ConfirmDialog from '../components/common/ConfirmDialog';
-import Sidebar from '../components/layout/Sidebar';
+import Sidebar from '../components/layout/SideBar';
 import './DeliveryTripsPage.css';
 
 // Import Feather Icons
@@ -41,7 +41,7 @@ const DeliveryTripsPage = () => {
             const params = {
                 page: pagination.page,
                 limit: pagination.limit,
-                trang_thai: filters.status || '',
+                TrangThaiChuyen: filters.status || '',
                 driver_id: filters.ma_tai_xe || '',
                 sortKey: filters.sortBy === 'ngay_bat_dau' ? 'DeliveryID' : filters.sortBy || 'DeliveryID',
                 sortOrder: filters.sortOrder || 'DESC'
@@ -73,7 +73,7 @@ const DeliveryTripsPage = () => {
     const handleViewDetails = async (trip) => { try { const data = await deliveryTripAPI.getById(trip.DeliveryID); setSelectedTrip(data.trip); setShowDetailsModal(true); } catch (err) { alert('❌ Không thể tải chi tiết: ' + err.response?.data?.message); } };
     const handleAddOrder = (trip) => { setSelectedTrip(trip); setShowAddOrderModal(true); };
     const handleAddOrderSubmit = async (orderData) => { try { await deliveryTripAPI.addOrder(selectedTrip.DeliveryID, orderData); alert('✅ Thêm đơn hàng thành công!'); setShowAddOrderModal(false); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể thêm đơn hàng')); } };
-    const handleUpdateStatus = async (trip, newStatus) => { try { const updateData = { trang_thai: newStatus, ngay_ket_thuc: newStatus === 'Hoàn thành' ? new Date().toISOString() : undefined }; await deliveryTripAPI.update(trip.DeliveryID, updateData); alert('✅ Cập nhật thành công!'); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể cập nhật')); } };
+    const handleUpdateStatus = async (trip, newStatus) => { try { const updateData = { TrangThaiChuyen: newStatus, ngay_ket_thuc: newStatus === 'Hoàn thành' ? new Date().toISOString() : undefined }; await deliveryTripAPI.update(trip.DeliveryID, updateData); alert('✅ Cập nhật thành công!'); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể cập nhật')); } };
     const handleDeleteClick = (trip) => { setTripToDelete(trip); setShowDeleteDialog(true); };
     const handleDeleteConfirm = async () => { try { await deliveryTripAPI.delete(tripToDelete.DeliveryID); alert('✅ Xóa thành công!'); setShowDeleteDialog(false); setTripToDelete(null); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể xóa')); } };
 

@@ -4,7 +4,7 @@ import { driverAPI } from '../api/services.js';
 import DriverTable from '../components/driver/DriverTable.jsx';
 import DriverForm from '../components/driver/DriverForm.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
-import Sidebar from '../components/layout/Sidebar'; 
+import Sidebar from '../components/layout/SideBar.jsx'; 
 import { useAuth } from '../context/AuthContext';   
 import { useNavigate } from 'react-router-dom';     
 

@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Package, User, Truck, BarChart, Home } from 'react-feather';
-import './Sidebar.css';
+import './SideBar.css';
 
 const Sidebar = () => {
     const navigate = useNavigate();

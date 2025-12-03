@@ -6,7 +6,7 @@ import OrderForm from '../components/order/OderForm.jsx'; // <-- Đã sửa thà
 import OrderFilter from '../components/order/OderFilter.jsx'; // <-- Đã sửa thành OderFilter
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
 import Pagination from '../components/common/Pagination.jsx';
-import Sidebar from '../components/layout/Sidebar'; // Import Sidebar
+import Sidebar from '../components/layout/SideBar.jsx';
 import { useAuth } from '../context/AuthContext'; 
 import { useNavigate } from 'react-router-dom';   
 
