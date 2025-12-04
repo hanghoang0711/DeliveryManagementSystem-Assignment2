@@ -42,7 +42,7 @@ const DeliveryTripsPage = () => {
             const params = {
                 page: pagination.page,
                 limit: pagination.limit,
-                TrangThaiChuyen: filters.status || '',
+                trang_thai: filters.status || '',
                 driver_id: filters.ma_tai_xe || '',
                 sortKey: filters.sortBy === 'ngay_bat_dau' ? 'DeliveryID' : filters.sortBy || 'DeliveryID',
                 sortOrder: filters.sortOrder || 'DESC'

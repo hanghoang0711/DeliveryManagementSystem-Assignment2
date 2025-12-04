@@ -13,10 +13,12 @@ const TripFilter = ({ filters, onFilterChange }) => {
   }, [filters]);
 
   const handleChange = (field, value) => {
-    setLocalFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...localFilters,
       [field]: value
-    }));
+    };
+    setLocalFilters(newFilters);
+    onFilterChange(newFilters);
   };
 
   const handleApply = () => {
