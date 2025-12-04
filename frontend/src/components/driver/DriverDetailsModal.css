@@ -1,0 +1,383 @@
+.driver-details-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+.driver-details-modal .modal-header {
+  background: linear-gradient(135deg, #3B5998 0%, #2d4373 100%);
+  color: white;
+  padding: 24px 32px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.driver-details-modal .modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.driver-details-modal .btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.driver-details-modal .btn-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.driver-details-modal .modal-body {
+  padding: 32px;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+}
+
+.avatar-section {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B5998 0%, #2d4373 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 16px rgba(59, 89, 152, 0.3);
+}
+
+.driver-basic-info h3 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.driver-id {
+  display: block;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rating-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFA500;
+  margin-left: 4px;
+}
+
+.status-badge-container {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Detail Section - Reuse from OrderDetailsModal */
+.detail-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #3B5998;
+}
+
+.detail-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #3B5998;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-item label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-item span {
+  font-size: 15px;
+  color: #1e293b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.highlight-text {
+  color: #3B5998 !important;
+  font-family: 'Courier New', monospace;
+  font-weight: 600 !important;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rating-number {
+  font-weight: 600;
+  color: #FFA500;
+  font-size: 14px;
+}
+
+/* Phone List */
+.phone-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.phone-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  color: #3B5998;
+  font-weight: 500;
+}
+
+/* Driver Type Badges */
+.driver-type-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.driver-type-badge {
+  flex: 1;
+  min-width: 200px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.driver-type-badge.motorcycle {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.driver-type-badge.truck {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.driver-type-badge span:first-of-type {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.type-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.type-details small {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.no-vehicle-type {
+  width: 100%;
+  padding: 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* License Cards */
+.license-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.license-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.license-card:hover {
+  border-color: #3B5998;
+  box-shadow: 0 4px 12px rgba(59, 89, 152, 0.1);
+}
+
+.license-type {
+  background: linear-gradient(135deg, #3B5998 0%, #2d4373 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.license-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.license-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.license-detail label {
+  font-size: 12px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.license-detail span {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.note-box {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .driver-details-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .driver-details-modal .modal-body {
+    padding: 20px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-type-badge {
+    min-width: 100%;
+  }
+}
+
+/* Scrollbar */
+.driver-details-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.driver-details-modal::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.driver-details-modal::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.driver-details-modal::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

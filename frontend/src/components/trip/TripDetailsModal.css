@@ -1,0 +1,413 @@
+.trip-details-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+.trip-details-modal .modal-header {
+  background: linear-gradient(135deg, #3B5998 0%, #2d4373 100%);
+  color: white;
+  padding: 24px 32px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.trip-details-modal .modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.trip-details-modal .btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.trip-details-modal .btn-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.trip-details-modal .modal-body {
+  padding: 32px;
+}
+
+/* Trip Summary */
+.trip-summary {
+  margin-bottom: 32px;
+}
+
+.status-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.status-badge-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #bae6fd;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.card-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Detail Section */
+.detail-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #3B5998;
+}
+
+.detail-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #3B5998;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-item label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail-item span {
+  font-size: 15px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* Driver Info Card */
+.driver-info-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+}
+
+.driver-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B5998 0%, #2d4373 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.driver-details {
+  flex: 1;
+}
+
+.driver-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.driver-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.driver-id {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.driver-rating {
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFA500;
+}
+
+/* Orders List */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.order-card:hover {
+  border-color: #3B5998;
+  box-shadow: 0 4px 12px rgba(59, 89, 152, 0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.order-id-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-id {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3B5998;
+}
+
+.order-status-badge {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.order-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-address {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.order-address > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-address small {
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.order-address span {
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.order-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.delivery-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.delivery-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.delivery-detail.full-width {
+  grid-column: 1 / -1;
+}
+
+.delivery-detail label {
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.delivery-detail span {
+  font-size: 13px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.sequence-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #3B5998 0%, #2d4373 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.empty-orders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.empty-orders p {
+  margin-top: 16px;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trip-details-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .trip-details-modal .modal-body {
+    padding: 20px;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .delivery-info {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-info-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .driver-meta {
+    justify-content: center;
+  }
+}
+
+/* Scrollbar */
+.trip-details-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.trip-details-modal::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.trip-details-modal::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.trip-details-modal::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

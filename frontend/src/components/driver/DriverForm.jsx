@@ -4,7 +4,7 @@ import './DriverForm.css';
 // Import Feather Icons
 import { X, User, Save, Edit2, Plus } from 'react-feather';
 
-const DriverForm = ({ driver, onSubmit, onClose }) => {
+const DriverForm = ({ driver, onSubmit, onCancel }) => {
   // Form state (Giữ nguyên)
   const [formData, setFormData] = useState({
     Ho_ten: '',
@@ -75,8 +75,14 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
 
   const isEditMode = !!driver;
 
+  const handleClose = () => {
+    if (onCancel) {
+      onCancel();
+    }
+  };
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         
         {/* Header với Icon */}
@@ -85,7 +91,7 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
             {isEditMode ? <Edit2 size={20} color="#3B5998" style={{marginRight:'8px'}}/> : <Plus size={20} color="#3B5998" style={{marginRight:'8px'}}/>}
             {isEditMode ? 'Sửa thông tin tài xế' : 'Thêm tài xế mới'}
           </h2>
-          <button className="btn-close" onClick={onClose}><X size={24}/></button>
+          <button className="btn-close" onClick={handleClose} type="button"><X size={24}/></button>
         </div>
 
         {/* Form */}
@@ -185,7 +191,7 @@ const DriverForm = ({ driver, onSubmit, onClose }) => {
             <button
               type="button"
               className="btn-cancel"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={submitting}
             >
               Hủy

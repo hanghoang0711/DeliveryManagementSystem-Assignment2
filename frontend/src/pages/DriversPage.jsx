@@ -3,6 +3,7 @@ import { driverAPI } from '../api/services.js';
 // Import Components
 import DriverTable from '../components/driver/DriverTable.jsx';
 import DriverForm from '../components/driver/DriverForm.jsx';
+import DriverDetailsModal from '../components/driver/DriverDetailsModal.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
 import Sidebar from '../components/layout/SideBar.jsx'; 
 import { useAuth } from '../context/AuthContext';   
@@ -24,6 +25,7 @@ const DriversPage = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [editingDriver, setEditingDriver] = useState(null);
+  const [viewingDriver, setViewingDriver] = useState(null);
   const [deletingDriver, setDeletingDriver] = useState(null);
 
   const handleLogout = async () => { await logout(); navigate('/login'); };
@@ -44,9 +46,19 @@ const DriversPage = () => {
   };
 
   useEffect(() => { fetchDrivers(); }, []);
-
   const handleCreate = () => { setEditingDriver(null); setShowForm(true); };
   const handleEdit = (driver) => { setEditingDriver(driver); setShowForm(true); };
+  
+  const handleView = async (driver) => {
+    try {
+      const response = await driverAPI.getById(driver.DriverID);
+      const fullDriver = response.data || response;
+      setViewingDriver(fullDriver);
+    } catch (err) {
+      console.error('Error fetching driver details:', err);
+      alert('❌ Không thể tải thông tin tài xế');
+    }
+  };
 
   const handleFormSubmit = async (driverData) => {
     try {
@@ -140,14 +152,12 @@ const DriversPage = () => {
 
           {/* LOADING / ERROR */}
           {loading && (
-            <div className="loading-container">
-              <div className="spinner"></div><p>Đang tải dữ liệu...</p>
-            </div>
+            <div className="loading">⏳ Đang tải...</div>
           )}
-
-          {!loading && error && (
-            <div className="error-container">
-              <p>❌ {error}</p><button className="btn-primary" onClick={fetchDrivers}>Thử lại</button>
+          {error && (
+            <div className="error">
+              <p>❌ {error}</p>
+              <button className="btn-primary" onClick={fetchDrivers}>Thử lại</button>
             </div>
           )}
 
@@ -155,6 +165,7 @@ const DriversPage = () => {
           {!loading && !error && (
             <DriverTable
               drivers={filteredDrivers}
+              onView={handleView}
               onEdit={handleEdit}
               onDelete={handleDeleteClick}
             />
@@ -168,15 +179,27 @@ const DriversPage = () => {
             </div>
           )}
 
-          {/* MODALS */}
+          {/* FORM MODAL */}
           {showForm && (
             <DriverForm
               driver={editingDriver}
               onSubmit={handleFormSubmit}
-              onClose={() => { setShowForm(false); setEditingDriver(null); }}
+              onCancel={() => {
+                setShowForm(false);
+                setEditingDriver(null);
+              }}
             />
           )}
 
+          {/* VIEW MODAL */}
+          {viewingDriver && (
+            <DriverDetailsModal 
+              driver={viewingDriver} 
+              onClose={() => setViewingDriver(null)} 
+            />
+          )}
+
+          {/* DELETE CONFIRM */}
           {deletingDriver && (
             <ConfirmDialog
               title="Xác nhận xóa"

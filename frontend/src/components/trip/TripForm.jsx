@@ -4,7 +4,7 @@ import './TripForm.css';
 // Import Feather Icons
 import { X, Truck, Info, Plus } from 'react-feather';
 
-const TripForm = ({ onSubmit, onClose }) => {
+const TripForm = ({ onSubmit, onCancel }) => {
   // Logic cũ của bạn (giữ nguyên state tên là DriverID)
   const [formData, setFormData] = useState({
     DriverID: '',
@@ -55,8 +55,14 @@ const TripForm = ({ onSubmit, onClose }) => {
     }
   };
 
+  const handleClose = () => {
+    if (onCancel) {
+      onCancel();
+    }
+  };
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content trip-form-modal" onClick={(e) => e.stopPropagation()}>
         
         {/* Header với Icon */}
@@ -65,7 +71,7 @@ const TripForm = ({ onSubmit, onClose }) => {
              <Truck size={22} color="#3B5998" /> 
              Tạo chuyến giao hàng mới
           </h2>
-          <button className="btn-close" onClick={onClose}>
+          <button className="btn-close" onClick={handleClose} type="button">
              <X size={24} />
           </button>
         </div>
@@ -106,7 +112,7 @@ const TripForm = ({ onSubmit, onClose }) => {
             <button
               type="button"
               className="btn-cancel"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={submitting}
             >
               Hủy

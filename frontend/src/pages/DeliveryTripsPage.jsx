@@ -5,6 +5,7 @@ import deliveryTripAPI from '../services/deliveryTripAPI';
 import TripFilter from '../components/trip/TripFilter';
 import TripTable from '../components/trip/TripTable';
 import TripForm from '../components/trip/TripForm';
+import TripDetailsModal from '../components/trip/TripDetailsModal';
 import AddOrderToTripForm from '../components/trip/AddOrderToTripForm';
 import Pagination from '../components/common/Pagination';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -70,7 +71,16 @@ const DeliveryTripsPage = () => {
     };
     const handlePageChange = (page) => { setPagination(prev => ({ ...prev, page })); setSearchParams({ page: page.toString() }); };
     const handleCreateTrip = async (tripData) => { try { await deliveryTripAPI.create(tripData); alert('✅ Tạo chuyến giao hàng thành công!'); setShowCreateModal(false); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể tạo chuyến')); } };
-    const handleViewDetails = async (trip) => { try { const data = await deliveryTripAPI.getById(trip.DeliveryID); setSelectedTrip(data.trip); setShowDetailsModal(true); } catch (err) { alert('❌ Không thể tải chi tiết: ' + err.response?.data?.message); } };
+    const handleViewDetails = async (trip) => { 
+        try { 
+            const response = await deliveryTripAPI.getById(trip.DeliveryID); 
+            const fullTrip = response.data || response;
+            setSelectedTrip(fullTrip); 
+            setShowDetailsModal(true); 
+        } catch (err) { 
+            alert('❌ Không thể tải chi tiết: ' + (err.response?.data?.message || err.message)); 
+        } 
+    };
     const handleAddOrder = (trip) => { setSelectedTrip(trip); setShowAddOrderModal(true); };
     const handleAddOrderSubmit = async (orderData) => { try { await deliveryTripAPI.addOrder(selectedTrip.DeliveryID, orderData); alert('✅ Thêm đơn hàng thành công!'); setShowAddOrderModal(false); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể thêm đơn hàng')); } };
     const handleUpdateStatus = async (trip, newStatus) => { try { const updateData = { TrangThaiChuyen: newStatus, ngay_ket_thuc: newStatus === 'Hoàn thành' ? new Date().toISOString() : undefined }; await deliveryTripAPI.update(trip.DeliveryID, updateData); alert('✅ Cập nhật thành công!'); fetchTrips(); } catch (err) { alert('❌ Lỗi: ' + (err.response?.data?.message || 'Không thể cập nhật')); } };
@@ -167,29 +177,39 @@ const DeliveryTripsPage = () => {
                         </>
                     )}
 
-                    {/* MODALS */}
-                    {showCreateModal && <TripForm onSubmit={handleCreateTrip} onClose={() => setShowCreateModal(false)} />}
-                    {showAddOrderModal && selectedTrip && <AddOrderToTripForm trip={selectedTrip} onSubmit={handleAddOrderSubmit} onClose={() => setShowAddOrderModal(false)} />}
-                    {showDeleteDialog && tripToDelete && <ConfirmDialog title="Xác nhận xóa" message={`Bạn có chắc muốn xóa chuyến "${tripToDelete.DeliveryID}"?`} onConfirm={handleDeleteConfirm} onCancel={() => { setShowDeleteDialog(false); setTripToDelete(null); }} />}
-                    
+                    {/* CREATE MODAL */}
+                    {showCreateModal && (
+                        <TripForm
+                            onSubmit={handleCreateTrip}
+                            onCancel={() => setShowCreateModal(false)}
+                        />
+                    )}
+
+                    {/* ADD ORDER MODAL */}
+                    {showAddOrderModal && (
+                        <AddOrderToTripForm
+                            trip={selectedTrip}
+                            onSubmit={handleAddOrderSubmit}
+                            onCancel={() => setShowAddOrderModal(false)}
+                        />
+                    )}
+
                     {/* DETAILS MODAL */}
                     {showDetailsModal && selectedTrip && (
-                        <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
-                            <div className="modal-content trip-details-modal" onClick={(e) => e.stopPropagation()}>
-                                <div className="modal-header">
-                                    <h2>
-                                        <FileText size={24} color="#3B5998"/> 
-                                        Chi tiết: {selectedTrip.DeliveryID}
-                                    </h2>
-                                    <button className="btn-close" onClick={() => setShowDetailsModal(false)}>
-                                        <X size={24} />
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <pre>{JSON.stringify(selectedTrip, null, 2)}</pre>
-                                </div>
-                            </div>
-                        </div>
+                        <TripDetailsModal
+                            trip={selectedTrip}
+                            onClose={() => { setShowDetailsModal(false); setSelectedTrip(null); }}
+                        />
+                    )}
+
+                    {/* DELETE CONFIRM */}
+                    {showDeleteDialog && tripToDelete && (
+                        <ConfirmDialog
+                            title="Xác nhận xóa"
+                            message={`Bạn có chắc muốn xóa chuyến giao hàng "${tripToDelete.DeliveryID}"?`}
+                            onConfirm={handleDeleteConfirm}
+                            onCancel={() => { setShowDeleteDialog(false); setTripToDelete(null); }}
+                        />
                     )}
                 </div>
             </div>

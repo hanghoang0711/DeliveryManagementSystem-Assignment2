@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { orderAPI } from '../api/services';
-// Import Components (GIỮ NGUYÊN TÊN FILE CŨ CỦA BẠN)
+// Import Components (GIỮNGUYÊN TÊN FILE CŨ CỦA BẠN)
 import OrderTable from '../components/order/OrderTable.jsx';
 import OrderForm from '../components/order/OderForm.jsx'; // <-- Đã sửa thành OderForm
 import OrderFilter from '../components/order/OderFilter.jsx'; // <-- Đã sửa thành OderFilter
+import OrderDetailsModal from '../components/order/OrderDetailsModal.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
 import Pagination from '../components/common/Pagination.jsx';
 import Sidebar from '../components/layout/SideBar.jsx';
 import { useAuth } from '../context/AuthContext'; 
-import { useNavigate } from 'react-router-dom';   
+import { useNavigate } from 'react-router-dom';
 
 import './OrdersPage.css';
 
@@ -80,7 +81,8 @@ const OrdersPage = () => {
 
     const handleView = async (order) => {
         try {
-            const fullOrder = await orderAPI.getById(order.Ma_don_hang);
+            const response = await orderAPI.getById(order.Ma_don_hang);
+            const fullOrder = response.data || response;
             setViewingOrder(fullOrder);
         } catch (err) {
             console.error('Error fetching order details:', err);
@@ -221,24 +223,11 @@ const OrdersPage = () => {
                             onClose={() => { setShowForm(false); setEditingOrder(null); }}
                         />
                     )}
-
                     {viewingOrder && (
-                        <div className="modal-overlay" onClick={() => setViewingOrder(null)}>
-                            <div className="order-details-modal" onClick={(e) => e.stopPropagation()}>
-                                <div className="modal-header">
-                                    <h2>
-                                        <FileText size={24} color="#3B5998" />
-                                        Chi tiết: {viewingOrder.Ma_don_hang}
-                                    </h2>
-                                    <button className="btn-close" onClick={() => setViewingOrder(null)}>
-                                        <X size={24} />
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <pre>{JSON.stringify(viewingOrder, null, 2)}</pre>
-                                </div>
-                            </div>
-                        </div>
+                        <OrderDetailsModal 
+                            order={viewingOrder} 
+                            onClose={() => setViewingOrder(null)} 
+                        />
                     )}
 
                     {deletingOrder && (

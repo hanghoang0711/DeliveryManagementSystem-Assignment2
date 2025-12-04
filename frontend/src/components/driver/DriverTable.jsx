@@ -1,7 +1,7 @@
 import './DriverTable.css';
-import { Edit, Trash2, Star, CheckCircle, XCircle, AlertCircle, User } from 'react-feather';
+import { Edit, Trash2, Eye, Star, CheckCircle, XCircle, AlertCircle, User } from 'react-feather';
 
-const DriverTable = ({ drivers, onEdit, onDelete }) => {
+const DriverTable = ({ drivers, onView, onEdit, onDelete }) => {
   
   /**
    * Format rating với sao
@@ -77,6 +77,13 @@ const DriverTable = ({ drivers, onEdit, onDelete }) => {
                   </td>
                   <td>
                     <div className="action-buttons">
+                      <button
+                        className="btn-action"
+                        onClick={() => onView(driver)}
+                        title="Xem chi tiết"
+                      >
+                        <Eye size={16} />
+                      </button>
                       <button
                         className="btn-action"
                         onClick={() => onEdit(driver)}
