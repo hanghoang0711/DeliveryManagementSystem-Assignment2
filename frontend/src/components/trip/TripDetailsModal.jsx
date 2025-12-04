@@ -121,20 +121,18 @@ const TripDetailsModal = ({ trip, onClose }) => {
             </div>
           </section>
 
-          {/* Thời gian */}
+          {/* Thông tin chuyến */}
           <section className="detail-section">
-            <h3><Calendar size={20} /> Thời gian</h3>
+            <h3><Calendar size={20} /> Thông tin chuyến</h3>
             <div className="detail-grid">
               <div className="detail-item">
-                <label><Clock size={14} /> Ngày bắt đầu:</label>
-                <span>{formatDate(trip.Ngay_bat_dau)}</span>
+                <label>Mã chuyến:</label>
+                <span className="highlight-text">{trip.DeliveryID}</span>
               </div>
-              {trip.Ngay_ket_thuc && (
-                <div className="detail-item">
-                  <label><Clock size={14} /> Ngày kết thúc:</label>
-                  <span>{formatDate(trip.Ngay_ket_thuc)}</span>
-                </div>
-              )}
+              <div className="detail-item">
+                <label>Số lượng đơn gộp:</label>
+                <span>{trip.so_luong_don_gop || 0}</span>
+              </div>
             </div>
           </section>
 

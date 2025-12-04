@@ -145,7 +145,12 @@ const OrderDetailsModal = ({ order, onClose }) => {
               </div>
               <div className="detail-item highlight">
                 <label>Tổng thanh toán:</label>
-                <span className="amount total">{formatCurrency(order.tong_tien_phai_thanh_toan)}</span>
+                <span className="amount total">
+                  {formatCurrency(
+                    (parseFloat(order.gia_tri_hang_hoa_phi_van_chuyen) || 0) + 
+                    (parseFloat(order.phi_van_chuyen_sau_giam) || 0)
+                  )}
+                </span>
               </div>
             </div>
           </section>

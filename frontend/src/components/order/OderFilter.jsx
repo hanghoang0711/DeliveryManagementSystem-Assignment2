@@ -1,19 +1,49 @@
+import { useState, useEffect, useRef } from 'react';
 import { ORDER_STATUSES, ORDER_SORT_FIELDS } from '../../utils/constants';
 import './OrderFilter.css';
 import { RefreshCw, Filter, User, Tag, BarChart2 } from 'react-feather';
 
 const OrderFilter = ({ filters, onFilterChange, loading }) => {
-  const handleChange = (field, value) => {
-    onFilterChange({ [field]: value });
+  const [localFilters, setLocalFilters] = useState(filters);
+  const debounceTimer = useRef(null);
+
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+
+  const handleChange = (field, value, immediate = false) => {
+    const newFilters = {
+      ...localFilters,
+      [field]: value
+    };
+    setLocalFilters(newFilters);
+    
+    // Nếu là dropdown (immediate = true), apply ngay
+    if (immediate) {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+      onFilterChange(newFilters);
+    } else {
+      // Nếu là input text, debounce 500ms
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+      debounceTimer.current = setTimeout(() => {
+        onFilterChange(newFilters);
+      }, 1500);
+    }
   };
 
   const handleReset = () => {
-    onFilterChange({
+    const defaultFilters = {
       trang_thai_don: '',
       ma_khach_hang: '',
       sortKey: 'thoi_gian_dat_don',
       sortOrder: 'DESC'
-    });
+    };
+    setLocalFilters(defaultFilters);
+    onFilterChange(defaultFilters);
   };
 
   return (
@@ -26,8 +56,8 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
               <Tag size={14} color="#3B5998" /> Trạng thái:
           </label>
           <select
-            value={filters.trang_thai_don}
-            onChange={(e) => handleChange('trang_thai_don', e.target.value)}
+            value={localFilters.trang_thai_don}
+            onChange={(e) => handleChange('trang_thai_don', e.target.value, true)}
             disabled={loading}
           >
             <option value="">Tất cả trạng thái</option>
@@ -45,8 +75,8 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
           <input
             type="text"
             placeholder="Mã khách hàng (KH001)"
-            value={filters.ma_khach_hang}
-            onChange={(e) => handleChange('ma_khach_hang', e.target.value)}
+            value={localFilters.ma_khach_hang}
+            onChange={(e) => handleChange('ma_khach_hang', e.target.value, false)}
             disabled={loading}
           />
         </div>
@@ -57,8 +87,8 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
               <BarChart2 size={14} color="#3B5998" /> Sắp xếp theo:
           </label>
           <select
-            value={filters.sortKey}
-            onChange={(e) => handleChange('sortKey', e.target.value)}
+            value={localFilters.sortKey}
+            onChange={(e) => handleChange('sortKey', e.target.value, true)}
             disabled={loading}
           >
             {ORDER_SORT_FIELDS.map(field => (
@@ -75,8 +105,8 @@ const OrderFilter = ({ filters, onFilterChange, loading }) => {
               <Filter size={14} color="#3B5998" /> Thứ tự:
           </label>
           <select
-            value={filters.sortOrder}
-            onChange={(e) => handleChange('sortOrder', e.target.value)}
+            value={localFilters.sortOrder}
+            onChange={(e) => handleChange('sortOrder', e.target.value, true)}
             disabled={loading}
           >
             <option value="ASC">Tăng dần</option>

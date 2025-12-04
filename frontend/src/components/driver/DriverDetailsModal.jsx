@@ -96,15 +96,15 @@ const DriverDetailsModal = ({ driver, onClose }) => {
               </div>
               <div className="detail-item">
                 <label>Ngày sinh:</label>
-                <span>{formatDateTime(driver.Ngay_sinh)}</span>
+                <span>{formatDateTime(driver.Ngay_Sinh)}</span>
               </div>
               <div className="detail-item">
                 <label>Giới tính:</label>
-                <span>{driver.Gioi_tinh}</span>
+                <span>{driver.Gioi_Tinh || 'N/A'}</span>
               </div>
-              <div className="detail-item full-width">
-                <label>Địa chỉ:</label>
-                <span><MapPin size={14} /> {driver.Dia_chi || 'N/A'}</span>
+              <div className="detail-item">
+                <label>Ngày bắt đầu làm việc:</label>
+                <span>{formatDateTime(driver.Ngay_Bat_Dau_Lam_Viec)}</span>
               </div>
             </div>
           </section>

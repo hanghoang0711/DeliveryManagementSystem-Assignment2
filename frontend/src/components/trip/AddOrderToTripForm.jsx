@@ -5,7 +5,7 @@ import './AddOrderToTripForm.css';
 // Import Feather Icons
 import { X, Plus, Package, Truck, Info, User } from 'react-feather';
 
-const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
+const AddOrderToTripForm = ({ trip, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     Ma_don_hang: '',
     Thu_tu_lay_hang: 1,
@@ -14,6 +14,10 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
 
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+
+  const handleClose = () => {
+    if (onCancel) onCancel();
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,7 +72,7 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content add-order-form-modal" onClick={(e) => e.stopPropagation()}>
         
         {/* HEADER */}
@@ -77,7 +81,7 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
              <Package size={20} color="#3B5998" /> 
              Thêm đơn hàng vào chuyến
           </h2>
-          <button className="btn-close" onClick={onClose} style={{background:'none', border:'none', cursor:'pointer'}}>
+          <button className="btn-close" onClick={handleClose} style={{background:'none', border:'none', cursor:'pointer'}}>
              <X size={20} color="#64748b" />
           </button>
         </div>
@@ -140,7 +144,7 @@ const AddOrderToTripForm = ({ trip, onSubmit, onClose }) => {
 
           {/* Actions */}
           <div className="form-actions">
-            <button type="button" className="btn-cancel" onClick={onClose} disabled={submitting}>Hủy</button>
+            <button type="button" className="btn-cancel" onClick={handleClose} disabled={submitting}>Hủy</button>
             <button type="submit" className="btn-submit" disabled={submitting}>
               <Plus size={18} /> {submitting ? 'Đang thêm...' : 'Thêm đơn hàng'}
             </button>
