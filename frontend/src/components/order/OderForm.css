@@ -188,3 +188,24 @@
     .form-grid, .form-row { grid-template-columns: 1fr; }
     .order-form-modal { max-width: 95%; }
 }
+
+.delivery-method-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 6px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  accent-color: #3B5998; /* Màu xanh giống style của bạn */
+  width: 18px;
+  height: 18px;
+}

@@ -102,7 +102,7 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
             <div className="form-section">
               <h3><User size={18}/> Thông tin chung</h3>
               
-              <div className="form-group">
+              <div className="form-group">1
                 <label>Mã khách hàng <span className="required">*</span></label>
                 <input type="text" name="Ma_khach_hang" value={formData.Ma_khach_hang} onChange={handleChange} placeholder="KH001" disabled={isEditMode} className={errors.Ma_khach_hang ? 'input-error' : ''} />
                 {errors.Ma_khach_hang && <span className="error-message">{errors.Ma_khach_hang}</span>}
@@ -147,11 +147,46 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
                   </div>
               </div>
 
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label>Phương thức giao <span className="required">*</span></label>
                 <input type="text" name="phuong_thuc_giao_hang" value={formData.phuong_thuc_giao_hang} onChange={handleChange} placeholder="Ví dụ: Đường bộ" disabled={isEditMode} className={errors.phuong_thuc_giao_hang ? 'input-error' : ''} />
+              </div> */}
+
+              <div className="form-group">
+                <label>Phương thức giao <span className="required">*</span></label>
+
+                <div className="delivery-method-group">
+                  <label className="radio-option">
+                    <input
+                      type="radio"
+                      name="phuong_thuc_giao_hang"
+                      value="Siêu tốc"
+                      checked={formData.phuong_thuc_giao_hang === "Siêu tốc"}
+                      onChange={handleChange}
+                      disabled={isEditMode}
+                    />
+                    Siêu tốc
+                  </label>
+
+                  <label className="radio-option">
+                    <input
+                      type="radio"
+                      name="phuong_thuc_giao_hang"
+                      value="Tiết kiệm"
+                      checked={formData.phuong_thuc_giao_hang === "Tiết kiệm"}
+                      onChange={handleChange}
+                      disabled={isEditMode}
+                    />
+                    Tiết kiệm
+                  </label>
+                </div>
+
+                {errors.phuong_thuc_giao_hang && (
+                  <span className="error-message">{errors.phuong_thuc_giao_hang}</span>
+                )}
               </div>
 
+              
               {isEditMode && (
                 <div className="form-group">
                   <label>Trạng thái <span className="required">*</span></label>
