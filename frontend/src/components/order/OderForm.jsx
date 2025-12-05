@@ -79,9 +79,8 @@ const OrderForm = ({ order, onSubmit, onClose }) => {
 
   const getAvailableStatuses = () => {
     if (!isEditMode) return ['Đang xử lý'];
-    const currentStatus = order.Trang_thai_don;
-    const nextStatuses = STATUS_WORKFLOW[currentStatus] || [];
-    return [currentStatus, ...nextStatuses];
+    // Trả về tất cả trạng thái để user có thể chọn bất kỳ
+    return ORDER_STATUSES;
   };
 
   return (

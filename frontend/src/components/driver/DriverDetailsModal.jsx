@@ -146,9 +146,9 @@ const DriverDetailsModal = ({ driver, onClose }) => {
             </div>
           </section>
 
-          {/* Loại tài xế */}
+          {/* Loại phương tiện */}
           <section className="detail-section">
-            <h3><Truck size={20} /> Loại tài xế</h3>
+            <h3><Truck size={20} /> Loại phương tiện</h3>
             <div className="driver-type-badges">
               {driver.Loai_xe_may && (
                 <div className="driver-type-badge motorcycle">

@@ -73,7 +73,7 @@ const DriverTable = ({ drivers, onView, onEdit, onDelete }) => {
                   <td style={{fontFamily: 'monospace', color: '#475569'}}>{driver.CCCD}</td>
                   <td>{formatRating(driver.Rating)}</td>
                   <td>
-                    {getStatusBadge(driver.Trang_thai_hoat_dong)}
+                    {getStatusBadge(driver.Trang_Thai)}
                   </td>
                   <td>
                     <div className="action-buttons">
