@@ -1,4 +1,4 @@
-import { X, User, Phone, CreditCard, MapPin, Star, Award, Calendar, Truck, CheckCircle } from 'react-feather';
+import { X, User, Phone, CreditCard, Star, Award, Calendar, CheckCircle } from 'react-feather';
 import './DriverDetailsModal.css';
 
 const DriverDetailsModal = ({ driver, onClose }) => {
@@ -143,38 +143,6 @@ const DriverDetailsModal = ({ driver, onClose }) => {
                   <span className="rating-number">{driver.Rating?.toFixed(2) || '0.00'} / 5.0</span>
                 </div>
               </div>
-            </div>
-          </section>
-
-          {/* Loại phương tiện */}
-          <section className="detail-section">
-            <h3><Truck size={20} /> Loại phương tiện</h3>
-            <div className="driver-type-badges">
-              {driver.Loai_xe_may && (
-                <div className="driver-type-badge motorcycle">
-                  <Truck size={16} />
-                  <span>Xe máy</span>
-                  <div className="type-details">
-                    <small>Biển số: {driver.Loai_xe_may.Bien_so_xe || 'N/A'}</small>
-                    <small>Hãng xe: {driver.Loai_xe_may.Hang_xe || 'N/A'}</small>
-                  </div>
-                </div>
-              )}
-              {driver.Loai_xe_tai && (
-                <div className="driver-type-badge truck">
-                  <Truck size={16} />
-                  <span>Xe tải</span>
-                  <div className="type-details">
-                    <small>Biển số: {driver.Loai_xe_tai.Bien_so_xe || 'N/A'}</small>
-                    <small>Tải trọng: {driver.Loai_xe_tai.Tai_trong || 'N/A'} tấn</small>
-                  </div>
-                </div>
-              )}
-              {!driver.Loai_xe_may && !driver.Loai_xe_tai && (
-                <div className="no-vehicle-type">
-                  <span>Chưa có thông tin loại xe</span>
-                </div>
-              )}
             </div>
           </section>
 

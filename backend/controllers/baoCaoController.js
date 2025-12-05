@@ -318,23 +318,23 @@ exports.getTopKhachHang = async (req, res) => {
       });
     }
     
-    // ✅ FIX: Thêm tiêu chí phụ - số đơn hàng để tránh trùng doanh thu
-    // Gọi function và JOIN với KHACH_HANG + SO_DIEN_THOAI_CUA_KHACH_HANG để lấy Email, SDT
-    // + COUNT đơn hàng để làm tiêu chí sắp xếp phụ
+    // ✅ FIX: Dùng TOP trong subquery và lấy số điện thoại đầu tiên (không JOIN với SDT table tránh duplicate)
+    // Function đã trả về TongDonHang, không cần COUNT lại
     // Test expect: Ma_khach_hang, Email, SDT, total_revenue, so_don_hang
     const results = await db.sequelize.query(
-      `SELECT TOP (:topN)
+      `SELECT 
         f.Ma_khach_hang,
         kh.email as Email,
-        sdt.So_dien_thoai as SDT,
+        (
+          SELECT TOP 1 So_dien_thoai 
+          FROM SO_DIEN_THOAI_CUA_KHACH_HANG 
+          WHERE Ma_khach_hang = f.Ma_khach_hang
+        ) as SDT,
         f.TongDoanhThu as total_revenue,
-        COUNT(dh.Ma_don_hang) as so_don_hang
-      FROM dbo.fn_TopKhachHangTheoDoanhThu(100, :startDate, :endDate) f
+        f.TongDonHang as so_don_hang
+      FROM dbo.fn_TopKhachHangTheoDoanhThu(:topN, :startDate, :endDate) f
       LEFT JOIN KHACH_HANG kh ON f.Ma_khach_hang = kh.Ma_khach_hang
-      LEFT JOIN SO_DIEN_THOAI_CUA_KHACH_HANG sdt ON f.Ma_khach_hang = sdt.Ma_khach_hang
-      LEFT JOIN DON_HANG dh ON f.Ma_khach_hang = dh.Ma_khach_hang
-      GROUP BY f.Ma_khach_hang, kh.email, sdt.So_dien_thoai, f.TongDoanhThu
-      ORDER BY f.TongDoanhThu DESC, COUNT(dh.Ma_don_hang) DESC`,
+      ORDER BY f.TongDoanhThu DESC, f.TongDonHang DESC`,
       {
         replacements: { 
           topN, 
