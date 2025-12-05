@@ -362,38 +362,69 @@ exports.deleteDonHang = async (req, res) => {
       });
     }
 
-    // Kiểm tra trạng thái đơn hàng (không cho xóa đơn đã hoàn thành)
-    if (donHang.Trang_thai_don === 'Đã giao') {
+    /**
+     * ✅ QUY TẮC XÓA ĐƠN HÀNG THEO TRẠNG THÁI:
+     * 
+     * CÓ THỂ XÓA:
+     * - Đang xử lý (chưa được gán tài xế)
+     * - Đã huỷ (đơn đã bị hủy)
+     * - Lấy hàng thất bại (chưa giao được)
+     * - Giao hàng thất bại (giao không thành công)
+     * - Đã hoàn về kho (hàng đã về kho)
+     * 
+     * KHÔNG THỂ XÓA:
+     * - Đang tìm tài xế (đang xử lý)
+     * - Đã tìm được tài xế (đã gán)
+     * - Đang lấy hàng (đang thực hiện)
+     * - Lấy hàng thành công (đang vận chuyển)
+     * - Đang giao hàng (đang thực hiện)
+     * - Giao hàng thành công (đã giao)
+     * - Đã hoàn thành (đã thanh toán)
+     */
+    const DELETABLE_STATUSES = [
+      'Đang xử lý',
+      'Đã huỷ',
+      'Lấy hàng thất bại',
+      'Giao hàng thất bại',
+      'Đã hoàn về kho'
+    ];
+
+    if (!DELETABLE_STATUSES.includes(donHang.Trang_thai_don)) {
       return res.status(400).json({
         success: false,
-        message: 'Không thể xóa đơn hàng đã hoàn thành'
+        message: `Không thể xóa đơn hàng có trạng thái "${donHang.Trang_thai_don}". Chỉ có thể xóa đơn hàng ở trạng thái: ${DELETABLE_STATUSES.join(', ')}`
       });
     }
 
-    // Kiểm tra có bản ghi liên quan không (FK constraint check)
-    // Check các bảng: DON_HANG_DUOC_GIAO (ERD v2 - HOA_DON đã bị xóa)
-    const checkTables = [
-      'DON_HANG_DUOC_GIAO'
-    ];
-
-    for (const table of checkTables) {
-      const hasDependencies = await db.sequelize.query(
-        `SELECT COUNT(*) as count FROM ${table} WHERE Ma_don_hang = :id`,
-        {
-          replacements: { id },
-          type: db.sequelize.QueryTypes.SELECT
-        }
-      );
-
-      if (hasDependencies[0].count > 0) {
-        return res.status(400).json({
-          success: false,
-          message: `Không thể xóa đơn hàng đã có dữ liệu liên quan trong bảng ${table}. Vui lòng xóa dữ liệu liên quan trước.`
-        });
+    // ✅ XÓA CÁC BẢNG LIÊN QUAN TRƯỚC (CASCADE DELETE)
+    // 1. Xóa DON_HANG_DUOC_GIAO (nếu đơn đã được gộp vào chuyến)
+    await db.sequelize.query(
+      'DELETE FROM DON_HANG_DUOC_GIAO WHERE Ma_don_hang = :id',
+      {
+        replacements: { id },
+        type: db.sequelize.QueryTypes.DELETE
       }
-    }
+    );
 
-    // Xóa
+    // 2. Xóa DON_HANG_DUOC_TIEP_NHAN (nếu đơn đã được nhân viên tiếp nhận)
+    await db.sequelize.query(
+      'DELETE FROM DON_HANG_DUOC_TIEP_NHAN WHERE Ma_don_hang = :id',
+      {
+        replacements: { id },
+        type: db.sequelize.QueryTypes.DELETE
+      }
+    );
+
+    // 3. Xóa DON_HANG_HOAN_VE_KHO (nếu đơn đã được hoàn về kho)
+    await db.sequelize.query(
+      'DELETE FROM DON_HANG_HOAN_VE_KHO WHERE Ma_don_hang = :id',
+      {
+        replacements: { id },
+        type: db.sequelize.QueryTypes.DELETE
+      }
+    );
+
+    // 4. Xóa đơn hàng
     await donHang.destroy();
 
     res.status(200).json({

@@ -39,8 +39,12 @@ exports.getAllChuyenGiaoHang = async (req, res) => {
     const offset = (parseInt(page) - 1) * parseInt(limit);
     const limitInt = parseInt(limit);
 
+    // ✅ Validate sortKey - chỉ cho phép field hợp lệ
+    const validSortKeys = ['DeliveryID', 'so_luong_don_gop', 'DriverID', 'TrangThaiChuyen'];
+    const validatedSortKey = validSortKeys.includes(sortKey) ? sortKey : 'DeliveryID';
+
     // 🐛 DEBUG: Log received filter values
-    console.log('🔍 Filter params:', { trang_thai, driver_id });
+    console.log('🔍 Filter params:', { trang_thai, driver_id, sortKey: validatedSortKey });
 
     // Build where conditions
     const whereConditions = {};
@@ -92,7 +96,7 @@ exports.getAllChuyenGiaoHang = async (req, res) => {
           attributes: ['Ma_don_hang', 'quang_duong', 'Trang_thai_don']
         }
       ],
-      order: [[sortKey, sortOrder.toUpperCase()]],
+      order: [[validatedSortKey, sortOrder.toUpperCase()]],
       limit: limitInt,
       offset: offset,
       distinct: true

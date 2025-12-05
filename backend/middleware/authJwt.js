@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'Meomeo667708'; // Phải trùng với auth.routes.js
+require('dotenv').config();
+const SECRET_KEY =  process.env.JWT_SECRET;
 
 exports.verifyToken = (req, res, next) => {
   const header = req.headers['authorization'];

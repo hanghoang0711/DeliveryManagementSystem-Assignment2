@@ -3,8 +3,8 @@ const bcrypt = require('bcryptjs');
 const db = require('../models');
 const User = db.User;
 
-// CHÚ Ý: Đổi SECRET_KEY trong môi trường production!
-const SECRET_KEY = 'Meomeo667708'; 
+require('dotenv').config();
+const SECRET_KEY = process.env.JWT_SECRET;
 
 exports.login = async (req, res) => {
   const { username, password } = req.body;
@@ -44,11 +44,11 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  // Đối với JWT, logout chỉ là thông báo (Client tự xóa token)
+  
   return res.json({ message: 'Logout successful' });
 };
 
-// Middleware để xác minh token (Chỉ dùng cho các route bảo mật)
+// Middleware để xác minh token 
 exports.verifyToken = (req, res, next) => {
   const header = req.headers['authorization'];
 

@@ -7,12 +7,17 @@ const sql = require("mssql");
 const bcrypt = require('bcryptjs');
 const db = require('./models');
 
+require('dotenv').config();
+
 const sqlConfig = {
-    user: "sa",  // Dùng sa để tạo tài khoản SQL Server
-    password: "Nhom6251",
-    server: "localhost",
+    user: process.env.SA_USER, 
+    password: process.env.SA_PASSWORD,
+    server: process.env.DB_SERVER || "localhost",
     database: "master",
-    options: { encrypt: false }
+    options: { 
+        encrypt: false,
+        trustServerCertificate: true // Thêm cái này nếu chạy local cho chắc
+    }
 };
 
 // Step 1: Tạo SQL Server login và user
@@ -24,7 +29,7 @@ async function createManagerAccount() {
         await sql.query(`
             IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = 'sManager')
             BEGIN
-                CREATE LOGIN sManager WITH PASSWORD = 'Nhom6251';
+                CREATE LOGIN sManager WITH PASSWORD = '${process.env.DB_PASSWORD}';;
             END
         `);
 

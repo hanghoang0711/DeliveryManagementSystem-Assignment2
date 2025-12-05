@@ -43,11 +43,11 @@ const options = {
           properties: {
             username: {
               type: 'string',
-              example: 'sManager'
+              example: 'user_example'
             },
             password: {
               type: 'string',
-              example: 'Nhom6251'
+              example: 'password123'
             }
           }
         },

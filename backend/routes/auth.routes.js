@@ -3,10 +3,10 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { verifyToken } = require("../middleware/authJwt");
 
-const USERNAME = "sManager";
-const PASSWORD = "Nhom6251";      // trùng với seed.js
-const SECRET = "Meomeo667708";
-
+// 1. Đưa tất cả vào biến môi trường
+const USERNAME = process.env.DB_USER || "admin"; 
+const PASSWORD = process.env.DB_PASSWORD; 
+const SECRET = process.env.JWT_SECRET;
 /**
  * @swagger
  * /api/auth/login:

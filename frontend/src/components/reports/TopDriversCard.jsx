@@ -38,6 +38,7 @@ const TopDriversCard = ({ drivers, limit, onLimitChange }) => {
         <div className="limit-selector">
           <label>Hiển thị:</label>
           <select value={limit} onChange={(e) => onLimitChange(parseInt(e.target.value))}>
+            <option value={3}>Top 3</option>
             <option value={5}>Top 5</option>
             <option value={10}>Top 10</option>
             <option value={20}>Top 20</option>

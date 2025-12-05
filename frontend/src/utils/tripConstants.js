@@ -27,12 +27,13 @@ export const TRIP_STATUS_WORKFLOW = {
 
 /**
  * Sort fields for delivery trips
+ * Chỉ dùng field tồn tại trong model CHUYEN_GIAO_HANG
  */
 export const TRIP_SORT_FIELDS = [
-  { value: 'Ma_chuyen_giao_hang', label: 'Mã chuyến' },
-  { value: 'ngay_bat_dau', label: 'Ngày bắt đầu' },
-  { value: 'ngay_ket_thuc', label: 'Ngày kết thúc' },
-  { value: 'tong_quang_duong', label: 'Tổng quãng đường' }
+  { value: 'DeliveryID', label: 'Mã chuyến' },
+  { value: 'so_luong_don_gop', label: 'Số đơn gộp' },
+  { value: 'TrangThaiChuyen', label: 'Trạng thái' },
+  { value: 'DriverID', label: 'Mã tài xế' }
 ];
 
 /**

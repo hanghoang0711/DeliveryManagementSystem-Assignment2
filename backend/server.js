@@ -50,7 +50,7 @@ app.use('/api/chuyen-giao-hang', chuyenGiaoHangRoutes);
 // ============================================
 const storedProcedureRoutes = require('./routes/storedProcedureRoutes');
 app.use('/api/sp', storedProcedureRoutes);
-
+require('dotenv').config();
 // ============================================
 // SERVER START
 // ============================================
